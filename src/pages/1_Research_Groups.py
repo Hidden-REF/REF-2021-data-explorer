@@ -14,7 +14,8 @@ st.title(page_title)
 
 with st.spinner(sh.PROC_TEXT):
     (dset, _) = rw.get_data(rw.DATA_PPROC_RGROUPS,
-                            string_columns=[cb.COL_RG_NAME])
+                            string_columns=[cb.COL_RG_NAME],
+                            categories_columns=[cb.COL_RG_CODE])
 
 dset_to_print = pd.DataFrame.from_dict(
     {
