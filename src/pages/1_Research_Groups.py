@@ -1,0 +1,59 @@
+import pandas as pd
+import streamlit as st
+from streamlit_extras.dataframe_explorer import dataframe_explorer
+
+import codebook as cb
+import read_write as rw
+import process as proc
+import visualisations as vis
+
+
+page_title = "Research Groups"
+st.title(page_title)
+
+with st.spinner(rw.PROC_TEXT):
+    (dset, _) = rw.get_data(rw.DATA_PPROC_RGROUPS,
+                            categories_columns=[cb.COL_RG_NAME])
+
+dset_to_print = pd.DataFrame.from_dict(
+    {
+        "Records": dset.shape[0],
+        "Institutions": dset[cb.COL_INST_NAME].nunique()
+    },
+    orient="index"
+    )
+dset_to_print.columns = ["count"]
+pd.set_option("display.max_colwidth", None)
+st.dataframe(dset_to_print)
+
+st.subheader("Charts")
+
+st.markdown("Select from the charts below to view the "
+            "distributions for the number of research groups records by ...")
+
+columns = [cb.COL_PANEL_NAME,
+           cb.COL_UOA_NAME]
+tab_names = columns.copy()
+tab_names.append(f"{cb.COL_PANEL_NAME} & {cb.COL_UOA_NAME}")
+tabs = st.tabs(tab_names)
+
+for i, column in enumerate(columns):
+
+    with tabs[i]:
+        dset_stats = proc.calculate_counts(dset,
+                                           column,
+                                           sort=False)
+        vis.draw_counts_percent_chart(dset_stats,
+                                      column)
+with tabs[2]:
+    dset_stats = proc.calculate_grouped_counts(dset,
+                                               [cb.COL_PANEL_NAME, cb.COL_UOA_NAME])
+    vis.draw_grouped_counts_chart(dset_stats,
+                                  cb.COL_PANEL_NAME,
+                                  cb.COL_UOA_NAME,
+                                  cb.COL_PANEL_NAME
+                                  )
+
+st.subheader("Explore the data")
+dset_explore = dataframe_explorer(dset)
+st.dataframe(dset_explore, use_container_width=False)

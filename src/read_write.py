@@ -1,0 +1,91 @@
+import os
+import pandas as pd
+import streamlit as st
+
+import codebook as cb
+
+
+# data paths
+PROJECT_PATH = os.path.dirname(os.path.abspath(os.path.dirname(__file__)))
+DATA_PATH = "data/"
+
+DATA_EXT = ".csv.gz"
+DATA_PPROCESS = "_ppreprocessed"
+
+DATA_PPROC_RGROUPS = f"{DATA_PATH}ResearchGroups{DATA_PPROCESS}{DATA_EXT}"
+DATA_PPROC_OUTPUTS = f"{DATA_PATH}Outputs{DATA_PPROCESS}{DATA_EXT}"
+DATA_PPROC_IMPACTS = f"{DATA_PATH}ImpactCaseStudies{DATA_PPROCESS}{DATA_EXT}"
+DATA_PPROC_DEGREES = f"{DATA_PATH}ResearchDoctoralDegreesAwarded{DATA_PPROCESS}{DATA_EXT}"
+DATA_PPROC_RINCOME = f"{DATA_PATH}ResearchIncome{DATA_PPROCESS}{DATA_EXT}"
+DATA_PPROC_RINCOMEINKIND = f"{DATA_PATH}ResearchIncomeInKind{DATA_PPROCESS}{DATA_EXT}"
+DATA_PPROC_RESULTS = f"{DATA_PATH}Results{DATA_PPROCESS}{DATA_EXT}"
+
+PROC_TEXT = "Processing request..."
+
+
+@st.cache_data
+def get_data(fname, categories_columns=[]):
+    """ Read a csv file and return a dataset and a list of institution names.
+
+    Args:
+        fname (str): Filename of the csv file to read.
+        categories_columns (list): List of columns to be read as categories.
+
+    Returns:
+        tuple: A tuple containing:
+            - pd.DataFrame: Dataset read from the csv file.
+            - list: List of institution names
+    """
+
+    # defines types to read
+    dtype = {cb.COL_INST_CODE: 'category',
+             cb.COL_INST_NAME: 'category',
+             cb.COL_PANEL_NAME: 'category',
+             cb.COL_UOA_NAME: 'category'
+             }
+    # binned percentages and various categories, depending on file
+    binned_perc_columns = []
+    # categories_columns = []
+    if "Results_" in fname:
+        binned_perc_columns = [cb.COL_RESULTS_1star_BINNED,
+                               cb.COL_RESULTS_2star_BINNED,
+                               cb.COL_RESULTS_3star_BINNED,
+                               cb.COL_RESULTS_4star_BINNED,
+                               cb.COL_RESULTS_UNCLASSIFIED_BINNED,
+                               cb.COL_RESULTS_PERC_STAFF_SUBMITTED_BINNED
+                               ]
+    for column in binned_perc_columns:
+        dtype[column] = 'category'
+
+    for column in categories_columns:
+        dtype[column] = 'category'
+
+    dset = pd.read_csv(os.path.join(PROJECT_PATH, fname),
+                       index_col=0,
+                       dtype=dtype)
+    print(f"Read {fname}: {dset.shape[0]} records")
+
+    # set the category order for the binned percentages
+    for column in binned_perc_columns:
+        dset[column] = pd.Categorical(dset[column],
+                                      categories=cb.bin_percentages_labels())
+
+    # get institution names as list
+    inst_names = dset[cb.COL_INST_NAME].unique()
+
+    return (dset, inst_names)
+
+
+def download_data(dset, prompt, fname):
+    """ Download a dataset as a csv file.
+
+    Args:
+        dset (pandas.DataFrame): The dataset to download.
+        prompt (str): The prompt to display for the download link.
+    """
+    st.download_button(
+        label=prompt,
+        data=dset.to_csv().encode('utf-8'),
+        file_name=fname,
+        mime='text/csv',
+    )
