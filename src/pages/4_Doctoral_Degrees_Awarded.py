@@ -6,12 +6,13 @@ import codebook as cb
 import read_write as rw
 import process as proc
 import visualisations as vis
+import shared as sh
 
 
 page_title = "Doctoral Degrees Awarded"
 st.title(page_title)
 
-with st.spinner(rw.PROC_TEXT):
+with st.spinner(sh.PROC_TEXT):
     (dset, _) = rw.get_data(rw.DATA_PPROC_DEGREES)
 
 dset_to_print = pd.DataFrame.from_dict(
@@ -25,8 +26,7 @@ dset_to_print.columns = ["count"]
 pd.set_option("display.max_colwidth", None)
 st.dataframe(dset_to_print)
 
-
-st.subheader("Charts")
+st.subheader(sh.CHARTS_HEADER)
 st.markdown("Select from the charts below to view the "
             "distributions for the number of doctoral degrees records by ...")
 
@@ -43,6 +43,6 @@ for i, column in enumerate(columns):
         vis.draw_counts_percent_chart(dset_stats,
                                       column)
 
-st.subheader("Explore the data")
+st.subheader(sh.EXPLORE_HEADER)
 dset_explore = dataframe_explorer(dset)
 st.dataframe(dset_explore, use_container_width=False)

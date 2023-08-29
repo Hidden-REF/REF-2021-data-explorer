@@ -6,12 +6,13 @@ import codebook as cb
 import read_write as rw
 import process as proc
 import visualisations as vis
+import shared as sh
 
 
 page_title = "Research Groups"
 st.title(page_title)
 
-with st.spinner(rw.PROC_TEXT):
+with st.spinner(sh.PROC_TEXT):
     (dset, _) = rw.get_data(rw.DATA_PPROC_RGROUPS,
                             categories_columns=[cb.COL_RG_NAME])
 
@@ -26,8 +27,7 @@ dset_to_print.columns = ["count"]
 pd.set_option("display.max_colwidth", None)
 st.dataframe(dset_to_print)
 
-st.subheader("Charts")
-
+st.subheader(sh.CHARTS_HEADER)
 st.markdown("Select from the charts below to view the "
             "distributions for the number of research groups records by ...")
 
@@ -54,6 +54,6 @@ with tabs[2]:
                                   cb.COL_PANEL_NAME
                                   )
 
-st.subheader("Explore the data")
+st.subheader(sh.EXPLORE_HEADER)
 dset_explore = dataframe_explorer(dset)
 st.dataframe(dset_explore, use_container_width=False)

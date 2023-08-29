@@ -20,8 +20,6 @@ DATA_PPROC_RINCOME = f"{DATA_PATH}ResearchIncome{DATA_PPROCESS}{DATA_EXT}"
 DATA_PPROC_RINCOMEINKIND = f"{DATA_PATH}ResearchIncomeInKind{DATA_PPROCESS}{DATA_EXT}"
 DATA_PPROC_RESULTS = f"{DATA_PATH}Results{DATA_PPROCESS}{DATA_EXT}"
 
-PROC_TEXT = "Processing request..."
-
 
 @st.cache_data
 def get_data(fname, categories_columns=[], string_columns=[]):

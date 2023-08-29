@@ -6,12 +6,13 @@ import codebook as cb
 import read_write as rw
 import process as proc
 import visualisations as vis
+import shared as sh
 
 
 page_title = "Outputs"
 st.title(page_title)
 
-with st.spinner(rw.PROC_TEXT):
+with st.spinner(sh.PROC_TEXT):
     (dset, _) = rw.get_data(rw.DATA_PPROC_OUTPUTS,
                             categories_columns=[cb.COL_OUTPUT_TYPE_NAME,
                                                 cb.COL_OUTPUT_CITATIONS,
@@ -52,7 +53,8 @@ dset_to_print.columns = ["count"]
 pd.set_option("display.max_colwidth", None)
 st.dataframe(dset_to_print)
 
-st.subheader("Charts")
+st.subheader(sh.CHARTS_HEADER)
+
 tab1, tab2, tab3 = st.tabs(["All records", "Explore types", "Search titles"])
 
 with tab1:
@@ -80,7 +82,7 @@ with tab2:
                                )
 
     if search_type:
-        with st.spinner(rw.PROC_TEXT):
+        with st.spinner(sh.PROC_TEXT):
             dset_selected = dset[dset[cb.COL_OUTPUT_TYPE_NAME] == search_type]
         st.markdown(f"Number of outputs records of type '{search_type}': "
                     f"{dset_selected.shape[0]}")
@@ -114,7 +116,7 @@ with tab3:
                                 )
     search_column = cb.COL_OUTPUT_TITLE
     if search_word:
-        with st.spinner(rw.PROC_TEXT):
+        with st.spinner(sh.PROC_TEXT):
             dset_selected = dset[dset[search_column].str.contains(search_word,
                                                                   case=False,
                                                                   na=False)]
@@ -141,6 +143,6 @@ with tab3:
                 vis.draw_counts_percent_chart(dset_stats,
                                               column)
 
-st.subheader("Explore the data")
+st.subheader(sh.EXPLORE_HEADER)
 dset_explore = dataframe_explorer(dset)
 st.dataframe(dset_explore, use_container_width=False)

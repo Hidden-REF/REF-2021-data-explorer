@@ -3,6 +3,7 @@ import streamlit as st
 
 import codebook as cb
 
+
 source_url = "https://results2021.ref.ac.uk/"
 
 page_title = "REF 2021 Data Explorer"
