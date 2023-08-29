@@ -24,6 +24,7 @@ dset_to_print.columns = ["count"]
 pd.set_option("display.max_colwidth", None)
 st.dataframe(dset_to_print)
 
+st.subheader("Charts")
 tab1, tab2, tab3 = st.tabs(["All records", "Explore types", "Search titles"])
 
 with tab1:
