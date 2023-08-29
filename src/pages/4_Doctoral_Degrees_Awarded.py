@@ -56,6 +56,8 @@ bin_size = st.slider("Select the bin size",
 fig = ff.create_distplot([dset[cb.COL_DEGREES_TOTAL]],
                          [cb.COL_DEGREES_TOTAL],
                          histnorm="probability",
+                         show_rug=True,
+                         show_curve=False,
                          bin_size=bin_size)
 fig.update_layout(showlegend=False)
 st.plotly_chart(fig, use_container_width=True)
