@@ -2,8 +2,6 @@
 import streamlit as st
 import altair as alt
 
-import read_write as rw
-
 
 USE_CONTAINER_WIDTH = True
 
@@ -41,9 +39,6 @@ def draw_counts_percent_chart(dset,
                     ).interactive()
     st.altair_chart(chart,
                     use_container_width=USE_CONTAINER_WIDTH)
-    rw.download_data(dset,
-                     "Download chart data as csv",
-                     "chart_data.csv")
 
 
 def draw_grouped_counts_chart(dset, x, y, colour):
