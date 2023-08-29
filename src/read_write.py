@@ -24,7 +24,7 @@ PROC_TEXT = "Processing request..."
 
 
 @st.cache_data
-def get_data(fname, categories_columns=[]):
+def get_data(fname, categories_columns=[], string_columns=[]):
     """ Read a csv file and return a dataset and a list of institution names.
 
     Args:
@@ -59,6 +59,9 @@ def get_data(fname, categories_columns=[]):
 
     for column in categories_columns:
         dtype[column] = 'category'
+
+    for column in string_columns:
+        dtype[column] = 'string'
 
     dset = pd.read_csv(os.path.join(PROJECT_PATH, fname),
                        index_col=0,

@@ -12,7 +12,7 @@ st.title(page_title)
 
 with st.spinner(rw.PROC_TEXT):
     (dset, _) = rw.get_data(rw.DATA_PPROC_RINCOMEINKIND)
-
+    
 dset_to_print = pd.DataFrame.from_dict(
     {
         "Research income in kind records": dset.shape[0],

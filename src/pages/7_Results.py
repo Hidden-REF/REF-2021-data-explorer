@@ -12,7 +12,7 @@ st.title(page_title)
 
 with st.spinner(rw.PROC_TEXT):
     (dset, _) = rw.get_data(rw.DATA_PPROC_RESULTS)
-
+    
 dset_to_print = pd.DataFrame.from_dict(
     {
         "Results records": dset.shape[0],
