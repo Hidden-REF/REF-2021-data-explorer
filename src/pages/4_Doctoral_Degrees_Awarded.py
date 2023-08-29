@@ -59,7 +59,8 @@ fig = ff.create_distplot([dset[cb.COL_DEGREES_TOTAL]],
                          show_rug=True,
                          show_curve=False,
                          bin_size=bin_size)
-fig.update_layout(showlegend=False)
+fig.update_layout(showlegend=False, 
+                  margin=dict(l=10, r=10, t=10, b=10))
 st.plotly_chart(fig, use_container_width=True)
 
 st.subheader(sh.EXPLORE_HEADER)
