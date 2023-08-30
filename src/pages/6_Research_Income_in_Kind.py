@@ -14,7 +14,8 @@ page_title = "Research Income in Kind"
 st.title(page_title)
 
 with st.spinner(sh.PROC_TEXT):
-    (dset, _) = rw.get_data(rw.DATA_PPROC_RINCOMEINKIND)
+    (dset, _) = rw.get_data(rw.DATA_PPROC_RINCOMEINKIND,
+                            categories_columns=[cb.COL_INCOMEINKIND_SOURCE])
 
 dset_to_print = pd.DataFrame.from_dict(
     {

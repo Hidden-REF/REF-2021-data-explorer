@@ -60,7 +60,6 @@ COL_OUTPUT_RESERVE_OUTPUT = 'Is reserve output'
 COL_OUTPUT_DELAYED = 'Delayed by COVID19'
 # about the impact case studies
 COL_IMPACT_TITLE = 'Title'
-
 COL_IMPACT_COUNTRIES = 'Countries'
 COL_IMPACT_CONTINUED = 'Is continued from 2014'
 COL_IMPACT_FORMAL_PARTNERS = 'Formal partners'
@@ -70,13 +69,16 @@ COL_IMPACT_FUNDERS = 'Name of funders'
 COL_IMPACT_GLOBAL_RID = 'Global research identifiers'
 COL_IMPACT_FUNDERS_NAME = 'Name of funders'
 COL_IMPACT_ORCIDs = 'Researcher ORCIDs'
-
 COL_IMPACT_SUMMARY = '1. Summary of the impact'
 COL_IMPACT_UNDERPIN_RESEARCH = '2. Underpinning research'
 COL_IMPACT_REFERENCES_RESEARCH = '3. References to the research'
 COL_IMPACT_DETAILS = '4. Details of the impact'
 COL_IMPACT_CORROBORATE = '5. Sources to corroborate the impact'
+# about income
+COL_INCOME_SOURCE = 'Income source'
+COL_INCOMEINKIND_SOURCE = 'Income source'
 # about results
+COL_RESULLTS_PROFILE = 'Profile'
 COL_RESULTS_FTE_STAFF = 'FTE of submitted staff'
 COL_RESULTS_PERC_STAFF_SUBMITTED = '% of eligible staff submitted'
 COL_RESULTS_PERC_STAFF_SUBMITTED_BINNED = f"{COL_RESULTS_PERC_STAFF_SUBMITTED} (binned)"
