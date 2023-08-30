@@ -1,4 +1,3 @@
-import pandas as pd
 import streamlit as st
 from streamlit_extras.dataframe_explorer import dataframe_explorer
 from streamlit_extras.chart_container import chart_container
@@ -50,13 +49,18 @@ fig = ff.create_distplot([dset[cb.COL_DEGREES_TOTAL]],
                          show_rug=True,
                          show_curve=False,
                          bin_size=bin_size)
-fig.update_layout(showlegend=False, 
+fig.update_layout(showlegend=False,
                   margin=dict(l=10, r=10, t=10, b=10))
 st.plotly_chart(fig, use_container_width=True)
 
 # explore data
 # ------------
-st.divider()
 st.subheader(sh.EXPLORE_HEADER)
 dset_explore = dataframe_explorer(dset)
-st.dataframe(dset_explore, use_container_width=False)
+if (dset_explore.shape[0] < dset.shape[0]) & (dset_explore.shape[0] > 0):
+    dict = {"Selected records": dset_explore.shape[0]}
+    vis.display_table_from_dictionary(dict)
+    rw.download_data(dset_explore,
+                     sh.DOWNLOAD_SELECTED_DATA_PROMPT,
+                     "selected_data.csv")
+    st.dataframe(dset_explore, use_container_width=False)

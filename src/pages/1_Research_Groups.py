@@ -48,6 +48,14 @@ with tabs[2]:
                                       cb.COL_PANEL_NAME
                                       )
 
+# explore data
+# ------------
 st.subheader(sh.EXPLORE_HEADER)
 dset_explore = dataframe_explorer(dset)
-st.dataframe(dset_explore, use_container_width=False)
+if (dset_explore.shape[0] < dset.shape[0]) & (dset_explore.shape[0] > 0):
+    dict = {"Selected records": dset_explore.shape[0]}
+    vis.display_table_from_dictionary(dict)
+    rw.download_data(dset_explore,
+                     sh.DOWNLOAD_SELECTED_DATA_PROMPT,
+                     "selected_data.csv")
+    st.dataframe(dset_explore, use_container_width=False)

@@ -65,64 +65,14 @@ for i, column in enumerate(dcolumns):
             vis.draw_counts_percent_chart(dset_stats,
                                           column)
 
-# select categorical values and export
-# ------------------------------------
-st.divider()
-st.markdown(f"## {sh.SELECT_EXPORT_HEADER_PREFIX} ...")
-
-scolumns = dcolumns.copy()
-stabs = st.tabs(scolumns)
-
-for i, column in enumerate(scolumns):
-    with stabs[i]:
-        options = list(dset[column].cat.categories)
-        prompt = f"##### Select `{column}` value"
-        option = st.selectbox(prompt,
-                              [""] + options,
-                              index=0,
-                              help="Select a value to filter the data")
-
-        if option:
-            with st.spinner(sh.PROC_TEXT):
-                dset_selected = dset[dset[column] == option]
-            dict = {"Selected": option,
-                    "Records": dset_selected.shape[0]}
-            vis.display_table_from_dictionary(dict)
-            rw.download_data(dset_selected,
-                             sh.DOWNLOAD_SELECTED_DATA_PROMPT,
-                             "selected_data.csv")
-
-# search string fields for pattern
-# --------------------------------
-st.divider()
-st.markdown(f"## {sh.SEARCH_EXPORT_HEADER_PREFIX} ...")
-pcolumns = [cb.COL_OUTPUT_TITLE]
-
-ptabs = st.tabs(pcolumns)
-
-for i, column in enumerate(pcolumns):
-    with ptabs[i]:
-        prompt = f"Enter a pattern to search '{column}'"
-        pattern = st.text_input(prompt,
-                                max_chars=40,
-                                value="",
-                                help="Enter a pattern to search for"
-                                )
-        if pattern:
-            with st.spinner(sh.PROC_TEXT):
-                dset_selected = dset[dset[column].str.contains(pattern,
-                                                               case=False,
-                                                               na=False)]
-            dict = {"Pattern": pattern,
-                    "Records": dset_selected.shape[0]}
-            vis.display_table_from_dictionary(dict)
-            rw.download_data(dset_selected,
-                             sh.DOWNLOAD_SELECTED_DATA_PROMPT,
-                             "selected_data.csv")
-
 # explore data
 # ------------
-st.divider()
 st.subheader(sh.EXPLORE_HEADER)
 dset_explore = dataframe_explorer(dset)
-st.dataframe(dset_explore, use_container_width=False)
+if (dset_explore.shape[0] < dset.shape[0]) & (dset_explore.shape[0] > 0):
+    dict = {"Selected records": dset_explore.shape[0]}
+    vis.display_table_from_dictionary(dict)
+    rw.download_data(dset_explore,
+                     sh.DOWNLOAD_SELECTED_DATA_PROMPT,
+                     "selected_data.csv")
+    st.dataframe(dset_explore, use_container_width=False)
