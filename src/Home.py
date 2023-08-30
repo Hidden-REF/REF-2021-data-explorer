@@ -2,14 +2,13 @@ import pandas as pd
 import streamlit as st
 
 import codebook as cb
-
-
-source_url = "https://results2021.ref.ac.uk/"
+import shared as sh
 
 page_title = "REF 2021 Data Explorer"
 st.set_page_config(page_title=page_title,
                    layout="centered",
                    initial_sidebar_state="expanded",
+                   menu_items={'About': sh.DATA_INFO}
                    )
 
 st.title(page_title)
@@ -17,8 +16,7 @@ st.title(page_title)
 # page content
 # ------------
 st.markdown("## Data source")
-st.markdown(f"The data used in this app is from the [REF 2021 website]({source_url})"
-            " (accessed 2023/08/10) and has been processed with [https://github.com/softwaresaved/ref-2021-analysis](https://github.com/softwaresaved/ref-2021-analysis)")
+st.markdown(sh.DATA_INFO)
 
 st.markdown("## About the REF 2021 process")
 
