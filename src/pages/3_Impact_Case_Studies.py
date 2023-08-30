@@ -30,7 +30,6 @@ with st.spinner(sh.PROC_TEXT):
     (dset, _) = rw.get_data(rw.DATA_PPROC_IMPACTS,
                             categories_columns=CATEGORIES_COLUMNS,
                             string_columns=STRING_COLUMNS)
-print(dset.columns)
 
 vis.display_record_counts_table(dset)
 
