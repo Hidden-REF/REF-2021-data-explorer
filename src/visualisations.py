@@ -99,8 +99,3 @@ def display_table_from_dictionary(dict):
     """
     for items in dict.items():
         st.text(f"{items[0]} \t{items[1]}")
-    # dset_to_print = pd.DataFrame.from_dict(dict,
-    #                                        orient="index")
-    # dset_to_print.columns = [""]
-    # pd.set_option("display.max_colwidth", None)
-    # st.dataframe(dset_to_print)

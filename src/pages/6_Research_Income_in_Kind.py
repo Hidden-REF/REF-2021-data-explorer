@@ -33,7 +33,7 @@ for i, column in enumerate(dcolumns):
         dset_stats = proc.calculate_counts(dset,
                                            column,
                                            sort=False)
-        with chart_container(dset_stats):
+        with chart_container(dset_stats, export_formats=sh.DATA_EXPORT_FORMATS):
             vis.draw_counts_percent_chart(dset_stats,
                                           column)
 
