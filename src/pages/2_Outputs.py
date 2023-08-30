@@ -76,25 +76,24 @@ stabs = st.tabs(scolumns)
 for i, column in enumerate(scolumns):
     with stabs[i]:
         options = list(dset[column].cat.categories)
-        prompt_text = f"##### Select `{column}` value"
-        search_type = st.selectbox(prompt_text,
-                                   [""] + options,
-                                   index=0,
-                                   help="Select a value to filter the data"
-                                   )
+        prompt = f"##### Select `{column}` value"
+        option = st.selectbox(prompt,
+                              [""] + options,
+                              index=0,
+                              help="Select a value to filter the data")
 
-        if search_type:
+        if option:
             with st.spinner(sh.PROC_TEXT):
-                dset_selected = dset[dset[column] == search_type]
-            dict = {"Selected": search_type,
+                dset_selected = dset[dset[column] == option]
+            dict = {"Selected": option,
                     "Records": dset_selected.shape[0]}
             vis.display_table_from_dictionary(dict)
             rw.download_data(dset_selected,
                              sh.DOWNLOAD_SELECTED_DATA_PROMPT,
                              "selected_data.csv")
 
-# search string fields for patter
-# -------------------------------
+# search string fields for pattern
+# --------------------------------
 st.divider()
 st.markdown(f"## {sh.SEARCH_EXPORT_HEADER_PREFIX} ...")
 pcolumns = [cb.COL_OUTPUT_TITLE]
@@ -103,8 +102,8 @@ ptabs = st.tabs(pcolumns)
 
 for i, column in enumerate(pcolumns):
     with ptabs[i]:
-        search_prompt = f"Enter a pattern to search '{column}'"
-        pattern = st.text_input(search_prompt,
+        prompt = f"Enter a pattern to search '{column}'"
+        pattern = st.text_input(prompt,
                                 max_chars=40,
                                 value="",
                                 help="Enter a pattern to search for"
