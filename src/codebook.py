@@ -156,16 +156,16 @@ OUTPUT_TYPE_NAMES = {
     'V': 'Translation'
 }
 
-OPEN_ACCESS_NAMES = [
-    "Access exception",
-    "Compliant",
-    "Deposit exception",
-    "Exception within 3 months of publication",
-    "Not compliant",
-    "Other exception",
-    "Out of scope for open access requirements",
-    "Technical exception"
-]
+OPEN_ACCESS_NAMES = {
+    1: "Compliant",
+    2: "NotCompliant",
+    3: "DispositException",
+    4: "AccessException",
+    5: "TechnicalException",
+    6: "OtherException",
+    7: "OutOfScope",
+    8: "ExceptionWithin3MonthsOfPublication"
+}
 
 PERCENTAGE_BINS = range(0, 101, 10)
 

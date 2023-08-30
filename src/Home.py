@@ -15,18 +15,21 @@ st.title(page_title)
 
 # page content
 # ------------
-st.markdown("## Data source")
+st.header("Data source")
 st.markdown(sh.DATA_INFO)
 
-st.markdown("## About the REF 2021 process")
+st.header("About the REF 2021 process")
+text_to_display = \
+    """Submissions for REF 2021 consisted of
+    - Outputs (e.g. journal articles, books, datasets, etc.)
+    - Impact Case Studies
+    - Research Groups
+    - Research Income and Research Income in Kind
+    - Research Environment statements for each institution and unit
+    - Doctoral Degrees Awarded
+    """
+st.markdown(text_to_display)
 
-st.markdown("Submissions consisted of")
-st.markdown("- outputs (e.g. journal articles, books, datasets, etc.)")
-st.markdown("- impact case studies")
-st.markdown("- research groups information")
-st.markdown("- research income information")
-st.markdown("- research environment statements for each institution and unit")
-st.markdown("- doctoral degrees awarded")
 
 columns = [cb.COL_PANEL_NAME,
            cb.COL_UOA_NAME,
@@ -66,4 +69,8 @@ with tabs[2]:
 # OPEN ACCESS
 # -----------
 with tabs[3]:
-    st.write(cb.OPEN_ACCESS_NAMES)
+    dset_to_print = pd.DataFrame.from_dict(cb.OPEN_ACCESS_NAMES,
+                                           orient="index",
+                                           columns=["Output type"])
+    dset_to_print.index.name = "Code"
+    st.dataframe(dset_to_print)
