@@ -76,7 +76,8 @@ COL_IMPACT_DETAILS = '4. Details of the impact'
 COL_IMPACT_CORROBORATE = '5. Sources to corroborate the impact'
 # about income
 COL_INCOME_SOURCE = 'Income source'
-COL_INCOMEINKIND_SOURCE = 'Income source'
+# the column has the same name in both income and income in kind, but the values are different, different value here for displaying the codebook value
+COL_INCOMEINKIND_SOURCE = 'Income in kind source'
 # about results
 COL_RESULTS_PROFILE = 'Profile'
 COL_RESULTS_FTE_STAFF = 'FTE of submitted staff'
@@ -175,6 +176,47 @@ enum_values = {
         6: "Other Exception",
         7: "Out Of Scope",
         8: "Exception Within 3 Months Of Publication"
+    },
+    # source: info/submission_system_data_requirements/submission_validation/submissions-system-validation-documentation-for-ref2021-feb2021.pdf
+    # they don't match the ones in the data
+    # 1 : BEIS Research Councils, The Royal Society, British Academy and The Royal Society of Edinburgh
+    # 2 : UK-based charities (open competitive process)
+    # 3: UK-based charities (other)
+    # 4 : UK central government bodies, local authorities, health and hospital authorities
+    # 5: UK central government tax credits for research and development expenditure
+    # 6 : UK industry, commerce and public corporations
+    # 7: UK government bodies
+    # 8 : EU government bodies
+    # 9 : EU-based charities (open competitive process)
+    # 10 : EU industry, commerce and public corporations
+    # 11 : EU (excluding UK) other
+    # 12 : Non-EU based charities (open competitive process)
+    # 13: Non-EU industry, commerce and public corporations
+    # 14 : Non-EU other
+    # 15: Health research funding bodies
+    COL_INCOME_SOURCE: {
+        1: 'BEIS Research Councils, The Royal Society, British Academy and The Royal Society of Edinburgh',
+        2: 'UK-based charities (open competitive process)',
+        3: 'UK-based charities (other)',
+        4: 'UK central government bodies/local authorities, health and hospital authorities',
+        5: 'Health research funding bodies',
+        6: 'UK central government tax credits for research and development expenditure',
+        7: 'UK industry, commerce and public corporations',
+        8: 'UK other sources',
+        9: 'EU government bodies',
+        10: 'EU-based charities (open competitive process)',
+        11: 'EU industry, commerce and public corporations',
+        12: 'EU (excluding UK) other',
+        13: 'Non-EU-based charities (open competitive process)',
+        14: 'Non-EU industry commerce and public corporations',
+        15: 'Non-EU other',
+        16: 'Total income'
+    },
+    # source: data
+    COL_INCOMEINKIND_SOURCE: {
+        1: 'Research councils income-in-kind',
+        2: 'Health research funding bodies income-in-kind',
+        3: 'Total income-in-kind'
     }
 }
 

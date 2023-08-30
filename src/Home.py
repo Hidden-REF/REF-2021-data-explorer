@@ -33,7 +33,9 @@ st.markdown(text_to_display)
 columns = [cb.COL_PANEL_NAME,
            cb.COL_UOA_NAME,
            cb.COL_OUTPUT_TYPE_NAME,
-           cb.COL_OPEN_ACCESS
+           cb.COL_OPEN_ACCESS,
+           cb.COL_INCOME_SOURCE,
+           cb.COL_INCOMEINKIND_SOURCE
            ]
 
 tabs = st.tabs(columns)
