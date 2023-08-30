@@ -42,16 +42,16 @@ bin_size = st.slider("Select the bin size",
                      max_value=50,
                      value=10,
                      step=1)
-
-fig = ff.create_distplot([dset[cb.COL_DEGREES_TOTAL]],
-                         [cb.COL_DEGREES_TOTAL],
-                         histnorm="probability",
-                         show_rug=True,
-                         show_curve=False,
-                         bin_size=bin_size)
-fig.update_layout(showlegend=False,
-                  margin=dict(l=10, r=10, t=10, b=10))
-st.plotly_chart(fig, use_container_width=True)
+with chart_container(dset_stats, export_formats=sh.DATA_EXPORT_FORMATS):
+    fig = ff.create_distplot([dset[cb.COL_DEGREES_TOTAL]],
+                            [cb.COL_DEGREES_TOTAL],
+                            histnorm="probability",
+                            show_rug=True,
+                            show_curve=False,
+                            bin_size=bin_size)
+    fig.update_layout(showlegend=False,
+                    margin=dict(l=10, r=10, t=10, b=10))
+    st.plotly_chart(fig, use_container_width=True)
 
 # explore data
 # ------------
