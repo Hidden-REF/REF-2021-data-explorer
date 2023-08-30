@@ -85,86 +85,86 @@ COL_RESULTS_UNCLASSIFIED_BINNED = f"{COL_RESULTS_UNCLASSIFIED} (binned)"
 # value to add if no entry in the data
 VALUE_ADDED_NOT_SPECIFIED = 'Not specified'
 
-# source: website
-PANEL_NAMES = {
-    "A": "Medicine, health and life sciences",
-    "B": "Physical sciences, engineering and mathematics",
-    "C": "Social sciences",
-    "D": "Arts and humanities"
-}
-
-# source: https://results2021.ref.ac.uk/filters/unit-of-assessment
-UOA_NAMES = {
-    1: 'Clinical Medicine',
-    2: 'Public Health, Health Services and Primary Care',
-    3: 'Allied Health Professions, Dentistry, Nursing and Pharmacy',
-    4: 'Psychology, Psychiatry and Neuroscience',
-    5: 'Biological Sciences',
-    6: 'Agriculture, Food and Veterinary Sciences',
-    7: 'Earth Systems and Environmental Sciences',
-    8: 'Chemistry',
-    9: 'Physics',
-    10: 'Mathematical Sciences',
-    11: 'Computer Science and Informatics',
-    12: 'Engineering',
-    13: 'Architecture, Built Environment and Planning',
-    14: 'Geography and Environmental Studies',
-    15: 'Archaeology',
-    16: 'Economics and Econometrics',
-    17: 'Business and Management Studies',
-    18: 'Law',
-    19: 'Politics and International Studies',
-    20: 'Social Work and Social Policy',
-    21: 'Sociology',
-    22: 'Anthropology and Development Studies',
-    23: 'Education',
-    24: 'Sport and Exercise Sciences, Leisure and Tourism',
-    25: 'Area Studies',
-    26: 'Modern Languages and Linguistics',
-    27: 'English Language and Literature',
-    28: 'History',
-    29: 'Classics',
-    30: 'Philosophy',
-    31: 'Theology and Religious Studies',
-    32: 'Art and Design: History, Practice and Theory',
-    33: 'Music, Drama, Dance, Performing Arts, Film and Screen Studies',
-    34: 'Communication, Cultural and Media Studies, Library and Information Management'
-}
-
-# source: https://results2021.ref.ac.uk/outputs
-OUTPUT_TYPE_NAMES = {
-    'A': 'Authored book',
-    'B': 'Edited book',
-    'C': 'Chapter in book',
-    'D': 'Journal article',
-    'E': 'Conference contribution',
-    'F': 'Patent/ published patent application',
-    'G': 'Software',
-    'H': 'Website content',
-    'I': 'Performance',
-    'J': 'Composition',
-    'K': 'Design',
-    'L': 'Artefact',
-    'M': 'Exhibition',
-    'N': 'Research report for external body',
-    'P': 'Devices and products',
-    'Q': 'Digital or visual media',
-    'R': 'Scholarly edition',
-    'S': 'Research data sets and databases',
-    'T': 'Other',
-    'U': 'Working paper',
-    'V': 'Translation'
-}
-
-OPEN_ACCESS_NAMES = {
-    1: "Compliant",
-    2: "NotCompliant",
-    3: "DispositException",
-    4: "AccessException",
-    5: "TechnicalException",
-    6: "OtherException",
-    7: "OutOfScope",
-    8: "ExceptionWithin3MonthsOfPublication"
+enum_values = {
+    # source: website
+    COL_PANEL_NAME: {
+        "A": "Medicine, health and life sciences",
+        "B": "Physical sciences, engineering and mathematics",
+        "C": "Social sciences",
+        "D": "Arts and humanities"
+        },
+    # source: https://results2021.ref.ac.uk/filters/unit-of-assessment
+    COL_UOA_NAME: {
+        1: 'Clinical Medicine',
+        2: 'Public Health, Health Services and Primary Care',
+        3: 'Allied Health Professions, Dentistry, Nursing and Pharmacy',
+        4: 'Psychology, Psychiatry and Neuroscience',
+        5: 'Biological Sciences',
+        6: 'Agriculture, Food and Veterinary Sciences',
+        7: 'Earth Systems and Environmental Sciences',
+        8: 'Chemistry',
+        9: 'Physics',
+        10: 'Mathematical Sciences',
+        11: 'Computer Science and Informatics',
+        12: 'Engineering',
+        13: 'Architecture, Built Environment and Planning',
+        14: 'Geography and Environmental Studies',
+        15: 'Archaeology',
+        16: 'Economics and Econometrics',
+        17: 'Business and Management Studies',
+        18: 'Law',
+        19: 'Politics and International Studies',
+        20: 'Social Work and Social Policy',
+        21: 'Sociology',
+        22: 'Anthropology and Development Studies',
+        23: 'Education',
+        24: 'Sport and Exercise Sciences, Leisure and Tourism',
+        25: 'Area Studies',
+        26: 'Modern Languages and Linguistics',
+        27: 'English Language and Literature',
+        28: 'History',
+        29: 'Classics',
+        30: 'Philosophy',
+        31: 'Theology and Religious Studies',
+        32: 'Art and Design: History, Practice and Theory',
+        33: 'Music, Drama, Dance, Performing Arts, Film and Screen Studies',
+        34: 'Communication, Cultural and Media Studies, Library and Information Management'
+    },
+    # source: https://results2021.ref.ac.uk/outputs
+    COL_OUTPUT_TYPE_NAME: {
+        'A': 'Authored book',
+        'B': 'Edited book',
+        'C': 'Chapter in book',
+        'D': 'Journal article',
+        'E': 'Conference contribution',
+        'F': 'Patent/ published patent application',
+        'G': 'Software',
+        'H': 'Website content',
+        'I': 'Performance',
+        'J': 'Composition',
+        'K': 'Design',
+        'L': 'Artefact',
+        'M': 'Exhibition',
+        'N': 'Research report for external body',
+        'P': 'Devices and products',
+        'Q': 'Digital or visual media',
+        'R': 'Scholarly edition',
+        'S': 'Research data sets and databases',
+        'T': 'Other',
+        'U': 'Working paper',
+        'V': 'Translation'
+    },
+    # source: info/submission_system_data_requirements/import_templates/ref2021schema-0920.json
+    COL_OPEN_ACCESS: {
+        1: "Compliant",
+        2: "Not Compliant",
+        3: "Disposit Exception",
+        4: "Access Exception",
+        5: "Technical Exception",
+        6: "Other Exception",
+        7: "Out Of Scope",
+        8: "Exception Within 3 Months Of Publication"
+    }
 }
 
 PERCENTAGE_BINS = range(0, 101, 10)

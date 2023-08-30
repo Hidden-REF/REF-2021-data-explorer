@@ -78,8 +78,9 @@ with tab1:
 
 
 with tab2:
+    output_names = cb.enum_values[cb.COL_OUTPUT_TYPE_NAME]
     search_type = st.selectbox("Select an output type to display",
-                               [""] + list(cb.OUTPUT_TYPE_NAMES.values()),
+                               [""] + list(output_names.values()),
                                index=0
                                )
 

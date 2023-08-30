@@ -38,38 +38,12 @@ columns = [cb.COL_PANEL_NAME,
 
 tabs = st.tabs(columns)
 
-# MAIN PANELS
-# ------------
-with tabs[0]:
-    dset_to_print = pd.DataFrame.from_dict(cb.PANEL_NAMES,
-                                           orient="index",
-                                           columns=["Main Panel"])
-    dset_to_print.index.name = "Code"
-    st.dataframe(dset_to_print)
-
-# UOAs
-# ----
-with tabs[1]:
-    dset_to_print = pd.DataFrame.from_dict(cb.UOA_NAMES,
-                                           orient="index",
-                                           columns=["UOA"])
-    dset_to_print.index.name = "Code"
-    st.dataframe(dset_to_print)
-
-# OUTPUT TYPES
-# ------------
-with tabs[2]:
-    dset_to_print = pd.DataFrame.from_dict(cb.OUTPUT_TYPE_NAMES,
-                                           orient="index",
-                                           columns=["Output type"])
-    dset_to_print.index.name = "Code"
-    st.dataframe(dset_to_print)
-
-# OPEN ACCESS
-# -----------
-with tabs[3]:
-    dset_to_print = pd.DataFrame.from_dict(cb.OPEN_ACCESS_NAMES,
-                                           orient="index",
-                                           columns=["Output type"])
-    dset_to_print.index.name = "Code"
-    st.dataframe(dset_to_print)
+for itab, tab in enumerate(tabs):
+    with tab:
+        column = columns[itab]
+        dict = cb.enum_values[column]
+        dset_to_print = pd.DataFrame.from_dict(dict,
+                                               orient="index",
+                                               columns=[column])
+        dset_to_print.index.name = "Code"
+        st.dataframe(dset_to_print)
