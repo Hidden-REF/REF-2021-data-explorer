@@ -17,28 +17,17 @@ st.title(page_title)
 with st.spinner(sh.PROC_TEXT):
     (dset, _) = rw.get_data(rw.DATA_PPROC_DEGREES)
 
-dset_to_print = pd.DataFrame.from_dict(
-    {
-        "Doctoral degrees records": dset.shape[0],
-        "Institutions": dset[cb.COL_INST_NAME].nunique()
-    },
-    orient="index"
-    )
-dset_to_print.columns = ["count"]
-pd.set_option("display.max_colwidth", None)
-st.dataframe(dset_to_print)
+vis.display_record_counts_table(dset)
 
+# distribution charts
+# -------------------
 st.subheader(sh.CHARTS_HEADER)
-st.markdown("Select from the charts below to view the "
-            "distributions for the number of doctoral degrees records by ...")
+dcolumns = [cb.COL_PANEL_NAME,
+            cb.COL_UOA_NAME]
+dtabs = st.tabs(dcolumns)
 
-
-columns = [cb.COL_PANEL_NAME,
-           cb.COL_UOA_NAME]
-tabs = st.tabs(columns)
-
-for i, column in enumerate(columns):
-    with tabs[i]:
+for i, column in enumerate(dcolumns):
+    with dtabs[i]:
         dset_stats = proc.calculate_counts(dset,
                                            column,
                                            sort=False)
@@ -46,6 +35,8 @@ for i, column in enumerate(columns):
             vis.draw_counts_percent_chart(dset_stats,
                                           column)
 
+# histograms
+# ----------
 st.subheader(cb.COL_DEGREES_TOTAL)
 bin_size = st.slider("Select the bin size",
                      min_value=1,
@@ -63,6 +54,9 @@ fig.update_layout(showlegend=False,
                   margin=dict(l=10, r=10, t=10, b=10))
 st.plotly_chart(fig, use_container_width=True)
 
+# explore data
+# ------------
+st.divider()
 st.subheader(sh.EXPLORE_HEADER)
 dset_explore = dataframe_explorer(dset)
 st.dataframe(dset_explore, use_container_width=False)
