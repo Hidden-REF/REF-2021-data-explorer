@@ -18,7 +18,7 @@ st.title(page_title)
 # ------------
 st.markdown("## Data source")
 st.markdown(f"The data used in this app is from the [REF 2021 website]({source_url})"
-            ", accessed 2023/08/10.")
+            " (accessed 2023/08/10) and has been processed with [https://github.com/softwaresaved/ref-2021-analysis](https://github.com/softwaresaved/ref-2021-analysis)")
 
 st.markdown("## About the REF 2021 process")
 
