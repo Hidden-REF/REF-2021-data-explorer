@@ -1,4 +1,3 @@
-import pandas as pd
 import streamlit as st
 from streamlit_extras.dataframe_explorer import dataframe_explorer
 from streamlit_extras.chart_container import chart_container
@@ -9,29 +8,20 @@ import process as proc
 import visualisations as vis
 import shared as sh
 
+STRING_COLUMNS = [cb.COL_RG_NAME]
+CATEGORIES_COLUMNS = [cb.COL_RG_CODE]
 
 page_title = "Research Groups"
 st.title(page_title)
 
 with st.spinner(sh.PROC_TEXT):
     (dset, _) = rw.get_data(rw.DATA_PPROC_RGROUPS,
-                            string_columns=[cb.COL_RG_NAME],
-                            categories_columns=[cb.COL_RG_CODE])
+                            string_columns=STRING_COLUMNS,
+                            categories_columns=CATEGORIES_COLUMNS)
 
-dset_to_print = pd.DataFrame.from_dict(
-    {
-        "Records": dset.shape[0],
-        "Institutions": dset[cb.COL_INST_NAME].nunique()
-    },
-    orient="index"
-    )
-dset_to_print.columns = ["count"]
-pd.set_option("display.max_colwidth", None)
-st.dataframe(dset_to_print)
+vis.display_record_counts_table(dset)
 
 st.subheader(sh.CHARTS_HEADER)
-st.markdown("Select from the charts below to view the "
-            "distributions for the number of research groups records by ...")
 
 columns = [cb.COL_PANEL_NAME,
            cb.COL_UOA_NAME]

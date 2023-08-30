@@ -1,4 +1,3 @@
-import pandas as pd
 import streamlit as st
 from streamlit_extras.dataframe_explorer import dataframe_explorer
 from streamlit_extras.chart_container import chart_container
@@ -9,145 +8,122 @@ import process as proc
 import visualisations as vis
 import shared as sh
 
+STRING_COLUMNS = [cb.COL_OUTPUT_TITLE,
+                  cb.COL_OUTPUT_RG_NAME,
+                  cb.COL_OUTPUT_PLACE,
+                  cb.COL_OUTPUT_PUBLISHER,
+                  cb.COL_OUTPUT_VOL_TITLE,
+                  cb.COL_OUTPUT_VOL_NO,
+                  cb.COL_OUTPUT_ISSUE,
+                  cb.COL_OUTPUT_FIRST_PAGE,
+                  cb.COL_OUTPUT_ARTICLE_NO,
+                  cb.COL_OUTPUT_ISBN,
+                  cb.COL_OUTPUT_ISSN,
+                  cb.COL_OUTPUT_DOI,
+                  cb.COL_OUTPUT_PATENT_NO,
+                  cb.COL_OUTPUT_MONTH,
+                  cb.COL_OUTPUT_URL,
+                  cb.COL_OUTPUT_SUPP]
+
+CATEGORIES_COLUMNS = [cb.COL_OUTPUT_TYPE_NAME,
+                      cb.COL_OUTPUT_CITATIONS,
+                      cb.COL_OUTPUT_INTERDISCIPLINARY,
+                      cb.COL_OUTPUT_NON_ENGLISH,
+                      cb.COL_OUTPUT_FORENSIC_SCIENCE,
+                      cb.COL_OUTPUT_CRIMINOLOGY,
+                      cb.COL_OUTPUT_DOUBLE_WEIGHTING,
+                      cb.COL_OUTPUT_RESERVE_OUTPUT,
+                      cb.COL_OPEN_ACCESS,
+                      cb.COL_OUTPUT_DELAYED]
 
 page_title = "Outputs"
 st.title(page_title)
 
 with st.spinner(sh.PROC_TEXT):
     (dset, _) = rw.get_data(rw.DATA_PPROC_OUTPUTS,
-                            categories_columns=[cb.COL_OUTPUT_TYPE_NAME,
-                                                cb.COL_OUTPUT_CITATIONS,
-                                                cb.COL_OUTPUT_INTERDISCIPLINARY,
-                                                cb.COL_OUTPUT_NON_ENGLISH,
-                                                cb.COL_OUTPUT_FORENSIC_SCIENCE,
-                                                cb.COL_OUTPUT_CRIMINOLOGY,
-                                                cb.COL_OUTPUT_DOUBLE_WEIGHTING,
-                                                cb.COL_OUTPUT_RESERVE_OUTPUT,
-                                                cb.COL_OPEN_ACCESS,
-                                                cb.COL_OUTPUT_DELAYED],
-                            string_columns=[cb.COL_OUTPUT_TITLE,
-                                            cb.COL_OUTPUT_RG_NAME,
-                                            cb.COL_OUTPUT_PLACE,
-                                            cb.COL_OUTPUT_PUBLISHER,
-                                            cb.COL_OUTPUT_VOL_TITLE,
-                                            cb.COL_OUTPUT_VOL_NO,
-                                            cb.COL_OUTPUT_ISSUE,
-                                            cb.COL_OUTPUT_FIRST_PAGE,
-                                            cb.COL_OUTPUT_ARTICLE_NO,
-                                            cb.COL_OUTPUT_ISBN,
-                                            cb.COL_OUTPUT_ISSN,
-                                            cb.COL_OUTPUT_DOI,
-                                            cb.COL_OUTPUT_PATENT_NO,
-                                            cb.COL_OUTPUT_MONTH,
-                                            cb.COL_OUTPUT_URL,
-                                            cb.COL_OUTPUT_SUPP])
+                            categories_columns=CATEGORIES_COLUMNS,
+                            string_columns=STRING_COLUMNS)
 
+vis.display_record_counts_table(dset)
 
-dset_to_print = pd.DataFrame.from_dict(
-    {
-        "Outputs records": dset.shape[0],
-        "Institutions": dset[cb.COL_INST_NAME].nunique()
-    },
-    orient="index"
-    )
-dset_to_print.columns = ["count"]
-pd.set_option("display.max_colwidth", None)
-st.dataframe(dset_to_print)
-
+# distribution charts
+# -------------------
 st.subheader(sh.CHARTS_HEADER)
+dcolumns = [cb.COL_PANEL_NAME,
+            cb.COL_UOA_NAME,
+            cb.COL_OUTPUT_TYPE_NAME,
+            cb.COL_OUTPUT_INTERDISCIPLINARY,
+            cb.COL_OPEN_ACCESS]
+dtabs = st.tabs(dcolumns)
 
-tab1, tab2, tab3 = st.tabs(["All records", "Explore types", "Search titles"])
+for i, column in enumerate(dcolumns):
+    with dtabs[i]:
+        dset_stats = proc.calculate_counts(dset,
+                                           column,
+                                           sort=False)
+        with chart_container(dset_stats):
+            vis.draw_counts_percent_chart(dset_stats,
+                                          column)
 
-with tab1:
-    st.markdown("Select from the charts below to view the "
-                "distributions for the number of outputs records by ...")
-    columns = [cb.COL_PANEL_NAME,
-               cb.COL_UOA_NAME,
-               cb.COL_OUTPUT_TYPE_NAME,
-               cb.COL_OUTPUT_INTERDISCIPLINARY,
-               cb.COL_OPEN_ACCESS]
-    tabs = st.tabs(columns)
-    for i, column in enumerate(columns):
-        with tabs[i]:
-            dset_stats = proc.calculate_counts(dset,
-                                               column,
-                                               sort=False)
-            with chart_container(dset_stats):
-                vis.draw_counts_percent_chart(dset_stats,
-                                              column)
+# select categorical values and export
+# ------------------------------------
+st.divider()
+st.markdown(f"## {sh.SELECT_EXPORT_HEADER_PREFIX} ...")
 
+scolumns = dcolumns.copy()
+stabs = st.tabs(scolumns)
 
-with tab2:
-    output_names = cb.enum_values[cb.COL_OUTPUT_TYPE_NAME]
-    search_type = st.selectbox("Select an output type to display",
-                               [""] + list(output_names.values()),
-                               index=0
-                               )
+for i, column in enumerate(scolumns):
+    with stabs[i]:
+        options = list(dset[column].cat.categories)
+        prompt_text = f"##### Select `{column}` value"
+        search_type = st.selectbox(prompt_text,
+                                   [""] + options,
+                                   index=0,
+                                   help="Select a value to filter the data"
+                                   )
 
-    if search_type:
-        with st.spinner(sh.PROC_TEXT):
-            dset_selected = dset[dset[cb.COL_OUTPUT_TYPE_NAME] == search_type]
-        st.markdown(f"Number of outputs records of type '{search_type}': "
-                    f"{dset_selected.shape[0]}")
-        rw.download_data(dset_selected,
-                         f"Download '{search_type}' outputs as csv",
-                         "selected_data.csv")
+        if search_type:
+            with st.spinner(sh.PROC_TEXT):
+                dset_selected = dset[dset[column] == search_type]
+            dict = {"Selected": search_type,
+                    "Records": dset_selected.shape[0]}
+            vis.display_table_from_dictionary(dict)
+            rw.download_data(dset_selected,
+                             sh.DOWNLOAD_SELECTED_DATA_PROMPT,
+                             "selected_data.csv")
 
-        st.markdown("Select from the charts below to view the "
-                    "distributions for the number of selected outputs records by ...")
-        columns = [cb.COL_PANEL_NAME,
-                   cb.COL_UOA_NAME,
-                   cb.COL_OUTPUT_INTERDISCIPLINARY,
-                   cb.COL_OPEN_ACCESS]
-        tabs = st.tabs(columns)
-        for i, column in enumerate(columns):
-            with tabs[i]:
-                dset_stats = proc.calculate_counts(dset_selected,
-                                                   column,
-                                                   sort=False)
-                with chart_container(dset_stats):
-                    vis.draw_counts_percent_chart(dset_stats,
-                                                  column)
+# search string fields for patter
+# -------------------------------
+st.divider()
+st.markdown(f"## {sh.SEARCH_EXPORT_HEADER_PREFIX} ...")
+pcolumns = [cb.COL_OUTPUT_TITLE]
 
-with tab3:
-    search_word = st.text_input(f"Enter a term to search the '{cb.COL_OUTPUT_TITLE}'"
-                                " of the outputs,"
-                                " for example software,"
-                                " computation, database, machine learning etc.",
+ptabs = st.tabs(pcolumns)
+
+for i, column in enumerate(pcolumns):
+    with ptabs[i]:
+        search_prompt = f"Enter a pattern to search '{column}'"
+        pattern = st.text_input(search_prompt,
                                 max_chars=40,
                                 value="",
-                                help="Enter a term to search for."
+                                help="Enter a pattern to search for"
                                 )
-    search_column = cb.COL_OUTPUT_TITLE
-    if search_word:
-        with st.spinner(sh.PROC_TEXT):
-            dset_selected = dset[dset[search_column].str.contains(search_word,
-                                                                  case=False,
-                                                                  na=False)]
-        st.markdown(f"Number of outputs records with '{search_word}' in '{search_column}': "
-                    f"{dset_selected.shape[0]}")
+        if pattern:
+            with st.spinner(sh.PROC_TEXT):
+                dset_selected = dset[dset[column].str.contains(pattern,
+                                                               case=False,
+                                                               na=False)]
+            dict = {"Pattern": pattern,
+                    "Records": dset_selected.shape[0]}
+            vis.display_table_from_dictionary(dict)
+            rw.download_data(dset_selected,
+                             sh.DOWNLOAD_SELECTED_DATA_PROMPT,
+                             "selected_data.csv")
 
-        rw.download_data(dset_selected,
-                         f"Download outputs with '{search_word}' in '{search_column}' as csv",
-                         "selected_data.csv")
-
-        st.markdown("Select from the charts below to view the "
-                    "distributions for the number of selected outputs records by ...")
-        columns = [cb.COL_PANEL_NAME,
-                   cb.COL_UOA_NAME,
-                   cb.COL_OUTPUT_TYPE_NAME,
-                   cb.COL_OUTPUT_INTERDISCIPLINARY,
-                   cb.COL_OPEN_ACCESS]
-        tabs = st.tabs(columns)
-        for i, column in enumerate(columns):
-            with tabs[i]:
-                dset_stats = proc.calculate_counts(dset_selected,
-                                                   column,
-                                                   sort=False)
-                with chart_container(dset_stats):
-                    vis.draw_counts_percent_chart(dset_stats,
-                                                  column)
-
+# explore data
+# ------------
+st.divider()
 st.subheader(sh.EXPLORE_HEADER)
 dset_explore = dataframe_explorer(dset)
 st.dataframe(dset_explore, use_container_width=False)

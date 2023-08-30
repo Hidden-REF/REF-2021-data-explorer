@@ -1,7 +1,9 @@
 """ Visualisation functions. """
+import pandas as pd
 import streamlit as st
 import altair as alt
 
+import codebook as cb
 
 USE_CONTAINER_WIDTH = True
 
@@ -69,3 +71,36 @@ def draw_grouped_counts_chart(dset, x, y, colour):
                                'type': 'nominal',
                                'legend': None}}
         }, use_container_width=True)
+
+
+def display_record_counts_table(dset):
+    """ Display a table with the number of records and institutions.
+
+        Args:
+            dset (pandas.DataFrame): dataset
+    """
+    dset_to_print = pd.DataFrame.from_dict(
+        {
+            "Records": dset.shape[0],
+            "Institutions": dset[cb.COL_INST_NAME].nunique()
+        },
+        orient="index")
+
+    dset_to_print.columns = ["count"]
+    pd.set_option("display.max_colwidth", None)
+    st.dataframe(dset_to_print)
+
+
+def display_table_from_dictionary(dict):
+    """ Display a table from a dictionary.
+
+        Args:
+            dict (dict): dictionary
+    """
+    for items in dict.items():
+        st.text(f"{items[0]} \t{items[1]}")
+    # dset_to_print = pd.DataFrame.from_dict(dict,
+    #                                        orient="index")
+    # dset_to_print.columns = [""]
+    # pd.set_option("display.max_colwidth", None)
+    # st.dataframe(dset_to_print)
