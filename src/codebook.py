@@ -60,8 +60,17 @@ COL_OUTPUT_RESERVE_OUTPUT = 'Is reserve output'
 COL_OUTPUT_DELAYED = 'Delayed by COVID19'
 # about the impact case studies
 COL_IMPACT_TITLE = 'Title'
+
+COL_IMPACT_COUNTRIES = 'Countries'
+COL_IMPACT_CONTINUED = 'Is continued from 2014'
+COL_IMPACT_FORMAL_PARTNERS = 'Formal partners'
+COL_IMPACT_GRANT_FUNDING = 'Grant funding'
 COL_IMPACT_FUNDING_PROGS = 'Funding programmes'
 COL_IMPACT_FUNDERS = 'Name of funders'
+COL_IMPACT_GLOBAL_RID = 'Global research identifiers'
+COL_IMPACT_FUNDERS_NAME = 'Name of funders'
+COL_IMPACT_ORCIDs = 'Researcher ORCIDs'
+
 COL_IMPACT_SUMMARY = '1. Summary of the impact'
 COL_IMPACT_UNDERPIN_RESEARCH = '2. Underpinning research'
 COL_IMPACT_REFERENCES_RESEARCH = '3. References to the research'

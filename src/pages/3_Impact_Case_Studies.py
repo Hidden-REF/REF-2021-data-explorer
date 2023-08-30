@@ -14,7 +14,22 @@ page_title = "Impact Case Studies"
 st.title(page_title)
 
 with st.spinner(sh.PROC_TEXT):
-    (dset, _) = rw.get_data(rw.DATA_PPROC_IMPACTS)
+    (dset, _) = rw.get_data(rw.DATA_PPROC_IMPACTS,
+                            categories_columns=[cb.COL_IMPACT_CONTINUED],
+                            string_columns=[cb.COL_IMPACT_TITLE,
+                                            cb.COL_IMPACT_COUNTRIES,
+                                            cb.COL_IMPACT_FORMAL_PARTNERS,
+                                            cb.COL_IMPACT_FUNDING_PROGS,
+                                            cb.COL_IMPACT_GLOBAL_RID,
+                                            cb.COL_IMPACT_FUNDERS_NAME,
+                                            cb.COL_IMPACT_ORCIDs,
+                                            cb.COL_IMPACT_GRANT_FUNDING,
+                                            cb.COL_IMPACT_SUMMARY,
+                                            cb.COL_IMPACT_UNDERPIN_RESEARCH,
+                                            cb.COL_IMPACT_REFERENCES_RESEARCH,
+                                            cb.COL_IMPACT_DETAILS,
+                                            cb.COL_IMPACT_CORROBORATE]
+                            )
 
 dset_to_print = pd.DataFrame.from_dict(
     {
