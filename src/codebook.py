@@ -78,7 +78,7 @@ COL_IMPACT_CORROBORATE = '5. Sources to corroborate the impact'
 COL_INCOME_SOURCE = 'Income source'
 COL_INCOMEINKIND_SOURCE = 'Income source'
 # about results
-COL_RESULLTS_PROFILE = 'Profile'
+COL_RESULTS_PROFILE = 'Profile'
 COL_RESULTS_FTE_STAFF = 'FTE of submitted staff'
 COL_RESULTS_PERC_STAFF_SUBMITTED = '% of eligible staff submitted'
 COL_RESULTS_PERC_STAFF_SUBMITTED_BINNED = f"{COL_RESULTS_PERC_STAFF_SUBMITTED} (binned)"
