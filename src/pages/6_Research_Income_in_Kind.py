@@ -37,10 +37,6 @@ for i, column in enumerate(dcolumns):
             vis.draw_counts_percent_chart(dset_stats,
                                           column)
 
-st.subheader(sh.EXPLORE_HEADER)
-dset_explore = dataframe_explorer(dset)
-st.dataframe(dset_explore, use_container_width=False)
-
 # explore data
 # ------------
 st.subheader(sh.EXPLORE_HEADER)
