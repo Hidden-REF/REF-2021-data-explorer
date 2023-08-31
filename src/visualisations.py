@@ -4,8 +4,6 @@ import pandas as pd
 import streamlit as st
 from streamlit_extras.chart_container import chart_container
 from streamlit_extras.dataframe_explorer import dataframe_explorer
-from streamlit_extras.grid import grid
-# import plotly.figure_factory as ff
 
 
 import altair as alt
@@ -192,8 +190,8 @@ def display_histograms(dset, key=None, bin_size=None):
                 dset_to_plot = dset_plot.copy()
                 dset_to_plot[column_x] = bin_mids
                 chart = alt.Chart(dset_to_plot.reset_index())\
-                        .mark_bar()\
-                        .encode(
+                           .mark_bar()\
+                           .encode(
                                 x=alt.X(column_x,
                                         type="quantitative",
                                         axis=alt.Axis(title=""),
@@ -247,14 +245,17 @@ def display_data_explorer(dset, do_histograms=False):
         if dset_explore.shape[0] == 0:
             st.warning(sh.NO_SELECTED_RECORDS_WARNING)
         else:
-            g = grid(2, vertical_align="center")
-            g.text(f"Selected records: {dset_explore.shape[0]}")
-            g.download_button(
-                label=sh.DOWNLOAD_SELECTED_DATA_BUTTON,
-                data=dset_explore.to_csv().encode('utf-8'),
-                file_name="selected_data.csv",
-                mime='text/csv',
-            )
+            cols = st.columns(2)
+            with cols[0]:
+                st.write(f"Selected records: {dset_explore.shape[0]}")
+            with cols[1]:
+                st.download_button(
+                    label=sh.DOWNLOAD_SELECTED_DATA_BUTTON,
+                    data=dset_explore.to_csv().encode('utf-8'),
+                    file_name="selected_data.csv",
+                    mime='text/csv',
+                )
+
             tabs = st.tabs([sh.SHOW_SELECTED_TAB_HEADER,
                             sh.VISUALISE_SELECTED_TAB_HEADER])
             with tabs[0]:
