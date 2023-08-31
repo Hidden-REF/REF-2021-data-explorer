@@ -97,7 +97,8 @@ COL_RESULTS_UNCLASSIFIED_BINNED = f"{COL_RESULTS_UNCLASSIFIED} (binned)"
 CATEGORY_FIELDS_EXCLUDE_CHARTS = [COL_INST_CODE,
                                   COL_INST_NAME,
                                   COL_RG_CODE,
-                                  COL_INCOME_SOURCE]
+                                  COL_INCOME_SOURCE,
+                                  COL_RESULTS_PROFILE]
 
 # value to add if no entry in the data
 VALUE_ADDED_NOT_SPECIFIED = 'Not specified'
