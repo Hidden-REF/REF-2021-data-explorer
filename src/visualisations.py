@@ -158,7 +158,7 @@ def display_histograms(dset, key=None, bin_size=None):
         types = ["Counts", "Percentages"]
         with cols[0]:
             bins = st.select_slider("Select number of bins",
-                                    options=[5, 10, 25, 50, 75, 100, 125, 150, 175, 200],
+                                    options=[5, 10, 25, 50, 75, 100, 125, 150, 175, 200, 250, 300],
                                     value=10,
                                     key=f"slider_{key}_{column_selected}")
         with cols[1]:
@@ -169,7 +169,11 @@ def display_histograms(dset, key=None, bin_size=None):
                             key=f"radio_{key}_{column_selected}")
 
         if bins:
-            hcounts, bin_edges = np.histogram(dset[column_selected], bins=bins)
+            n_negative_values = len(dset.loc[dset[column_selected] < 0, column_selected])
+            if n_negative_values > 0:
+                st.warning(f"{n_negative_values} negative values were ignored.")
+            hcounts, bin_edges = np.histogram(dset.loc[dset[column_selected] > 0, column_selected],
+                                              bins=bins)
             hpercs = np.round(100 * hcounts / hcounts.sum(), 0)
             bin_edges = np.round(bin_edges).astype(int)
             bin_labels = [f"{bin_edges[i]} to {bin_edges[i+1]}"
