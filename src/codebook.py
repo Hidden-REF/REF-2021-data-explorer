@@ -76,7 +76,7 @@ COL_IMPACT_DETAILS = '4. Details of the impact'
 COL_IMPACT_CORROBORATE = '5. Sources to corroborate the impact'
 # about income
 COL_INCOME_SOURCE = 'Income source'
-# the column has the same name in both income and income in kind, but the values are different, different value here for displaying the codebook value
+# the column has the same name in both income and income in kind, the value here for displaying the codebook value
 COL_INCOMEINKIND_SOURCE = 'Income in kind source'
 # about results
 COL_RESULTS_PROFILE = 'Profile'
@@ -93,6 +93,10 @@ COL_RESULTS_3star_BINNED = f"{COL_RESULTS_3star} (binned)"
 COL_RESULTS_2star_BINNED = f"{COL_RESULTS_2star} (binned)"
 COL_RESULTS_1star_BINNED = f"{COL_RESULTS_1star} (binned)"
 COL_RESULTS_UNCLASSIFIED_BINNED = f"{COL_RESULTS_UNCLASSIFIED} (binned)"
+
+CATEGORY_FIELDS_EXCLUDE_CHARTS = [COL_INST_CODE,
+                                  COL_INST_NAME,
+                                  COL_RG_CODE]
 
 # value to add if no entry in the data
 VALUE_ADDED_NOT_SPECIFIED = 'Not specified'

@@ -1,4 +1,5 @@
 """ Functions for processing the data. """
+import codebook as cb
 
 
 def calculate_counts(dset, col, sort=True):
@@ -34,3 +35,23 @@ def calculate_grouped_counts(dset, columns):
     dset_stats = dset.groupby(columns).size().reset_index(name=col_counts)
 
     return dset_stats
+
+
+def get_column_lists(dset, dtype):
+    """ Get a list of columns of a given data type.
+
+    Args:
+        dset (pandas.DataFrame): The dataset to use.
+        dtype (str): The data type to use.
+
+    Returns:
+        columns (list): The list of columns.
+    """
+    if dtype == "category":
+        return [column for column in dset.columns
+                if (dset[column].dtype.name == dtype)
+                & (column not in cb.CATEGORY_FIELDS_EXCLUDE_CHARTS)]
+    elif dtype == "number":
+        dtypes = ["int64", "float64"]
+        return [column for column in dset.columns
+                if dset[column].dtype.name in dtypes]
