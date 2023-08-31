@@ -152,7 +152,7 @@ def display_histograms(dset, key=None, bin_size=None):
                                    index=0)
     if column_selected:
         hist, bin_edges = np.histogram(dset[column_selected], bins=100)
-        bin_mids = 0.5 * (bin_edges[1:] + bin_edges[:-1])
+        bin_mids = np.round(0.5 * (bin_edges[1:] + bin_edges[:-1]))
         column_to_plot = "value"
         dset_to_plot = pd.DataFrame.from_dict(
             {
