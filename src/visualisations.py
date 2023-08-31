@@ -154,6 +154,9 @@ def display_histograms(dset, key=None, bin_size=None):
                                    key=key,
                                    index=0)
     if column_selected:
+        n_negative_values = len(dset.loc[dset[column_selected] < 0, column_selected])
+        exclude_negative = False
+
         cols = st.columns(2)
         types = ["Counts", "Percentages"]
         with cols[0]:
@@ -167,18 +170,26 @@ def display_histograms(dset, key=None, bin_size=None):
                             index=0,
                             horizontal=True,
                             key=f"radio_{key}_{column_selected}")
+            if n_negative_values > 0:
+                exclude_negative = st.checkbox(sh.EXCLUDE_NEGATIVE_PROMPT,
+                                               value=False,
+                                               key=f"checkbox_negative_{key}_{column_selected}")
 
         if bins:
-            n_negative_values = len(dset.loc[dset[column_selected] < 0, column_selected])
-            if n_negative_values > 0:
+            if exclude_negative:
                 st.warning(f"{n_negative_values} negative values were ignored.")
-            hcounts, bin_edges = np.histogram(dset.loc[dset[column_selected] > 0, column_selected],
-                                              bins=bins)
+                hcounts, bin_edges = np.histogram(dset.loc[dset[column_selected] > 0,
+                                                           column_selected],
+                                                  bins=bins)
+                x_limits = [0, max(bin_edges)]
+            else:
+                hcounts, bin_edges = np.histogram(dset[column_selected],
+                                                  bins=bins)
+                x_limits = [min(bin_edges), max(bin_edges)]
             hpercs = np.round(100 * hcounts / hcounts.sum(), 0)
             bin_edges = np.round(bin_edges).astype(int)
             bin_labels = [f"{bin_edges[i]} to {bin_edges[i+1]}"
                           for i in range(len(bin_edges)-1)]
-            bin_mids = np.round(0.5 * (bin_edges[1:] + bin_edges[:-1]))
             column_x = "value"
             column_label = "Interval"
             column_counts = types[0][:-1]
@@ -192,14 +203,14 @@ def display_histograms(dset, key=None, bin_size=None):
             dset_plot.set_index(column_label, inplace=True)
             with chart_container(dset_plot, export_formats=sh.DATA_EXPORT_FORMATS):
                 dset_to_plot = dset_plot.copy()
-                dset_to_plot[column_x] = bin_mids
+                dset_to_plot[column_x] = bin_edges[:-1]
                 chart = alt.Chart(dset_to_plot.reset_index())\
                            .mark_bar()\
                            .encode(
                                 x=alt.X(column_x,
                                         type="quantitative",
                                         axis=alt.Axis(title=""),
-                                        scale=alt.Scale(domain=[0, max(bin_mids)])
+                                        scale=alt.Scale(domain=x_limits)
                                         ),
                                 y=alt.Y(type[:-1],
                                         type="quantitative",

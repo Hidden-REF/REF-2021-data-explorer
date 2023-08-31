@@ -10,6 +10,8 @@ PROC_TEXT = "Processing request..."
 DISTRIBUTION_SELECT_PROMPT = "Select column to plot"
 GROUPED_DISTRIBUTION_SELECT_PROMPT = "Select columns to plot"
 BIN_SIZE_PROMPT = "Select the bin size"
+EXCLUDE_OUTLIERS_PROMPT = "Exclude outliers"
+EXCLUDE_NEGATIVE_PROMPT = "Exclude negative values"
 # headers
 header_style = "######"
 VISUALISE_HEADER = f"{header_style} Visualise data"
