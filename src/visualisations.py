@@ -158,8 +158,8 @@ def display_histograms(dset, key=None, bin_size=None):
         types = ["Counts", "Percentages"]
         with cols[0]:
             bins = st.select_slider("Select number of bins",
-                                    options=[25, 50, 75, 100, 125, 150, 175, 200],
-                                    value=25,
+                                    options=[5, 10, 25, 50, 75, 100, 125, 150, 175, 200],
+                                    value=10,
                                     key=f"slider_{key}_{column_selected}")
         with cols[1]:
             type = st.radio("Select what to plot",
