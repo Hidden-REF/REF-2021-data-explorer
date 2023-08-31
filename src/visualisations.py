@@ -145,44 +145,74 @@ def display_distributions(dset, key=None):
 
 
 def display_histograms(dset, key=None, bin_size=None):
+    """ Display histograms for a selected column.
+
+        Args:
+            dset (pandas.DataFrame): dataset
+    """
     fields = proc.get_column_lists(dset, "number")
     column_selected = st.selectbox(sh.DISTRIBUTION_SELECT_PROMPT,
                                    fields,
                                    key=key,
                                    index=0)
     if column_selected:
-        hist, bin_edges = np.histogram(dset[column_selected], bins=100)
-        bin_mids = np.round(0.5 * (bin_edges[1:] + bin_edges[:-1]))
-        column_to_plot = "value"
-        dset_to_plot = pd.DataFrame.from_dict(
-            {
-                column_to_plot: bin_mids,
-                "count": hist
-            })
-        dset_to_plot.set_index(column_to_plot, inplace=True)
-        with chart_container(dset_to_plot, export_formats=sh.DATA_EXPORT_FORMATS):
-            chart = alt.Chart(dset_to_plot.reset_index())\
-                    .mark_bar()\
-                    .encode(
-                            x=alt.X(column_to_plot,
-                                    type="quantitative",
-                                    axis=alt.Axis(title=""),
-                                    scale=alt.Scale(domain=[0, max(bin_mids)])
-                                    ),
-                            y=alt.Y("count",
-                                    type="quantitative",
-                                    axis=alt.Axis(title="", labelLimit=400),
-                                    sort="y"
-                                    ),
-                            tooltip=[column_to_plot, "count"],
-                            ).properties(title=alt.TitleParams(text=column_selected,
-                                                               anchor="middle",
-                                                               fontSize=14,
-                                                               dy=-10
-                                                               )
-                                         ).interactive()
-            st.altair_chart(chart,
-                            use_container_width=USE_CONTAINER_WIDTH)
+        cols = st.columns(2)
+        types = ["Counts", "Percentages"]
+        with cols[0]:
+            bins = st.select_slider("Select number of bins",
+                                    options=[25, 50, 75, 100, 125, 150, 175, 200],
+                                    value=25,
+                                    key=f"slider_{key}_{column_selected}")
+        with cols[1]:
+            type = st.radio("Select what to plot",
+                            options=types,
+                            index=0,
+                            horizontal=True,
+                            key=f"radio_{key}_{column_selected}")
+
+        if bins:
+            hcounts, bin_edges = np.histogram(dset[column_selected], bins=bins)
+            hpercs = np.round(100 * hcounts / hcounts.sum(), 0)
+            bin_edges = np.round(bin_edges).astype(int)
+            bin_labels = [f"{bin_edges[i]} to {bin_edges[i+1]}"
+                          for i in range(len(bin_edges)-1)]
+            bin_mids = np.round(0.5 * (bin_edges[1:] + bin_edges[:-1]))
+            column_x = "value"
+            column_label = "Interval"
+            column_counts = types[0][:-1]
+            column_percs = types[1][:-1]
+            dset_plot = pd.DataFrame.from_dict(
+                {
+                    column_label: bin_labels,
+                    column_counts: hcounts,
+                    column_percs: hpercs,
+                })
+            dset_plot.set_index(column_label, inplace=True)
+            with chart_container(dset_plot, export_formats=sh.DATA_EXPORT_FORMATS):
+                dset_to_plot = dset_plot.copy()
+                dset_to_plot[column_x] = bin_mids
+                chart = alt.Chart(dset_to_plot.reset_index())\
+                        .mark_bar()\
+                        .encode(
+                                x=alt.X(column_x,
+                                        type="quantitative",
+                                        axis=alt.Axis(title=""),
+                                        scale=alt.Scale(domain=[0, max(bin_mids)])
+                                        ),
+                                y=alt.Y(type[:-1],
+                                        type="quantitative",
+                                        axis=alt.Axis(title=type, labelLimit=400),
+                                        sort="y"
+                                        ),
+                                tooltip=[column_label, column_counts, column_percs],
+                                ).properties(title=alt.TitleParams(text=column_selected,
+                                                                   anchor="middle",
+                                                                   fontSize=14,
+                                                                   dy=-10
+                                                                   )
+                                             ).interactive()
+                st.altair_chart(chart,
+                                use_container_width=USE_CONTAINER_WIDTH)
 
 
 def display_grouped_distribution(dset, key=None):
