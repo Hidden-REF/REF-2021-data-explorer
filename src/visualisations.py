@@ -149,43 +149,39 @@ def display_histograms(dset, key=None, bin_size=None):
             dset (pandas.DataFrame): dataset
     """
     fields = proc.get_column_lists(dset, "number")
+    nrecords = dset.shape[0]
     column_selected = st.selectbox(sh.DISTRIBUTION_SELECT_PROMPT,
                                    fields,
                                    key=key,
                                    index=0)
     if column_selected:
-        n_negative_values = len(dset.loc[dset[column_selected] < 0, column_selected])
-        exclude_negative = False
-
         cols = st.columns(2)
         types = ["Counts", "Percentages"]
         with cols[0]:
             bins = st.select_slider("Select number of bins",
                                     options=[5, 10, 25, 50, 75, 100, 125, 150, 175, 200, 250, 300],
                                     value=10,
-                                    key=f"slider_{key}_{column_selected}")
+                                    key=f"slider_bins_{key}_{column_selected}")
         with cols[1]:
             type = st.radio("Select what to plot",
                             options=types,
                             index=0,
                             horizontal=True,
                             key=f"radio_{key}_{column_selected}")
-            if n_negative_values > 0:
-                exclude_negative = st.checkbox(sh.EXCLUDE_NEGATIVE_PROMPT,
-                                               value=False,
-                                               key=f"checkbox_negative_{key}_{column_selected}")
-
+        min_max = (int(np.ceil(dset[column_selected].min())),
+                   int(np.floor(dset[column_selected].max())))
+        limits = st.slider("Select data range to plot",
+                           min_max[0], min_max[1], min_max,
+                           key=f"slider_limits_{key}_{column_selected}")
         if bins:
-            if exclude_negative:
-                st.warning(f"{n_negative_values} negative values were ignored.")
-                hcounts, bin_edges = np.histogram(dset.loc[dset[column_selected] > 0,
-                                                           column_selected],
-                                                  bins=bins)
-                x_limits = [0, max(bin_edges)]
-            else:
-                hcounts, bin_edges = np.histogram(dset[column_selected],
-                                                  bins=bins)
-                x_limits = [min(bin_edges), max(bin_edges)]
+            nselected = dset[(dset[column_selected] >= limits[0])
+                             & (dset[column_selected] <= limits[1])].shape[0]
+
+            hcounts, bin_edges = np.histogram(dset.loc[(dset[column_selected] >= limits[0])
+                                              & (dset[column_selected] <= limits[1]),
+                                              column_selected],
+                                              bins=bins)
+            x_limits = [min(bin_edges), max(bin_edges)]
             hpercs = np.round(100 * hcounts / hcounts.sum(), 0)
             bin_edges = np.round(bin_edges).astype(int)
             bin_labels = [f"{bin_edges[i]} to {bin_edges[i+1]}"
@@ -204,6 +200,7 @@ def display_histograms(dset, key=None, bin_size=None):
             with chart_container(dset_plot, export_formats=sh.DATA_EXPORT_FORMATS):
                 dset_to_plot = dset_plot.copy()
                 dset_to_plot[column_x] = bin_edges[:-1]
+                title = f"{column_selected}: {nselected} of {nrecords} records"
                 chart = alt.Chart(dset_to_plot.reset_index())\
                            .mark_bar()\
                            .encode(
@@ -218,7 +215,7 @@ def display_histograms(dset, key=None, bin_size=None):
                                         sort="y"
                                         ),
                                 tooltip=[column_label, column_counts, column_percs],
-                                ).properties(title=alt.TitleParams(text=column_selected,
+                                ).properties(title=alt.TitleParams(text=title,
                                                                    anchor="middle",
                                                                    fontSize=14,
                                                                    dy=-10
