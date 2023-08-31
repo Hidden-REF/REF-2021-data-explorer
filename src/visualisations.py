@@ -1,10 +1,11 @@
 """ Visualisation functions. """
+import numpy as np
 import pandas as pd
 import streamlit as st
 from streamlit_extras.chart_container import chart_container
 from streamlit_extras.dataframe_explorer import dataframe_explorer
 from streamlit_extras.grid import grid
-import plotly.figure_factory as ff
+# import plotly.figure_factory as ff
 
 
 import altair as alt
@@ -143,39 +144,45 @@ def display_distributions(dset, key=None):
                                       column_to_plot)
 
 
-def display_histograms(dset, key=None):
+def display_histograms(dset, key=None, bin_size=None):
     fields = proc.get_column_lists(dset, "number")
-    column_to_plot = st.selectbox(sh.DISTRIBUTION_SELECT_PROMPT,
-                                  fields,
-                                  key=key,
-                                  index=0)
-    if column_to_plot:
-        min_bins = 25
-        min_steps = 10
-        min_value = 1
-        max_value = (dset[column_to_plot].max() - dset[column_to_plot].min())/min_bins
-        max_value = max_value.astype(int)
-        step = (max_value - min_value)/min_steps
-        step = step.astype(int)
-        if (step == 0) | (min_value == 0) | (max_value <= 1) | (min_value == max_value):
-            st.warning(sh.NOT_SUITABLE_FOR_HISTOGRAM_WARNING)
-        else:
-            bin_size = st.slider(sh.BIN_SIZE_PROMPT,
-                                 key=f"{key}_{column_to_plot}",
-                                 min_value=min_value,
-                                 max_value=max_value,
-                                 value=min_value,
-                                 step=step)
-            fig = ff.create_distplot([dset[column_to_plot]],
-                                     [column_to_plot],
-                                     histnorm="probability",
-                                     show_rug=True,
-                                     show_curve=False,
-                                     bin_size=bin_size)
-            fig.update_layout(showlegend=False,
-                              title=column_to_plot,
-                              margin=dict(l=10, r=10, t=40, b=10))
-            st.plotly_chart(fig, use_container_width=True)
+    column_selected = st.selectbox(sh.DISTRIBUTION_SELECT_PROMPT,
+                                   fields,
+                                   key=key,
+                                   index=0)
+    if column_selected:
+        hist, bin_edges = np.histogram(dset[column_selected], bins=100)
+        bin_mids = 0.5 * (bin_edges[1:] + bin_edges[:-1])
+        column_to_plot = "value"
+        dset_to_plot = pd.DataFrame.from_dict(
+            {
+                column_to_plot: bin_mids,
+                "count": hist
+            })
+        dset_to_plot.set_index(column_to_plot, inplace=True)
+        with chart_container(dset_to_plot, export_formats=sh.DATA_EXPORT_FORMATS):
+            chart = alt.Chart(dset_to_plot.reset_index())\
+                    .mark_bar()\
+                    .encode(
+                            x=alt.X(column_to_plot,
+                                    type="quantitative",
+                                    axis=alt.Axis(title=""),
+                                    scale=alt.Scale(domain=[0, max(bin_mids)])
+                                    ),
+                            y=alt.Y("count",
+                                    type="quantitative",
+                                    axis=alt.Axis(title="", labelLimit=400),
+                                    sort="y"
+                                    ),
+                            tooltip=[column_to_plot, "count"],
+                            ).properties(title=alt.TitleParams(text=column_selected,
+                                                               anchor="middle",
+                                                               fontSize=14,
+                                                               dy=-10
+                                                               )
+                                         ).interactive()
+            st.altair_chart(chart,
+                            use_container_width=USE_CONTAINER_WIDTH)
 
 
 def display_grouped_distribution(dset, key=None):

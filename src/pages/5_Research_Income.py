@@ -1,10 +1,7 @@
 import streamlit as st
-from streamlit_extras.dataframe_explorer import dataframe_explorer
-from streamlit_extras.chart_container import chart_container
 
 import codebook as cb
 import read_write as rw
-import process as proc
 import visualisations as vis
 import shared as sh
 
