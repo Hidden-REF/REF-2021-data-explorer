@@ -69,8 +69,15 @@ def show_grouped_counts_chart(dset, x, y, colour):
             y (str): column name for the y axis
             colour (str): column name for the colour
     """
+    y_title = y.replace(" stars", "* rating")\
+               .replace(" star", "* rating")\
+               .replace(" (binned)", "")
+    x_title = x.replace(" stars", "* rating")\
+               .replace(" star", "* rating")\
+               .replace(" (binned)", "")
+    title = f"{y_title} by {x_title}"
     st.vega_lite_chart(dset, {
-        'title': {'text': f"{y} by {x}", 'anchor': 'middle'},
+        'title': {'text': title, 'anchor': 'middle'},
         'mark': {'type': 'circle', 'tooltip': True},
         'encoding': {'x': {'field': x,
                            'type': 'nominal',
