@@ -155,22 +155,31 @@ def display_histograms(dset, key=None, bin_size=None):
                                    key=key,
                                    index=0)
     if column_selected:
+        nnegative = dset[dset[column_selected] < 0].shape[0]
         cols = st.columns(2)
         types = ["Counts", "Percentages"]
         with cols[0]:
-            bins = st.select_slider("Select number of bins",
+            bins = st.select_slider(sh.BIN_NUMBER_PROMPT,
                                     options=[5, 10, 25, 50, 75, 100, 125, 150, 175, 200, 250, 300],
                                     value=10,
                                     key=f"slider_bins_{key}_{column_selected}")
         with cols[1]:
-            type = st.radio("Select what to plot",
+            type = st.radio(sh.SELECT_STATS_PROMPT,
                             options=types,
                             index=0,
                             horizontal=True,
                             key=f"radio_{key}_{column_selected}")
-        min_max = (int(np.ceil(dset[column_selected].min())),
-                   int(np.floor(dset[column_selected].max())))
-        limits = st.slider("Select data range to plot",
+            if nnegative > 0:
+                exclude_negative =  st.toggle(sh.EXCLUDE_NEGATIVE_PROMPT,
+                                              value=False,
+                                              key=f"toggle_{key}_{column_selected}")
+            else:
+                exclude_negative = False
+        min_max = [int(np.ceil(dset[column_selected].min())),
+                   int(np.floor(dset[column_selected].max()))]
+        if exclude_negative:
+            min_max[0] = 0
+        limits = st.slider(sh.SELECT_DATA_RANGE_PROMPT,
                            min_max[0], min_max[1], min_max,
                            key=f"slider_limits_{key}_{column_selected}")
         if bins:

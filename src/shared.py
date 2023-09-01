@@ -9,8 +9,9 @@ PROC_TEXT = "Processing request..."
 # prompts
 DISTRIBUTION_SELECT_PROMPT = "Select column to plot"
 GROUPED_DISTRIBUTION_SELECT_PROMPT = "Select columns to plot"
-BIN_SIZE_PROMPT = "Select the bin size"
-EXCLUDE_OUTLIERS_PROMPT = "Exclude outliers"
+BIN_NUMBER_PROMPT = "Select number of bins"
+SELECT_STATS_PROMPT = "Select what to plot"
+SELECT_DATA_RANGE_PROMPT = "Select data range"
 EXCLUDE_NEGATIVE_PROMPT = "Exclude negative values"
 # headers
 header_style = "######"
