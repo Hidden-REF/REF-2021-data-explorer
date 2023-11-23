@@ -6,9 +6,7 @@ import codebook as cb
 
 
 # data paths
-PROJECT_PATH = os.path.dirname(os.path.abspath(os.path.dirname(__file__)))
-DATA_PATH = "data/"
-
+DATA_PATH = "https://github.com/softwaresaved/ref-2021-analysis/raw/main/data/processed/"
 DATA_EXT = ".csv.gz"
 DATA_PPROCESS = "_ppreprocessed"
 
@@ -61,7 +59,7 @@ def get_data(fname, categories_columns=[], string_columns=[]):
     for column in string_columns:
         dtype[column] = 'string'
 
-    dset = pd.read_csv(os.path.join(PROJECT_PATH, fname),
+    dset = pd.read_csv(fname,
                        index_col=0,
                        dtype=dtype)
     print(f"Read {fname}: {dset.shape[0]} records")
