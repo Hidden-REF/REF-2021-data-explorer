@@ -1,0 +1,30 @@
+name: build
+ 
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'src/*.py'
+      - requirements.txt
+      - Dockerfile
+      - .github/workflows/build.yml
+  workflow_dispatch:
+ 
+jobs:
+  build:
+    name: Build and push Docker image
+    runs-on: ubuntu-latest
+  
+    steps:
+    # Checkout the repository to the GitHub Actions runner
+    - uses: actions/checkout@v4
+    - uses: docker/login-action@v3
+      with:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+        registry: ghcr.io
+    - uses: docker/build-push-action@v5
+      with:
+        file: Dockerfile
+        push: true
+        tags: ghcr.io/${{github.repository}}/ref2021explorer:latest
