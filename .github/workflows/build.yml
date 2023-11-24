@@ -12,6 +12,7 @@ on:
  
 jobs:
   build:
+    permissions: write-all
     name: Build and push Docker image
     runs-on: ubuntu-latest
   
