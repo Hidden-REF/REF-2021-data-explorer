@@ -2,7 +2,7 @@ name: build
  
 on:
   push:
-    branches: [ main ]
+    branches: [ main, "fix-docker-build" ]
     paths:
       - 'src/*.py'
       - requirements.txt
@@ -27,4 +27,4 @@ jobs:
       with:
         file: Dockerfile
         push: true
-        tags: ghcr.io/${{github.repository}}/ref2021explorer:latest
+        tags: ghcr.io/hidden-ref/ref2021explorer:latest
