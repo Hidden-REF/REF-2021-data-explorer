@@ -2,7 +2,7 @@ name: build
  
 on:
   push:
-    branches: [ main, "fix-docker-build" ]
+    branches: [ main ]
     paths:
       - 'src/*.py'
       - requirements.txt
