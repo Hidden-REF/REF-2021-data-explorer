@@ -102,16 +102,10 @@ def display_record_counts_table(dset):
         Args:
             dset (pandas.DataFrame): dataset
     """
-    dset_to_print = pd.DataFrame.from_dict(
-        {
-            "Records": dset.shape[0],
-            "Institutions": dset[cb.COL_INST_NAME].nunique()
-        },
-        orient="index")
 
-    dset_to_print.columns = ["count"]
-    pd.set_option("display.max_colwidth", None)
-    st.dataframe(dset_to_print)
+    (s1, s2) = st.columns(2)
+    s1.metric(label="Records", value=dset.shape[0])
+    s2.metric(label="Institutions", value=dset[cb.COL_INST_NAME].nunique())
 
 
 def display_table_from_dictionary(dict):
