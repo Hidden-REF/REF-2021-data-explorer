@@ -12,6 +12,7 @@ on:
  
 jobs:
   build:
+    permissions: write-all
     name: Build and push Docker image
     runs-on: ubuntu-latest
   
@@ -27,4 +28,4 @@ jobs:
       with:
         file: Dockerfile
         push: true
-        tags: ghcr.io/${{github.repository}}/ref2021explorer:latest
+        tags: ghcr.io/hidden-ref/ref2021explorer:latest
