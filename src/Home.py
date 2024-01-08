@@ -2,14 +2,20 @@ import streamlit as st
 import shared as sh
 
 st.set_page_config(page_title=sh.HOME_TITLE,
+                   page_icon="📊",
                    layout=sh.LAYOUT,
                    initial_sidebar_state="expanded",
-                   menu_items={'About': sh.DATA_SOURCE_TEXT}
+                   menu_items={'Get Help': sh.REPO_URL,
+                               'Report a bug': sh.REPO_URL,
+                               'About': sh.DATA_SOURCE_TEXT
+                               }
                    )
 
-st.title(sh.HOME_TITLE)
+st.sidebar.title(f"{sh.HOME_TITLE} :construction:")
 
+st.title(sh.HOME_TITLE)
 st.warning(sh.WARNING_TEXT, icon="⚠️")
+
 
 # page content
 # ------------

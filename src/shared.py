@@ -2,6 +2,7 @@
 
 # settings
 LAYOUT = "wide"
+REPO_URL = "https://github.com/Hidden-REF/REF-2021-data-explorer"
 
 # titles
 HOME_TITLE = "REF 2021 Data Explorer"
