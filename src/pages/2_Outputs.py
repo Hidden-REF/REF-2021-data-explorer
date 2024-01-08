@@ -33,8 +33,7 @@ CATEGORIES_COLUMNS = [cb.COL_OUTPUT_TYPE_NAME,
                       cb.COL_OPEN_ACCESS,
                       cb.COL_OUTPUT_DELAYED]
 
-page_title = "Outputs"
-st.title(page_title)
+st.title(sh.OUTPUTS_TITLE)
 
 with st.spinner(sh.PROC_TEXT):
     (dset, _) = rw.get_data(rw.DATA_PPROC_OUTPUTS,

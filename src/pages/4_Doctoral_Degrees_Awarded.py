@@ -4,9 +4,7 @@ import read_write as rw
 import visualisations as vis
 import shared as sh
 
-
-page_title = "Doctoral Degrees Awarded"
-st.title(page_title)
+st.title(sh.DOCTORAL_DEGREES_TITLE)
 
 with st.spinner(sh.PROC_TEXT):
     (dset, _) = rw.get_data(rw.DATA_PPROC_DEGREES)

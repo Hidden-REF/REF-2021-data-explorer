@@ -7,8 +7,7 @@ import shared as sh
 
 CATEGORIES_COLUMNS = [cb.COL_RESULTS_PROFILE]
 
-page_title = "Results"
-st.title(page_title)
+st.title(sh.RESULTS_TITLE)
 
 with st.spinner(sh.PROC_TEXT):
     (dset, _) = rw.get_data(rw.DATA_PPROC_RESULTS,

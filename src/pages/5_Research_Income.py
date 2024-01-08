@@ -8,8 +8,7 @@ import shared as sh
 
 CATEGORIES_COLUMNS = [cb.COL_INCOME_SOURCE]
 
-page_title = "Research Income"
-st.title(page_title)
+st.title(sh.RESEARCH_INCOME_TITLE)
 
 with st.spinner(sh.PROC_TEXT):
     (dset, _) = rw.get_data(rw.DATA_PPROC_RINCOME,

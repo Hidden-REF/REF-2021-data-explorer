@@ -8,8 +8,7 @@ import shared as sh
 STRING_COLUMNS = [cb.COL_RG_NAME]
 CATEGORIES_COLUMNS = [cb.COL_RG_CODE]
 
-page_title = "Research Groups"
-st.title(page_title)
+st.title(sh.RESEARCH_GROUPS_TITLE)
 
 with st.spinner(sh.PROC_TEXT):
     (dset, _) = rw.get_data(rw.DATA_PPROC_RGROUPS,

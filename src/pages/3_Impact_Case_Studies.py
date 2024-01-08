@@ -20,8 +20,7 @@ STRING_COLUMNS = [cb.COL_IMPACT_TITLE,
                   cb.COL_IMPACT_CORROBORATE]
 CATEGORIES_COLUMNS = [cb.COL_IMPACT_CONTINUED]
 
-page_title = "Impact Case Studies"
-st.title(page_title)
+st.title(sh.IMPACT_CASE_STUDIES_TITLE)
 
 with st.spinner(sh.PROC_TEXT):
     (dset, _) = rw.get_data(rw.DATA_PPROC_IMPACTS,
