@@ -1,5 +1,8 @@
 """ Shared text for the app. """
 
+# settings
+LAYOUT = "wide"
+
 # titles
 HOME_TITLE = "REF 2021 Data Explorer"
 RESEARCH_GROUPS_TITLE = "Research Groups"
@@ -17,13 +20,18 @@ DATA_SOURCE_HEADER = "Data source"
 DATA_SOURCE_TEXT = f"The data used in this app is from the [REF 2021 website]({REF2021_URL})"\
                    f" (accessed 2023/08/10) and has been processed with [{PROC_URL}]({PROC_URL})"
 ABOUT_HEADER = "About the REF 2021 Explorer"
-ABOUT_TEXT = \
+WARNING_TEXT = \
     """
     This site is currently under construction.
-    Changes will be made on a frequent basis from November 2023 to early in 2024.
+
+    Changes will be made on a frequent basis.
+
     Until we announce that the website is complete, please do not use any of the results from
     analysis you conduct on this site unless you have independently verified the results.
 
+    """
+ABOUT_TEXT = \
+    """
     The Research Excellent Framework (REF) is the UK's approach to assessing
     the excellence of UK research. It employs a process of
     expert review across all UK universities for 34 subject-based units of assessment. The

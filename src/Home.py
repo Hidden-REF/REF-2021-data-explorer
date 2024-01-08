@@ -2,12 +2,14 @@ import streamlit as st
 import shared as sh
 
 st.set_page_config(page_title=sh.HOME_TITLE,
-                   layout="centered",
+                   layout=sh.LAYOUT,
                    initial_sidebar_state="expanded",
                    menu_items={'About': sh.DATA_SOURCE_TEXT}
                    )
 
 st.title(sh.HOME_TITLE)
+
+st.warning(sh.WARNING_TEXT, icon="⚠️")
 
 # page content
 # ------------
