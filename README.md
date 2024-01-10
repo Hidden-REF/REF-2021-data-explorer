@@ -23,3 +23,7 @@ Building the image: `docker build -t ref2021explorer .`
 Running the image: `docker run -p 8501:8501 ref2021explorer`. This binds the
 exposed port 8501 of the Docker container to port 8501 of the host; the
 Streamlit application is then visible at http://localhost:8501
+
+## Updating data
+
+The app is set with the default `None` value for the `ttl` (see [st.cache_data](https://docs.streamlit.io/library/api-reference/performance/st.cache_data)). This means that the app has to be restarted every time the data files in [ref-2021-analysis repository](https://github.com/softwaresaved/ref-2021-analysis) are updated.
