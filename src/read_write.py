@@ -6,7 +6,7 @@ import codebook as cb
 
 
 # data paths
-DATA_PATH = "https://github.com/softwaresaved/ref-2021-analysis/raw/main/data/processed/"
+DATA_PATH = "https://github.com/softwaresaved/ref-2021-analysis/raw/main/data/processed/sheets/"
 DATA_EXT = ".csv.gz"
 DATA_PPROCESS = "_ppreprocessed"
 
