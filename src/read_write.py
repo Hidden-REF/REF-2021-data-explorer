@@ -20,12 +20,14 @@ DATA_PPROC_RESULTS = f"{DATA_PATH}Results{DATA_PPROCESS}{DATA_EXT}"
 
 
 @st.cache_data
-def get_data(fname, categories_columns=[], string_columns=[]):
+def get_data(fname, categories_columns=[], string_columns=[], drop_columns=[]):
     """ Read a csv file and return a dataset and a list of institution names.
 
     Args:
         fname (str): Filename of the csv file to read.
         categories_columns (list): List of columns to be read as categories.
+        string_columns (list): List of columns to be read as strings.
+        drop_columns (list): List of columns to be dropped.
 
     Returns:
         tuple: A tuple containing:
@@ -62,7 +64,10 @@ def get_data(fname, categories_columns=[], string_columns=[]):
     dset = pd.read_csv(fname,
                        index_col=0,
                        dtype=dtype)
+    
     print(f"Read {fname}: {dset.shape[0]} records")
+    # drop columns
+    dset.drop(columns=drop_columns, inplace=True)
 
     # set the category order for the binned percentages
     for column in binned_perc_columns:

@@ -9,6 +9,7 @@ COL_UOA_NUMBER = 'Unit of assessment number'
 COL_UOA_NAME = 'Unit of assessment name'
 # about the institution etc
 COL_INST_CODE = 'Institution UKPRN code'
+COL_INST_CODE_BRACKETS = 'Institution code (UKPRN)'
 COL_INST_NAME = 'Institution name'
 COL_RG_CODE = 'Research group code'
 COL_RG_NAME = 'Research group name'
@@ -95,8 +96,7 @@ COL_RESULTS_1star_BINNED = f"{COL_RESULTS_1star} (binned)"
 COL_RESULTS_UNCLASSIFIED_BINNED = f"{COL_RESULTS_UNCLASSIFIED} (binned)"
 
 CATEGORY_FIELDS_EXCLUDE_CHARTS = [COL_INST_CODE,
-                                  COL_INST_NAME,
-                                  COL_RG_CODE,
+                                  # COL_RG_CODE,
                                   COL_INCOME_SOURCE,
                                   COL_RESULTS_PROFILE]
 

@@ -127,6 +127,10 @@ def display_record_counts_table(dset):
     s1.metric(label="Records", value=dset.shape[0])
     s2.metric(label="Institutions", value=dset[cb.COL_INST_NAME].nunique())
 
+    st.markdown("#### Columns in the dataset")
+    column_dtypes = [(column, str(dtype)) for column, dtype in dset.dtypes.items()]
+    st.markdown(", ".join([f"**{column}** ({dtype})" for column, dtype in column_dtypes]))
+
 
 def display_table_from_dictionary(dict):
     """ Display a table from a dictionary.
@@ -145,6 +149,7 @@ def display_distributions(dset, key=None):
             dset (pandas.DataFrame): dataset
     """
     fields = proc.get_column_lists(dset, "category")
+    
     column_to_plot = st.selectbox(sh.DISTRIBUTION_SELECT_PROMPT,
                                   fields,
                                   key=key,

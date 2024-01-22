@@ -32,13 +32,15 @@ CATEGORIES_COLUMNS = [cb.COL_OUTPUT_TYPE_NAME,
                       cb.COL_OUTPUT_RESERVE_OUTPUT,
                       cb.COL_OPEN_ACCESS,
                       cb.COL_OUTPUT_DELAYED]
+DROP_COLUMNS = [cb.COL_INST_CODE]
 
 st.title(sh.OUTPUTS_TITLE)
 
 with st.spinner(sh.PROC_TEXT):
     (dset, _) = rw.get_data(rw.DATA_PPROC_OUTPUTS,
                             categories_columns=CATEGORIES_COLUMNS,
-                            string_columns=STRING_COLUMNS)
+                            string_columns=STRING_COLUMNS,
+                            drop_columns=DROP_COLUMNS)
 
 vis.display_record_counts_table(dset)
 with st.expander(sh.VISUALISE_HEADER):

@@ -19,13 +19,15 @@ STRING_COLUMNS = [cb.COL_IMPACT_TITLE,
                   cb.COL_IMPACT_DETAILS,
                   cb.COL_IMPACT_CORROBORATE]
 CATEGORIES_COLUMNS = [cb.COL_IMPACT_CONTINUED]
+DROP_COLUMNS = [cb.COL_INST_CODE]
 
 st.title(sh.IMPACT_CASE_STUDIES_TITLE)
 
 with st.spinner(sh.PROC_TEXT):
     (dset, _) = rw.get_data(rw.DATA_PPROC_IMPACTS,
                             categories_columns=CATEGORIES_COLUMNS,
-                            string_columns=STRING_COLUMNS)
+                            string_columns=STRING_COLUMNS,
+                            drop_columns=DROP_COLUMNS)
 
 vis.display_record_counts_table(dset)
 with st.expander(sh.VISUALISE_HEADER):

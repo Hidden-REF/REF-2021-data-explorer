@@ -7,15 +7,18 @@ import shared as sh
 
 STRING_COLUMNS = [cb.COL_RG_NAME]
 CATEGORIES_COLUMNS = [cb.COL_RG_CODE]
+DROP_COLUMNS = [cb.COL_INST_CODE]
 
 st.title(sh.RESEARCH_GROUPS_TITLE)
 
 with st.spinner(sh.PROC_TEXT):
     (dset, _) = rw.get_data(rw.DATA_PPROC_RGROUPS,
                             string_columns=STRING_COLUMNS,
-                            categories_columns=CATEGORIES_COLUMNS)
+                            categories_columns=CATEGORIES_COLUMNS,
+                            drop_columns=DROP_COLUMNS)
 
 vis.display_record_counts_table(dset)
+
 with st.expander(sh.VISUALISE_HEADER):
     tabs = st.tabs([sh.DISTRIBUTIONS_TAB_HEADER,
                     sh.GROUPED_DISTRIBUTIONS_TAB_HEADER])
