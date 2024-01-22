@@ -41,6 +41,7 @@ def clean_titles(title):
 
 
 def show_counts_percent_chart(dset,
+                              title,
                               column_name,
                               column_count="records",
                               column_percent="records (%)",
@@ -58,7 +59,7 @@ def show_counts_percent_chart(dset,
     """
 
     # define the chart elements
-    title = alt.TitleParams(text=clean_titles(column_name),
+    title = alt.TitleParams(text=title,
                             anchor="middle",
                             fontSize=14,
                             dy=-10)
@@ -174,6 +175,7 @@ def display_distributions(dset, key=None):
                               key=f"radio_{key}_{column_to_plot}")
         with chart_container(dset_stats, export_formats=sh.DATA_EXPORT_FORMATS):
             show_counts_percent_chart(dset_stats,
+                                      f"{clean_titles(column_to_plot)} (N = {dset.shape[0]} records)",
                                       column_to_plot,
                                       stats_type=stats_type)
 
