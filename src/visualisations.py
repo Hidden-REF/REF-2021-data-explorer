@@ -21,6 +21,8 @@ TO_REPLACE_TITLES = {
     " (binned)": ""
 }
 
+STATS_TYPES = ["Percentages", "Counts"]
+
 
 def clean_titles(title):
     """ Clean titles.
@@ -42,8 +44,9 @@ def show_counts_percent_chart(dset,
                               column_name,
                               column_count="records",
                               column_percent="records (%)",
-                              use_container_width=USE_CONTAINER_WIDTH
-                              ):
+                              use_container_width=USE_CONTAINER_WIDTH,
+                              stats_type="Percentages"):
+
     """ Draw a chart with counts and percentages.
 
         Args:
@@ -59,10 +62,15 @@ def show_counts_percent_chart(dset,
                             anchor="middle",
                             fontSize=14,
                             dy=-10)
-    x = alt.X(column_percent,
-              type="quantitative",
-              axis=alt.Axis(title=column_percent),
-              scale=alt.Scale(domain=[0, 100]))
+    if stats_type == STATS_TYPES[1]:
+        x = alt.X(column_count,
+                  type="quantitative",
+                  axis=alt.Axis(title=column_count))
+    else:
+        x = alt.X(column_percent,
+                  type="quantitative",
+                  axis=alt.Axis(title=column_percent),
+                  scale=alt.Scale(domain=[0, 100]))
 
     y = alt.Y(column_name, 
               type="nominal",
@@ -148,6 +156,7 @@ def display_distributions(dset, key=None):
         Args:
             dset (pandas.DataFrame): dataset
     """
+    
     fields = proc.get_column_lists(dset, "category")
     
     column_to_plot = st.selectbox(sh.DISTRIBUTION_SELECT_PROMPT,
@@ -156,9 +165,15 @@ def display_distributions(dset, key=None):
                                   index=0)
     if column_to_plot:
         dset_stats = proc.calculate_counts(dset, column_to_plot, sort=True)
+        stats_type = st.radio(sh.SELECT_STATS_PROMPT,
+                              options=STATS_TYPES,
+                              index=0,
+                              horizontal=True,
+                              key=f"radio_{key}_{column_to_plot}")
         with chart_container(dset_stats, export_formats=sh.DATA_EXPORT_FORMATS):
             show_counts_percent_chart(dset_stats,
-                                      column_to_plot)
+                                      column_to_plot,
+                                      stats_type=stats_type)
 
 
 def display_histograms(dset, key=None, bin_size=None):
@@ -176,22 +191,21 @@ def display_histograms(dset, key=None, bin_size=None):
     if column_selected:
         nnegative = dset[dset[column_selected] < 0].shape[0]
         cols = st.columns(2)
-        types = ["Counts", "Percentages"]
         with cols[0]:
             bins = st.select_slider(sh.BIN_NUMBER_PROMPT,
                                     options=[5, 10, 25, 50, 75, 100, 125, 150, 175, 200, 250, 300],
                                     value=10,
                                     key=f"slider_bins_{key}_{column_selected}")
         with cols[1]:
-            type = st.radio(sh.SELECT_STATS_PROMPT,
-                            options=types,
-                            index=0,
-                            horizontal=True,
-                            key=f"radio_{key}_{column_selected}")
+            stats_type = st.radio(sh.SELECT_STATS_PROMPT,
+                                  options=STATS_TYPES,
+                                  index=0,
+                                  horizontal=True,
+                                  key=f"radio_{key}_{column_selected}")
             if nnegative > 0:
-                exclude_negative =  st.toggle(sh.EXCLUDE_NEGATIVE_PROMPT,
-                                              value=False,
-                                              key=f"toggle_{key}_{column_selected}")
+                exclude_negative = st.toggle(sh.EXCLUDE_NEGATIVE_PROMPT,
+                                             value=False,
+                                             key=f"toggle_{key}_{column_selected}")
             else:
                 exclude_negative = False
         min_max = [int(np.ceil(dset[column_selected].min())),
@@ -216,8 +230,8 @@ def display_histograms(dset, key=None, bin_size=None):
                           for i in range(len(bin_edges)-1)]
             column_x = "value"
             column_label = "Interval"
-            column_counts = types[0][:-1]
-            column_percs = types[1][:-1]
+            column_counts = STATS_TYPES[0][:-1]
+            column_percs = STATS_TYPES[1][:-1]
             dset_plot = pd.DataFrame.from_dict(
                 {
                     column_label: bin_labels,
@@ -237,9 +251,9 @@ def display_histograms(dset, key=None, bin_size=None):
                                         axis=alt.Axis(title=""),
                                         scale=alt.Scale(domain=x_limits)
                                         ),
-                                y=alt.Y(type[:-1],
+                                y=alt.Y(stats_type[:-1],
                                         type="quantitative",
-                                        axis=alt.Axis(title=type, labelLimit=400),
+                                        axis=alt.Axis(title=stats_type, labelLimit=400),
                                         sort="y"
                                         ),
                                 tooltip=[column_label, column_counts, column_percs],

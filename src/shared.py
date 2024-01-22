@@ -77,8 +77,8 @@ VISUALISE_HEADER = f"{header_style} Visualise data"
 EXPLORE_HEADER = f"{header_style} Select and explore data"
 
 # tabs headers
-DISTRIBUTIONS_TAB_HEADER = "Distributions"
-GROUPED_DISTRIBUTIONS_TAB_HEADER = "Grouped distributions"
+DISTRIBUTIONS_TAB_HEADER = "Distributions (categorical)"
+GROUPED_DISTRIBUTIONS_TAB_HEADER = "Grouped distributions (categorical)"
 HISTOGRAMS_TAB_HEADER = "Histograms"
 SHOW_SELECTED_TAB_HEADER = "Show selected data"
 VISUALISE_SELECTED_TAB_HEADER = "Visualise selected data"
