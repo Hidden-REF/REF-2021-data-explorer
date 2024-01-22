@@ -77,8 +77,13 @@ EXCLUDE_NEGATIVE_PROMPT = "Exclude negative values"
 
 # headers
 header_style = "######"
+DESCRIBE_HEADER = f"{header_style} Data description"
 VISUALISE_HEADER = f"{header_style} Visualise data"
 EXPLORE_HEADER = f"{header_style} Select and explore data"
+
+# titles
+title_style = "#####"
+COLUMNS_TITLE = f"{header_style} Data columns"
 
 # tabs headers
 DISTRIBUTIONS_TAB_HEADER = "Distributions (categorical)"

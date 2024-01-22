@@ -125,7 +125,7 @@ def show_grouped_counts_chart(dset, x, y, colour):
         }, use_container_width=True)
 
 
-def display_record_counts_table(dset, list_columns=True, suffix=""):
+def display_record_counts_table(dset, describe_data=True, suffix=""):
     """ Display a table with the number of records and institutions.
 
         Args:
@@ -136,11 +136,13 @@ def display_record_counts_table(dset, list_columns=True, suffix=""):
     s1.metric(label=f"{sh.RECORDS_LABEL}{suffix}", value=dset.shape[0])
     s2.metric(label=f"{sh.INSTITUTIONS_LABEL}{suffix}", value=dset[cb.COL_INST_NAME].nunique())
 
-    if list_columns:
-        st.markdown("#### Columns in the dataset")
-        column_dtypes = [(column, str(dtype)) for column, dtype in dset.dtypes.items()]
-        st.markdown(", ".join([f"**{column}** ({dtype})" for column, dtype in column_dtypes]))
-
+    if describe_data:
+        with st.expander(sh.DESCRIBE_HEADER):
+            st.markdown(sh.COLUMNS_TITLE)
+            column_dtypes = [(column, str(dtype)) for column, dtype in dset.dtypes.items()]
+            for column_items in column_dtypes:
+                st.markdown(f"- {column_items[0]} ({column_items[1]})")
+            
 
 def display_table_from_dictionary(dict):
     """ Display a table from a dictionary.
@@ -303,7 +305,7 @@ def display_data_explorer(dset, do_histograms=False):
         if dset_explore.shape[0] == 0:
             st.warning(sh.NO_SELECTED_RECORDS_WARNING)
         else:
-            display_record_counts_table(dset_explore, list_columns=False, suffix=" selected")
+            display_record_counts_table(dset_explore, describe_data=False, suffix=" selected")
             st.download_button(
                 label=sh.DOWNLOAD_SELECTED_DATA_BUTTON,
                 data=dset_explore.to_csv().encode('utf-8'),
