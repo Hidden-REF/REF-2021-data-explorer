@@ -72,7 +72,7 @@ def show_counts_percent_chart(dset,
                   axis=alt.Axis(title=column_percent),
                   scale=alt.Scale(domain=[0, 100]))
 
-    y = alt.Y(column_name, 
+    y = alt.Y(column_name,
               type="nominal",
               sort="-x",
               axis=alt.Axis(title="", labelLimit=400))
@@ -156,15 +156,16 @@ def display_distributions(dset, key=None):
         Args:
             dset (pandas.DataFrame): dataset
     """
-    
+
     fields = proc.get_column_lists(dset, "category")
-    
+
     column_to_plot = st.selectbox(sh.DISTRIBUTION_SELECT_PROMPT,
                                   fields,
                                   key=key,
                                   index=0)
     if column_to_plot:
         dset_stats = proc.calculate_counts(dset, column_to_plot, sort=True)
+
         stats_type = st.radio(sh.SELECT_STATS_PROMPT,
                               options=STATS_TYPES,
                               index=0,

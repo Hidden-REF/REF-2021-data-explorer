@@ -13,7 +13,8 @@ def calculate_counts(dset, col, sort=True):
 
     col_count = "records"
     col_perc = "records (%)"
-    dset_stats = dset[col].value_counts(sort=sort).to_frame(name=col_count)
+    dset_stats = dset[col].cat.remove_unused_categories().value_counts(sort=sort)\
+                          .to_frame(name=col_count)
     dset_stats[col_perc] = 100 * dset_stats[col_count] / dset.shape[0]
     dset_stats.index.name = col
 
@@ -32,7 +33,12 @@ def calculate_grouped_counts(dset, columns):
     """
 
     col_counts = "records"
-    dset_stats = dset.groupby(columns).size().reset_index(name=col_counts)
+    dset2plot = dset.copy()
+    for column in columns:
+        dset2plot[column] = dset2plot[column].cat.remove_unused_categories()
+
+    dset_stats = dset2plot[columns].groupby(columns).size().reset_index(name=col_counts)
+    del dset2plot
 
     return dset_stats
 
