@@ -94,7 +94,7 @@ def show_grouped_counts_chart(dset, x, y, colour):
     y_title = clean_titles(y)
     x_title = clean_titles(x)
     title = f"{y_title} by {x_title}"
-    
+
     st.vega_lite_chart(dset, {
         'title': {'text': title, 'anchor': 'middle'},
         'mark': {'type': 'circle', 'tooltip': True},
@@ -151,7 +151,6 @@ def display_distributions(dset, key=None):
                                   index=0)
     if column_to_plot:
         dset_stats = proc.calculate_counts(dset, column_to_plot, sort=True)
-        print(dset_stats)
         with chart_container(dset_stats, export_formats=sh.DATA_EXPORT_FORMATS):
             show_counts_percent_chart(dset_stats,
                                       column_to_plot)
