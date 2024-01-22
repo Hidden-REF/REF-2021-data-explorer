@@ -15,6 +15,28 @@ import shared as sh
 
 USE_CONTAINER_WIDTH = True
 
+TO_REPLACE_TITLES = {
+    " stars": "* rating",
+    " star": "* rating",
+    " (binned)": ""
+}
+
+
+def clean_titles(title):
+    """ Clean titles.
+
+    Args:
+        title (str): title
+
+    Returns:
+        str: cleaned title
+    """
+
+    for key in TO_REPLACE_TITLES.keys():
+        title = title.replace(key, TO_REPLACE_TITLES[key])
+
+    return title
+
 
 def show_counts_percent_chart(dset,
                               column_name,
@@ -31,30 +53,30 @@ def show_counts_percent_chart(dset,
             column_percent (str): column name for the percentages
             use_container_width (bool): use container width
     """
-    title = column_name.replace(" stars", "* rating")\
-                       .replace(" star", "* rating")\
-                       .replace(" (binned)", "")
+
+    # define the chart elements
+    title = alt.TitleParams(text=clean_titles(column_name),
+                            anchor="middle",
+                            fontSize=14,
+                            dy=-10)
+    x = alt.X(column_percent,
+              type="quantitative",
+              axis=alt.Axis(title=column_percent),
+              scale=alt.Scale(domain=[0, 100]))
+
+    y = alt.Y(column_name, 
+              type="nominal",
+              sort="-x",
+              axis=alt.Axis(title="", labelLimit=400))
+
+    tooltip = [column_name, column_count, column_percent]
+
     chart = alt.Chart(dset.reset_index())\
                .mark_bar()\
-               .encode(
-                        x=alt.X(column_percent,
-                                type="quantitative",
-                                axis=alt.Axis(title=column_percent),
-                                scale=alt.Scale(domain=[0, 100])
-                                ),
-                        y=alt.Y(column_name,
-                                type="nominal",
-                                axis=alt.Axis(title="",
-                                              labelLimit=400),
-                                sort="y"
-                                ),
-                        tooltip=[column_name, column_count, column_percent],
-                    ).properties(title=alt.TitleParams(text=title,
-                                                       anchor="middle",
-                                                       fontSize=14,
-                                                       dy=-10
-                                                       )
-                                 ).interactive()
+               .encode(x=x, y=y, tooltip=tooltip)\
+               .properties(title=title)\
+               .interactive()
+
     st.altair_chart(chart,
                     use_container_width=USE_CONTAINER_WIDTH)
 
@@ -68,13 +90,11 @@ def show_grouped_counts_chart(dset, x, y, colour):
             y (str): column name for the y axis
             colour (str): column name for the colour
     """
-    y_title = y.replace(" stars", "* rating")\
-               .replace(" star", "* rating")\
-               .replace(" (binned)", "")
-    x_title = x.replace(" stars", "* rating")\
-               .replace(" star", "* rating")\
-               .replace(" (binned)", "")
+    # define the chart elements
+    y_title = clean_titles(y)
+    x_title = clean_titles(x)
     title = f"{y_title} by {x_title}"
+    
     st.vega_lite_chart(dset, {
         'title': {'text': title, 'anchor': 'middle'},
         'mark': {'type': 'circle', 'tooltip': True},
@@ -130,7 +150,8 @@ def display_distributions(dset, key=None):
                                   key=key,
                                   index=0)
     if column_to_plot:
-        dset_stats = proc.calculate_counts(dset, column_to_plot, sort=False)
+        dset_stats = proc.calculate_counts(dset, column_to_plot, sort=True)
+        print(dset_stats)
         with chart_container(dset_stats, export_formats=sh.DATA_EXPORT_FORMATS):
             show_counts_percent_chart(dset_stats,
                                       column_to_plot)
