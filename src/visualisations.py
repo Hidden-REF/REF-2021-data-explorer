@@ -124,7 +124,7 @@ def show_grouped_counts_chart(dset, x, y, colour):
         }, use_container_width=True)
 
 
-def display_record_counts_table(dset):
+def display_record_counts_table(dset, list_columns=True, suffix=""):
     """ Display a table with the number of records and institutions.
 
         Args:
@@ -132,12 +132,13 @@ def display_record_counts_table(dset):
     """
 
     (s1, s2) = st.columns(2)
-    s1.metric(label="Records", value=dset.shape[0])
-    s2.metric(label="Institutions", value=dset[cb.COL_INST_NAME].nunique())
+    s1.metric(label=f"{sh.RECORDS_LABEL}{suffix}", value=dset.shape[0])
+    s2.metric(label=f"{sh.INSTITUTIONS_LABEL}{suffix}", value=dset[cb.COL_INST_NAME].nunique())
 
-    st.markdown("#### Columns in the dataset")
-    column_dtypes = [(column, str(dtype)) for column, dtype in dset.dtypes.items()]
-    st.markdown(", ".join([f"**{column}** ({dtype})" for column, dtype in column_dtypes]))
+    if list_columns:
+        st.markdown("#### Columns in the dataset")
+        column_dtypes = [(column, str(dtype)) for column, dtype in dset.dtypes.items()]
+        st.markdown(", ".join([f"**{column}** ({dtype})" for column, dtype in column_dtypes]))
 
 
 def display_table_from_dictionary(dict):
@@ -300,16 +301,13 @@ def display_data_explorer(dset, do_histograms=False):
         if dset_explore.shape[0] == 0:
             st.warning(sh.NO_SELECTED_RECORDS_WARNING)
         else:
-            cols = st.columns(2)
-            with cols[0]:
-                st.write(f"Selected records: {dset_explore.shape[0]}")
-            with cols[1]:
-                st.download_button(
-                    label=sh.DOWNLOAD_SELECTED_DATA_BUTTON,
-                    data=dset_explore.to_csv().encode('utf-8'),
-                    file_name="selected_data.csv",
-                    mime='text/csv',
-                )
+            display_record_counts_table(dset_explore, list_columns=False, suffix=" selected")
+            st.download_button(
+                label=sh.DOWNLOAD_SELECTED_DATA_BUTTON,
+                data=dset_explore.to_csv().encode('utf-8'),
+                file_name="selected_data.csv",
+                mime='text/csv',
+            )
 
             tabs = st.tabs([sh.SHOW_SELECTED_TAB_HEADER,
                             sh.VISUALISE_SELECTED_TAB_HEADER])

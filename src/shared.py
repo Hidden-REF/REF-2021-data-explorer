@@ -63,6 +63,10 @@ DATA_EXPORT_FORMATS = ["CSV"]
 # feedback
 PROC_TEXT = "Processing request..."
 
+# labels
+RECORDS_LABEL = "Records"
+INSTITUTIONS_LABEL = "Institutions"
+
 # prompts
 DISTRIBUTION_SELECT_PROMPT = "Select column to plot"
 GROUPED_DISTRIBUTION_SELECT_PROMPT = "Select columns to plot"
