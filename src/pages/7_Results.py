@@ -6,7 +6,8 @@ import visualisations as vis
 import shared as sh
 
 CATEGORIES_COLUMNS = [cb.COL_RESULTS_PROFILE]
-DROP_COLUMNS = [cb.COL_INST_CODE_BRACKETS]
+DROP_COLUMNS = [cb.COL_INST_CODE_BRACKETS,
+                cb.COL_INST_SORT_ORDER]
 
 st.title(sh.RESULTS_TITLE)
 

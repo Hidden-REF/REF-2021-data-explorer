@@ -13,6 +13,7 @@ COL_INST_CODE_BRACKETS = 'Institution code (UKPRN)'
 COL_INST_NAME = 'Institution name'
 COL_RG_CODE = 'Research group code'
 COL_RG_NAME = 'Research group name'
+COL_INST_SORT_ORDER = 'Institution sort order'
 # about the submissions
 COL_MULT_SUB_LETTER = 'Multiple submission letter'
 COL_MULT_SUB_NAME = 'Multiple submission name'
