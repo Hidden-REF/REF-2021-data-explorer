@@ -155,7 +155,7 @@ def display_record_counts_table(dset, describe_data=True, suffix=""):
                     if column_name != cb.COL_INST_NAME\
                        and column_name != cb.COL_RG_CODE:
                         categories = sorted([x for x in dset[column_name].dropna().unique()])
-                        st.markdown(f"- {', '.join(categories)}")
+                        st.markdown(f"- {'; '.join(categories)}")
                 else:
                     if column_type in ["int64", "float64"]:
                         column_type = "number"
