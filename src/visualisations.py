@@ -23,6 +23,8 @@ TO_REPLACE_TITLES = {
 
 STATS_TYPES = ["Percentages", "Counts"]
 
+DESCRIPTION_MEASURES = ["min", "max", "mean", "std"]
+
 
 def clean_titles(title):
     """ Clean titles.
@@ -140,9 +142,32 @@ def display_record_counts_table(dset, describe_data=True, suffix=""):
         with st.expander(sh.DESCRIBE_HEADER):
             st.markdown(sh.COLUMNS_TITLE)
             column_dtypes = [(column, str(dtype)) for column, dtype in dset.dtypes.items()]
-            for column_items in column_dtypes:
-                st.markdown(f"- {column_items[0]} ({column_items[1]})")
-            
+            for [column_name, column_type] in column_dtypes:
+                if column_type == "category":
+                    categories_count = dset[column_name].nunique()
+                    if categories_count > 1:
+                        categories_count_text = "categories"
+                    else:
+                        categories_count_text = "category"
+                    st.markdown(f"`{column_name}` ({column_type}, "
+                                f"{categories_count} {categories_count_text})")
+
+                    if column_name != cb.COL_INST_NAME\
+                       and column_name != cb.COL_RG_CODE:
+                        categories = sorted([x for x in dset[column_name].dropna().unique()])
+                        st.markdown(f"- {', '.join(categories)}")
+                else:
+                    if column_type in ["int64", "float64"]:
+                        column_type = "number"
+                        column_description = dset[column_name].describe()\
+                                                              .loc[DESCRIPTION_MEASURES]\
+                                                              .round(0).astype(int).to_dict()
+
+                        st.markdown(f"`{column_name}` ({column_type})")
+                        st.markdown(f"- {column_description}")
+                    else:
+                        st.markdown(f"`{column_name}` ({column_type})")
+
 
 def display_table_from_dictionary(dict):
     """ Display a table from a dictionary.
@@ -177,7 +202,8 @@ def display_distributions(dset, key=None):
                               key=f"radio_{key}_{column_to_plot}")
         with chart_container(dset_stats, export_formats=sh.DATA_EXPORT_FORMATS):
             show_counts_percent_chart(dset_stats,
-                                      f"{clean_titles(column_to_plot)} (N = {dset.shape[0]} records)",
+                                      f"{clean_titles(column_to_plot)} "
+                                      f"(N = {dset.shape[0]} records)",
                                       column_to_plot,
                                       stats_type=stats_type)
 
