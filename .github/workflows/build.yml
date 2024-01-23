@@ -4,7 +4,7 @@ on:
   push:
     branches: [ main ]
     paths:
-      - 'src/*.py'
+      - 'src/**'
       - requirements.txt
       - Dockerfile
       - .github/workflows/build.yml
