@@ -6,7 +6,10 @@ import visualisations as vis
 import shared as sh
 
 
-CATEGORIES_COLUMNS = [cb.COL_INCOME_SOURCE]
+CATEGORIES_COLUMNS = [cb.COL_INCOME_SOURCE,
+                      cb.COL_MULT_SUB_LETTER,
+                      cb.COL_MULT_SUB_NAME,
+                      cb.COL_JOINT_SUB]
 DROP_COLUMNS = [cb.COL_INST_CODE]
 
 st.title(sh.RESEARCH_INCOME_TITLE)

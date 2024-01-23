@@ -6,7 +6,10 @@ import visualisations as vis
 import shared as sh
 
 STRING_COLUMNS = [cb.COL_RG_NAME]
-CATEGORIES_COLUMNS = [cb.COL_RG_CODE]
+CATEGORIES_COLUMNS = [cb.COL_RG_CODE, 
+                      cb.COL_MULT_SUB_LETTER,
+                      cb.COL_MULT_SUB_NAME,
+                      cb.COL_JOINT_SUB]
 DROP_COLUMNS = [cb.COL_INST_CODE]
 
 st.title(sh.RESEARCH_GROUPS_TITLE)

@@ -22,7 +22,10 @@ STRING_COLUMNS = [cb.COL_OUTPUT_TITLE,
                   cb.COL_OUTPUT_URL,
                   cb.COL_OUTPUT_SUPP]
 
-CATEGORIES_COLUMNS = [cb.COL_OUTPUT_TYPE_NAME,
+CATEGORIES_COLUMNS = [cb.COL_MULT_SUB_LETTER,
+                      cb.COL_MULT_SUB_NAME,
+                      cb.COL_JOINT_SUB,
+                      cb.COL_OUTPUT_TYPE_NAME,
                       cb.COL_OUTPUT_CITATIONS,
                       cb.COL_OUTPUT_INTERDISCIPLINARY,
                       cb.COL_OUTPUT_NON_ENGLISH,

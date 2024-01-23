@@ -5,16 +5,16 @@ import read_write as rw
 import visualisations as vis
 import shared as sh
 
-CATEGORIES_COLUMNS = [cb.COL_RESULTS_PROFILE]
-DROP_COLUMNS = [cb.COL_INST_CODE_BRACKETS,
-                cb.COL_INST_SORT_ORDER]
+CATEGORIES_COLUMNS = [cb.COL_RESULTS_PROFILE,
+                      cb.COL_MULT_SUB_LETTER,
+                      cb.COL_MULT_SUB_NAME,
+                      cb.COL_JOINT_SUB]
 
 st.title(sh.RESULTS_TITLE)
 
 with st.spinner(sh.PROC_TEXT):
     (dset, _) = rw.get_data(rw.DATA_PPROC_RESULTS,
-                            categories_columns=CATEGORIES_COLUMNS,
-                            drop_columns=DROP_COLUMNS)
+                            categories_columns=CATEGORIES_COLUMNS)
 
 vis.display_record_counts_table(dset)
 

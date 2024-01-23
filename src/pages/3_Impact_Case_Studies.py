@@ -18,7 +18,10 @@ STRING_COLUMNS = [cb.COL_IMPACT_TITLE,
                   cb.COL_IMPACT_REFERENCES_RESEARCH,
                   cb.COL_IMPACT_DETAILS,
                   cb.COL_IMPACT_CORROBORATE]
-CATEGORIES_COLUMNS = [cb.COL_IMPACT_CONTINUED]
+CATEGORIES_COLUMNS = [cb.COL_MULT_SUB_LETTER,
+                      cb.COL_MULT_SUB_NAME,
+                      cb.COL_JOINT_SUB,
+                      cb.COL_IMPACT_CONTINUED]
 DROP_COLUMNS = [cb.COL_INST_CODE]
 
 st.title(sh.IMPACT_CASE_STUDIES_TITLE)
