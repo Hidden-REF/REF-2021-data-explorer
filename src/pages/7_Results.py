@@ -5,8 +5,7 @@ import read_write as rw
 import visualisations as vis
 import shared as sh
 
-CATEGORIES_COLUMNS = [cb.COL_RESULTS_PROFILE,
-                      cb.COL_MULT_SUB_LETTER,
+CATEGORIES_COLUMNS = [cb.COL_MULT_SUB_LETTER,
                       cb.COL_MULT_SUB_NAME,
                       cb.COL_JOINT_SUB]
 

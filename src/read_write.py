@@ -43,15 +43,17 @@ def get_data(fname, categories_columns=[], string_columns=[], drop_columns=[]):
              }
     # binned percentages and various categories, depending on file
     binned_perc_columns = []
-    # categories_columns = []
     if "Results_" in fname:
-        binned_perc_columns = [cb.COL_RESULTS_1star_BINNED,
-                               cb.COL_RESULTS_2star_BINNED,
-                               cb.COL_RESULTS_3star_BINNED,
-                               cb.COL_RESULTS_4star_BINNED,
-                               cb.COL_RESULTS_UNCLASSIFIED_BINNED,
-                               cb.COL_RESULTS_PERC_STAFF_SUBMITTED_BINNED
-                               ]
+        binned_perc_columns = []
+        for prefix in cb.COL_RESULTS_PROFILE_PREFIXES:
+            binned_perc_columns.extend([
+                f"{prefix} {cb.COL_RESULTS_1star_BINNED}",
+                f"{prefix} {cb.COL_RESULTS_2star_BINNED}",
+                f"{prefix} {cb.COL_RESULTS_3star_BINNED}",
+                f"{prefix} {cb.COL_RESULTS_4star_BINNED}",
+                f"{prefix} {cb.COL_RESULTS_UNCLASSIFIED_BINNED}"
+              ])
+    
     for column in binned_perc_columns:
         dtype[column] = 'category'
 
@@ -66,13 +68,14 @@ def get_data(fname, categories_columns=[], string_columns=[], drop_columns=[]):
                        dtype=dtype)
     
     print(f"Read {fname}: {dset.shape[0]} records")
+
     # drop columns
-    dset.drop(columns=drop_columns, inplace=True)
+    # dset.drop(columns=drop_columns, inplace=True)
 
     # set the category order for the binned percentages
-    for column in binned_perc_columns:
-        dset[column] = pd.Categorical(dset[column],
-                                      categories=cb.bin_percentages_labels())
+    # for column in binned_perc_columns:
+    #     dset[column] = pd.Categorical(dset[column],
+    #                                   categories=cb.bin_percentages_labels())
 
     # get institution names as list
     inst_names = dset[cb.COL_INST_NAME].unique()
