@@ -98,6 +98,7 @@ COL_RESULTS_UNCLASSIFIED_BINNED = f"{COL_RESULTS_UNCLASSIFIED} (binned)"
 COL_RESULTS_PROFILE_VALUES = ["Environment", "Outputs", "Impact", "Overall"]
 COL_RESULTS_PROFILE_PREFIXES = [f"{column} evaluation -" for column in COL_RESULTS_PROFILE_VALUES] 
 COL_RESULTS_RG_SUBMISSIONS = 'Research group submissions'
+COL_RESULTS_OUTPUT_SUBMISSIONS = 'Output submissions'
 
 CATEGORY_FIELDS_EXCLUDE_CHARTS = [COL_INST_CODE,
                                   # COL_RG_CODE,
