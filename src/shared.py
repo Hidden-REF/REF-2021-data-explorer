@@ -13,6 +13,7 @@ DOCTORAL_DEGREES_TITLE = "Doctoral Degrees Awarded"
 RESEARCH_INCOME_TITLE = "Research Income"
 RESEARCH_INCOME_IN_KIND_TITLE = "Research Income in Kind"
 RESULTS_TITLE = "Results"
+CHAT_TITLE = "REFChat"
 
 # home page
 REF2021_URL = "https://results2021.ref.ac.uk/"
