@@ -25,6 +25,8 @@ STATS_TYPES = ["Percentages", "Counts"]
 
 DESCRIPTION_MEASURES = ["min", "max", "mean", "std"]
 
+BIN_OPTIONS = [5, 10, 25, 50, 75, 100, 125, 150, 175, 200, 250, 300]
+
 
 def clean_titles(title):
     """ Clean titles.
@@ -66,10 +68,12 @@ def show_counts_percent_chart(dset,
                             fontSize=14,
                             dy=-10)
     if stats_type == STATS_TYPES[1]:
+        # counts
         x = alt.X(column_count,
                   type="quantitative",
                   axis=alt.Axis(title=column_count))
     else:
+        # percentages
         x = alt.X(column_percent,
                   type="quantitative",
                   axis=alt.Axis(title=column_percent),
@@ -82,6 +86,7 @@ def show_counts_percent_chart(dset,
 
     tooltip = [column_name, column_count, column_percent]
 
+    # add chart to display
     chart = alt.Chart(dset.reset_index())\
                .mark_bar()\
                .encode(x=x, y=y, tooltip=tooltip)\
@@ -101,30 +106,36 @@ def show_grouped_counts_chart(dset, x, y, colour):
             y (str): column name for the y axis
             colour (str): column name for the colour
     """
+
     # define the chart elements
     y_title = clean_titles(y)
     x_title = clean_titles(x)
     title = f"{y_title} by {x_title}"
+    x = {'field': x,
+         'type': 'nominal',
+         'axis': {'title': "",
+                  'labelLimit': 0,
+                  'labelAngle': 90}}
+    y = {'field': y,
+         'type': 'nominal',
+         'axis': {'title': "",
+                  'labelLimit': 0}}
+    size = {'field': 'records',
+            'type': 'quantitative'}
+    color = {'field': colour,
+             'type': 'nominal',
+             'legend': None}
 
-    st.vega_lite_chart(dset, {
+    # add chart to display
+    chart = {
         'title': {'text': title, 'anchor': 'middle'},
         'mark': {'type': 'circle', 'tooltip': True},
-        'encoding': {'x': {'field': x,
-                           'type': 'nominal',
-                           'axis': {'title': "",
-                                    'labelLimit': 0,
-                                    'labelAngle': 90
-                                    }},
-                     'y': {'field': y,
-                           'type': 'nominal',
-                           'axis': {'title': "",
-                                    'labelLimit': 0}},
-                     'size': {'field': 'records',
-                              'type': 'quantitative'},
-                     'color': {'field': colour,
-                               'type': 'nominal',
-                               'legend': None}}
-        }, use_container_width=True)
+        'encoding': {'x': x,
+                     'y': y,
+                     'size': size,
+                     'color': color}}
+
+    st.vega_lite_chart(dset, chart, use_container_width=True)
 
 
 def display_record_counts_table(dset, describe_data=True, suffix=""):
@@ -225,7 +236,7 @@ def display_histograms(dset, key=None, bin_size=None):
         cols = st.columns(2)
         with cols[0]:
             bins = st.select_slider(sh.BIN_NUMBER_PROMPT,
-                                    options=[5, 10, 25, 50, 75, 100, 125, 150, 175, 200, 250, 300],
+                                    options=BIN_OPTIONS,
                                     value=10,
                                     key=f"slider_bins_{key}_{column_selected}")
         with cols[1]:
@@ -248,12 +259,10 @@ def display_histograms(dset, key=None, bin_size=None):
                            min_max[0], min_max[1], min_max,
                            key=f"slider_limits_{key}_{column_selected}")
         if bins:
-            nselected = dset[(dset[column_selected] >= limits[0])
-                             & (dset[column_selected] <= limits[1])].shape[0]
-
-            hcounts, bin_edges = np.histogram(dset.loc[(dset[column_selected] >= limits[0])
-                                              & (dset[column_selected] <= limits[1]),
-                                              column_selected],
+            indices_selected = (dset[column_selected] >= limits[0])\
+                & (dset[column_selected] <= limits[1])
+            nselected = dset[indices_selected].shape[0]
+            hcounts, bin_edges = np.histogram(dset.loc[indices_selected, column_selected],
                                               bins=bins)
             x_limits = [min(bin_edges), max(bin_edges)]
             hpercs = np.round(100 * hcounts / hcounts.sum(), 0)
@@ -262,8 +271,8 @@ def display_histograms(dset, key=None, bin_size=None):
                           for i in range(len(bin_edges)-1)]
             column_x = "value"
             column_label = "Interval"
-            column_counts = STATS_TYPES[0][:-1]
-            column_percs = STATS_TYPES[1][:-1]
+            column_counts = STATS_TYPES[1][:-1]
+            column_percs = STATS_TYPES[0][:-1]
             dset_plot = pd.DataFrame.from_dict(
                 {
                     column_label: bin_labels,
@@ -272,29 +281,30 @@ def display_histograms(dset, key=None, bin_size=None):
                 })
             dset_plot.set_index(column_label, inplace=True)
             with chart_container(dset_plot, export_formats=sh.DATA_EXPORT_FORMATS):
+                # define the chart elements
                 dset_to_plot = dset_plot.copy()
                 dset_to_plot[column_x] = bin_edges[:-1]
-                title = f"{column_selected}: {nselected} of {nrecords} records"
+                
+                title_text = f"{column_selected}: {nselected} of {nrecords} records"
+                x = alt.X(column_x,
+                          type="quantitative",
+                          axis=alt.Axis(title=""),
+                          scale=alt.Scale(domain=x_limits))
+                y = alt.Y(stats_type[:-1],
+                          type="quantitative",
+                          axis=alt.Axis(title=stats_type, labelLimit=400),
+                          sort="y")
+                tooltip = [column_label, column_counts, column_percs]
+                title = alt.TitleParams(text=title_text,
+                                        anchor="middle",
+                                        fontSize=14,
+                                        dy=-10)
+                # add chart to display
                 chart = alt.Chart(dset_to_plot.reset_index())\
                            .mark_bar()\
-                           .encode(
-                                x=alt.X(column_x,
-                                        type="quantitative",
-                                        axis=alt.Axis(title=""),
-                                        scale=alt.Scale(domain=x_limits)
-                                        ),
-                                y=alt.Y(stats_type[:-1],
-                                        type="quantitative",
-                                        axis=alt.Axis(title=stats_type, labelLimit=400),
-                                        sort="y"
-                                        ),
-                                tooltip=[column_label, column_counts, column_percs],
-                                ).properties(title=alt.TitleParams(text=title,
-                                                                   anchor="middle",
-                                                                   fontSize=14,
-                                                                   dy=-10
-                                                                   )
-                                             ).interactive()
+                           .encode(x=x, y=y, tooltip=tooltip)\
+                           .properties(title=title)\
+                           .interactive()
                 st.altair_chart(chart,
                                 use_container_width=USE_CONTAINER_WIDTH)
 
