@@ -11,7 +11,6 @@ st.set_page_config(page_title=sh.HOME_TITLE,
                                }
                    )
 
-st.sidebar.title(f"{sh.HOME_TITLE} :construction:")
 
 st.title(sh.HOME_TITLE)
 st.warning(sh.WARNING_TEXT, icon="⚠️")
