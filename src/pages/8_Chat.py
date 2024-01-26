@@ -4,15 +4,24 @@ REFChat module
 Interact with the REF dataset using natural language queries
 """
 
+from pathlib import Path
+from typing import Optional, Literal, TypedDict
+
 import openai
 import pandas as pd
 import streamlit as st
-import shared as sh
-
 import sqlite_utils
-from typing import Optional, Literal
 
-DB = "ref2021.db"
+from pandas.api.types import (
+    is_numeric_dtype,
+    is_datetime64_dtype,
+    is_datetime64_ns_dtype,
+)
+
+from shared import CHAT_TITLE
+
+DB_NAME = "ref2021.db"
+DB = sqlite_utils.Database(DB_NAME)
 TABLE = "ref2021"
 DEFAULT_MODEL = "gpt-3.5-turbo"
 PROMPT = """
@@ -27,6 +36,7 @@ The dataset has the following schema:
 {schema}
 """
 
+
 class SchemaField(TypedDict):
     name: str
     type: str
@@ -36,6 +46,7 @@ class SchemaField(TypedDict):
 class TableInfo(TypedDict):
     rows: int
     columns: list[SchemaField]
+
 
 def get_schema(db: Path, enum_columns: list[str] = []) -> dict[str, TableInfo]:
     """Returns SQL schema as a dictionary of tables that can be passed to the LLM
@@ -73,12 +84,12 @@ def get_schema(db: Path, enum_columns: list[str] = []) -> dict[str, TableInfo]:
         for f in fields:
             if f in enum_columns:
                 f["distinct_values"] = [
-                        x[0]
-                        for x in cur.execute(
-                            f"SELECT DISTINCT [{f['name']}] from {table}"
-                        ).fetchall()
-                        if isinstance(x[0], str) and x[0].strip() not in NULL_VALUES
-                    ]
+                    x[0]
+                    for x in cur.execute(
+                        f"SELECT DISTINCT [{f['name']}] from {table}"
+                    ).fetchall()
+                    if isinstance(x[0], str) and x[0].strip() not in NULL_VALUES
+                ]
 
         schema[table] = {"rows": nrows, "columns": fields}
     return schema
@@ -114,6 +125,7 @@ def get_viz_type(data: pd.DataFrame) -> Optional[Literal["bar", "line", "map"]]:
     else:
         return "bar"
 
+
 def _postprocess_data(df: pd.DataFrame) -> pd.DataFrame:
     if len(df.columns) == 1:  # you probably want a histogram for a value series
         df = df.value_counts().reset_index()
@@ -141,8 +153,7 @@ def _postprocess_data(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
-
-def evaluate_sql(db: sqlite_utils.db.Database, sql_stmt: str) -> Union[str, pd.DataFrame]:
+def run_sql(db: sqlite_utils.db.Database, sql_stmt: str) -> Union[str, pd.DataFrame]:
     results = list(db.query(sql_stmt))
     if len(results) == 1 and len(results[0].keys()) == 1:
         return str(list(results[0].values())[0])
@@ -150,8 +161,7 @@ def evaluate_sql(db: sqlite_utils.db.Database, sql_stmt: str) -> Union[str, pd.D
         return postprocess_data(pd.DataFrame(results).replace(NULL_VALUES, None))
 
 
-
-def get_sql(query: str, prompt: str, model: str=DEFAULT_MODEL) -> str:
+def get_sql(query: str, prompt: str, model: str = DEFAULT_MODEL) -> str:
     completion = openai.ChatCompletion.create(
         model=model,
         messages=[
@@ -164,6 +174,7 @@ def get_sql(query: str, prompt: str, model: str=DEFAULT_MODEL) -> str:
         return content.replace("\n", " ")
     else:
         return content
+
 
 def show_data(
     df: pd.DataFrame,
@@ -190,10 +201,6 @@ def show_data(
                 color=yax,
             )
             ct.plotly_chart(fig)
-        elif "Location" in df.columns:
-            df = df.merge(LOCATIONS, how="inner", on="Location")
-            print(df.dtypes)
-            print("Size:", yax)
             ct.map(df, size=yax)
         elif {"latitude", "lat", "longitude", "long"} & set(df.columns):
             ct.map(df, size=yax)
@@ -225,16 +232,13 @@ def schema_to_text(schema: dict[str, TableInfo]) -> dict[str, str]:
     return {k: "\n".join(v) for k, v in text.items()}
 
 
-def ask(
-        message: str, schema: str
-) -> Tuple[Union[str, pd.DataFrame], Optional[str]]:
+def ask(message: str, schema: str) -> Tuple[Union[str, pd.DataFrame], Optional[str]]:
     prompt = PROMPT.format(schema=schema)
-    query = get_sql(prompt)
+    query = get_sql(message, prompt)
     if query.lower().strip().startswith("select"):
         try:
-            if self.verbose:
-                print("> Using query:", query)
-            results = self.evaluate_sql(query)
+            print("> Using query:", query)
+            results = run_sql(DB, query)
             return results, query
 
         except sqlite3.OperationalError:
@@ -242,5 +246,71 @@ def ask(
     else:
         return query, None
 
+
+# -----------------------------------------------------------------------
 # Streamlit code begins
-st.title(sh.CHAT_TITLE)
+# -----------------------------------------------------------------------
+st.title(CHAT_TITLE)
+schema = get_schema(Path(DB_NAME), ENUM_COLUMNS)
+
+# Initialize chat history
+if "messages" not in st.session_state:
+    st.session_state.messages = []
+
+
+def sql_query_explanation(query: str) -> str:
+    return f"""I used this query:
+```sql
+  {query}
+```"""
+
+
+# Display chat messages from history on app rerun
+for message in st.session_state.messages:
+    with st.chat_message(message["role"]):
+        if isinstance(message["content"], pd.DataFrame):
+            show_data_gui(message["content"], message.get("viz_type"))
+        else:
+            st.markdown(message["content"])
+        if message.get("explanation"):
+            st.markdown(sql_query_explanation(message["explanation"]))
+
+if query := st.chat_input("Enter your query here"):
+    # Display user message in chat message container
+    with st.chat_message("user"):
+        st.markdown(query)
+    # Add user message to chat history
+    st.session_state.messages.append({"role": "user", "content": query})
+    alternate_response = None
+    viz_type = None
+    sql_query = None
+    response = None
+    if alternate_response:
+        response = alternate_response
+    else:
+        try:
+            response, sql_query = ask(query, schema)
+        except openai.error.AuthenticationError:  # type: ignore
+            st.error("You need to supply an OpenAI API key in the sidebar", icon="🚨")
+            st.stop()
+
+    with st.chat_message("assistant"):
+        if isinstance(response, pd.DataFrame) and not response.empty:
+            print(response.dtypes)
+            viz_type = get_viz_type(response)
+            print(">> Inferred viz type:", viz_type)
+            show_data_gui(response, viz_type)
+        elif isinstance(response, pd.DataFrame) and response.empty:
+            response = "I could not find any data for this question"
+            st.markdown(response)
+        else:
+            st.markdown(response)
+        if sql_query:
+            st.markdown(sql_query_explanation(sql_query))
+    session_state = {
+        "role": "assistant",
+        "content": response,
+        "viz_type": viz_type,
+        "explanation": sql_query,
+    }
+    st.session_state.messages.append(session_state)
