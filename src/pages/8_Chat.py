@@ -4,8 +4,10 @@ REFChat module
 Interact with the REF dataset using natural language queries
 """
 
+import sqlite3
+import logging
 from pathlib import Path
-from typing import Optional, Literal, TypedDict
+from typing import Optional, Literal, TypedDict, Union, Tuple
 
 import openai
 import pandas as pd
@@ -20,6 +22,32 @@ from pandas.api.types import (
 
 from shared import CHAT_TITLE
 
+ENUM_COLUMNS = [
+    "Institution name",
+    "Main panel name",
+    "Unit of assessment name",
+    "Environment evaluation - 1 star (binned)",
+    "Environment evaluation - 2 stars (binned)",
+    "Environment evaluation - 3 stars (binned)",
+    "Environment evaluation - 4 stars (binned)",
+    "Environment evaluation - Unclassified (binned)",
+    "Impact evaluation - 1 star (binned)",
+    "Impact evaluation - 2 stars (binned)",
+    "Impact evaluation - 3 stars (binned)",
+    "Impact evaluation - 4 stars (binned)",
+    "Impact evaluation - Unclassified (binned)",
+    "Outputs evaluation - 1 star (binned)",
+    "Outputs evaluation - 2 stars (binned)",
+    "Outputs evaluation - 3 stars (binned)",
+    "Outputs evaluation - 4 stars (binned)",
+    "Outputs evaluation - Unclassified (binned)",
+    "Overall evaluation - 1 star (binned)",
+    "Overall evaluation - 2 stars (binned)",
+    "Overall evaluation - 3 stars (binned)",
+    "Overall evaluation - 4 stars (binned)",
+    "Overall evaluation - Unclassified (binned)",
+]
+
 DB_NAME = "ref2021.db"
 DB = sqlite_utils.Database(DB_NAME)
 TABLE = "ref2021"
@@ -27,7 +55,7 @@ DEFAULT_MODEL = "gpt-3.5-turbo"
 PROMPT = """
 
 You are a research assistant for the Research Excellence Framework 2021. Data
-is stored in SQLite within the ''ref2021' table. You must respond to questions
+is stored in SQLite within the 'ref2021' table. You must respond to questions
 with a valid SQL query. Do not return any natural language explanation, only
 the SQL query.
 
@@ -290,7 +318,7 @@ if query := st.chat_input("Enter your query here"):
     else:
         try:
             response, sql_query = ask(query, schema)
-        except openai.error.AuthenticationError:  # type: ignore
+        except openai.AuthenticationError:  # type: ignore
             st.error("You need to supply an OpenAI API key in the sidebar", icon="🚨")
             st.stop()
 
@@ -299,7 +327,7 @@ if query := st.chat_input("Enter your query here"):
             print(response.dtypes)
             viz_type = get_viz_type(response)
             print(">> Inferred viz type:", viz_type)
-            show_data_gui(response, viz_type)
+            show_data(response, viz_type)
         elif isinstance(response, pd.DataFrame) and response.empty:
             response = "I could not find any data for this question"
             st.markdown(response)
