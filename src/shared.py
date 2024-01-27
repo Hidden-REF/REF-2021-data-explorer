@@ -13,7 +13,6 @@ DOCTORAL_DEGREES_TITLE = "Doctoral Degrees Awarded"
 RESEARCH_INCOME_TITLE = "Research Income"
 RESEARCH_INCOME_IN_KIND_TITLE = "Research Income in Kind"
 RESULTS_TITLE = "Results"
-CHAT_TITLE = "REFChat"
 
 # home page
 REF2021_URL = "https://results2021.ref.ac.uk/"
@@ -99,3 +98,20 @@ DOWNLOAD_SELECTED_DATA_BUTTON = "Download selected data as csv"
 # warnings
 NO_SELECTED_RECORDS_WARNING = "No records match the selection"
 NOT_SUITABLE_FOR_HISTOGRAM_WARNING = "The data is not suitable for a histogram"
+
+# chat
+CHAT_TITLE = "Chat"
+CHAT_SIDEBAR_TEXT = """
+## REFChat
+
+REFChat is an **experimental** interface utilising GPT models to provide a
+natural language query to the the REF 2021 dataset. You can ask it questions
+such as:
+
+> Show me universities with units that achieved more than 75% of outputs in
+> their overall evaluation 4 stars
+
+:warning: REFChat may give **incorrect or misleading** answers. Check the
+generated query before using in reports!
+
+"""

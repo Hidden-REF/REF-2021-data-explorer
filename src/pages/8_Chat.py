@@ -5,11 +5,14 @@ Interact with the REF dataset using natural language queries
 """
 
 import sqlite3
+import textwrap
 import logging
 from pathlib import Path
-from typing import Optional, Literal, TypedDict, Union, Tuple
+from typing import Optional, Literal, TypedDict, Union, Tuple, cast
+from pprint import pprint
 
 import openai
+
 import pandas as pd
 import streamlit as st
 import sqlite_utils
@@ -20,7 +23,13 @@ from pandas.api.types import (
     is_datetime64_ns_dtype,
 )
 
-from shared import CHAT_TITLE
+from shared import CHAT_TITLE, CHAT_SIDEBAR_TEXT
+
+NO_ANSWER = "Sorry, I do not know the answer to that question."
+
+NULL_VALUES = ["NA", "N/A", "NK", "None"]
+
+client = openai.OpenAI()
 
 ENUM_COLUMNS = [
     "Institution name",
@@ -57,7 +66,10 @@ PROMPT = """
 You are a research assistant for the Research Excellence Framework 2021. Data
 is stored in SQLite within the 'ref2021' table. You must respond to questions
 with a valid SQL query. Do not return any natural language explanation, only
-the SQL query.
+the SQL query. Ensure that columns with spaces are quoted in the query.
+
+If you are filtering using a WHERE clause, you must SELECT the columns being
+filtered.
 
 The dataset has the following schema:
 
@@ -110,7 +122,7 @@ def get_schema(db: Path, enum_columns: list[str] = []) -> dict[str, TableInfo]:
             for x in fields
         ]
         for f in fields:
-            if f in enum_columns:
+            if f["name"] in enum_columns:
                 f["distinct_values"] = [
                     x[0]
                     for x in cur.execute(
@@ -154,13 +166,13 @@ def get_viz_type(data: pd.DataFrame) -> Optional[Literal["bar", "line", "map"]]:
         return "bar"
 
 
-def _postprocess_data(df: pd.DataFrame) -> pd.DataFrame:
+def postprocess_data(df: pd.DataFrame) -> pd.DataFrame:
     if len(df.columns) == 1:  # you probably want a histogram for a value series
-        df = df.value_counts().reset_index()
+        df = df.value_counts().reset_index(name="frequency")
 
         # if the counts are all 1, these were possibly from a SELECT DISTINCT query
-        if list(df["count"].unique()) == [1]:
-            del df["count"]
+        if list(df["frequency"].unique()) == [1]:
+            del df["frequency"]
     df = df.apply(
         lambda col: pd.to_datetime(col, errors="ignore")
         if col.dtypes == object
@@ -189,15 +201,17 @@ def run_sql(db: sqlite_utils.db.Database, sql_stmt: str) -> Union[str, pd.DataFr
         return postprocess_data(pd.DataFrame(results).replace(NULL_VALUES, None))
 
 
-def get_sql(query: str, prompt: str, model: str = DEFAULT_MODEL) -> str:
-    completion = openai.ChatCompletion.create(
+def get_sql(query: str, prompt: str, model: str = DEFAULT_MODEL) -> Optional[str]:
+    completion = client.chat.completions.create(
         model=model,
         messages=[
             {"role": "system", "content": prompt},
             {"role": "user", "content": query},
         ],
     )
-    content = completion.choices[0].message["content"]
+    content = completion.choices[0].message.content
+    if content is None:
+        return None
     if content.lower().startswith("select"):
         return content.replace("\n", " ")
     else:
@@ -220,20 +234,8 @@ def show_data(
         ct.line_chart(df, x=xax, y=yax)
     elif viz_type == "bar":
         ct.bar_chart(df, x=xax, y=yax)
-    elif viz_type == "map":
-        # is it a choropleth or a circle plot?
-        if "Country_ISO3" in df.columns and "Location" not in df.columns:
-            fig = px.choropleth(
-                df,
-                locations="Country_ISO3",
-                color=yax,
-            )
-            ct.plotly_chart(fig)
-            ct.map(df, size=yax)
-        elif {"latitude", "lat", "longitude", "long"} & set(df.columns):
-            ct.map(df, size=yax)
-        else:
-            pass
+    elif viz_type == "map" and ({"latitude", "lat", "longitude", "long"} & set(df.columns)):
+        ct.map(df, size=yax)
     else:
         raise ValueError(f"Unknown viz_type {viz_type}")
     dt.dataframe(df)
@@ -260,9 +262,11 @@ def schema_to_text(schema: dict[str, TableInfo]) -> dict[str, str]:
     return {k: "\n".join(v) for k, v in text.items()}
 
 
-def ask(message: str, schema: str) -> Tuple[Union[str, pd.DataFrame], Optional[str]]:
+def ask(user_message: str, schema: str) -> Tuple[Union[str, pd.DataFrame], Optional[str]]:
     prompt = PROMPT.format(schema=schema)
-    query = get_sql(message, prompt)
+    query = get_sql(user_message.replace("%", ""), prompt)
+    if query is None:
+        return NO_ANSWER, None
     if query.lower().strip().startswith("select"):
         try:
             print("> Using query:", query)
@@ -279,7 +283,12 @@ def ask(message: str, schema: str) -> Tuple[Union[str, pd.DataFrame], Optional[s
 # Streamlit code begins
 # -----------------------------------------------------------------------
 st.title(CHAT_TITLE)
-schema = get_schema(Path(DB_NAME), ENUM_COLUMNS)
+SCHEMA = get_schema(Path(DB_NAME), ENUM_COLUMNS)
+
+pprint(SCHEMA)
+
+with st.sidebar:
+    st.markdown(CHAT_SIDEBAR_TEXT)
 
 # Initialize chat history
 if "messages" not in st.session_state:
@@ -287,9 +296,10 @@ if "messages" not in st.session_state:
 
 
 def sql_query_explanation(query: str) -> str:
+    wrapped_query = '\n'.join(textwrap.wrap(query))
     return f"""I used this query:
 ```sql
-  {query}
+  {wrapped_query}
 ```"""
 
 
@@ -297,7 +307,7 @@ def sql_query_explanation(query: str) -> str:
 for message in st.session_state.messages:
     with st.chat_message(message["role"]):
         if isinstance(message["content"], pd.DataFrame):
-            show_data_gui(message["content"], message.get("viz_type"))
+            show_data(message["content"], message.get("viz_type"))
         else:
             st.markdown(message["content"])
         if message.get("explanation"):
@@ -317,7 +327,7 @@ if query := st.chat_input("Enter your query here"):
         response = alternate_response
     else:
         try:
-            response, sql_query = ask(query, schema)
+            response, sql_query = ask(query, schema_to_text(SCHEMA)[TABLE])
         except openai.AuthenticationError:  # type: ignore
             st.error("You need to supply an OpenAI API key in the sidebar", icon="🚨")
             st.stop()
