@@ -100,11 +100,11 @@ NO_SELECTED_RECORDS_WARNING = "No records match the selection"
 NOT_SUITABLE_FOR_HISTOGRAM_WARNING = "The data is not suitable for a histogram"
 
 # chat
-CHAT_TITLE = "Chat"
+CHAT_TITLE = "REF2021 Chat"
 CHAT_SIDEBAR_TEXT = """
-## REFChat
+## REF2021 Chat
 
-REFChat is an **experimental** interface utilising GPT models to provide a
+REF2021 Chat is an **experimental** interface utilising GPT models to provide a
 natural language query to the the REF 2021 dataset. You can ask it questions
 such as:
 
