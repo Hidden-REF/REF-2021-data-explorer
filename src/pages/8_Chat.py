@@ -4,18 +4,20 @@ REFChat module
 Interact with the REF dataset using natural language queries
 """
 
-import sqlite3
+import json
 import textwrap
 import logging
 from pathlib import Path
-from typing import Optional, Literal, TypedDict, Union, Tuple, cast
+from typing import Optional, Literal, TypedDict, Union, Tuple
 from pprint import pprint
 
 import openai
 
+import duckdb
 import pandas as pd
+import pyarrow.dataset
+import pyarrow.acero
 import streamlit as st
-import sqlite_utils
 
 from pandas.api.types import (
     is_numeric_dtype,
@@ -57,14 +59,13 @@ ENUM_COLUMNS = [
     "Overall evaluation - Unclassified (binned)",
 ]
 
-DB_NAME = "ref2021.db"
-DB = sqlite_utils.Database(DB_NAME)
+DB = "ref2021.parquet"
 TABLE = "ref2021"
 DEFAULT_MODEL = "gpt-3.5-turbo"
 PROMPT = """
 
 You are a research assistant for the Research Excellence Framework 2021. Data
-is stored in SQLite within the 'ref2021' table. You must respond to questions
+is stored in parquet format within the 'ref2021.parquet' table. You must respond to questions
 with a valid SQL query. Do not return any natural language explanation, only
 the SQL query. Ensure that columns with spaces are quoted in the query.
 
@@ -88,11 +89,36 @@ class TableInfo(TypedDict):
     columns: list[SchemaField]
 
 
-def get_schema(db: Path, enum_columns: list[str] = []) -> dict[str, TableInfo]:
-    """Returns SQL schema as a dictionary of tables that can be passed to the LLM
+def unique_values(dataset: pyarrow.dataset.Dataset, column: str) -> list[str]:
+    return (
+        pyarrow.acero.Declaration.from_sequence(
+            [
+                pyarrow.acero.Declaration(
+                    "scan", pyarrow.acero.ScanNodeOptions(dataset)
+                ),
+                pyarrow.acero.Declaration(
+                    "aggregate", pyarrow.acero.AggregateNodeOptions([], [column])
+                ),
+            ]
+        )
+        .to_table()
+        .column(0)
+        .to_pylist()
+    )
+
+
+def get_column_type(column: dict[str, Optional[str]]) -> str:
+    if column.get("numpy_type") == "object" or column.get("pandas_type") == "unicode":
+        return "string"
+    else:
+        return column.get("pandas_type") or column.get("numpy_type") or "string"
+
+
+def get_schema(file: Path, enum_columns: list[str] = []) -> TableInfo:
+    """Returns parquet file schema as a dictionary of tables that can be passed to the LLM
 
     Args:
-        db (str): SQLite database path
+        db (str): Filename of file in parquet format
         enum_columns (list[str]): List of columns that should be considered
             enumerations, i.e the unique items in that column will be
             visible to the LLM.
@@ -100,44 +126,32 @@ def get_schema(db: Path, enum_columns: list[str] = []) -> dict[str, TableInfo]:
     Returns:
         Mapping of table names to list of SchemaField dictionaries
     """
-    schema = {}
-    conn = sqlite3.connect(db)
-    tables = [
-        x[0]
-        for x in (
-            conn.cursor()
-            .execute(
-                "SELECT name from sqlite_schema WHERE type = 'table' AND name NOT LIKE 'sqlite_%'"
-            )
-            .fetchall()
+    ds = pyarrow.dataset.dataset(file)
+    metadata = ds.schema.metadata
+    metadata_schema_bytes = metadata[list(metadata.keys())[0]]
+    metadata_schema = json.loads(metadata_schema_bytes.decode("utf-8"))
+    out_schema: TableInfo = {"rows": ds.count_rows(), "columns": []}
+    for column in metadata_schema["columns"]:
+        if "Unnamed" in column["name"]:  # skip unnamed columns, usually pandas indices
+            continue
+        out_schema["columns"].append(
+            {
+                "name": column["name"],
+                "type": get_column_type(column),
+                "distinct_values": None,
+            }
         )
-    ]
-
-    for table in tables:
-        cur = conn.cursor()
-        nrows = cur.execute(f"SELECT COUNT(*) from {table}").fetchall()[0][0]
-        fields = cur.execute(f"PRAGMA table_info('{table}');").fetchall()
-        fields = [
-            cast(SchemaField, dict(name=x[1], type=x[2], distinct_vals=None))
-            for x in fields
-        ]
-        for f in fields:
-            if f["name"] in enum_columns:
-                f["distinct_values"] = [
-                    x[0]
-                    for x in cur.execute(
-                        f"SELECT DISTINCT [{f['name']}] from {table}"
-                    ).fetchall()
-                    if isinstance(x[0], str) and x[0].strip() not in NULL_VALUES
-                ]
-
-        schema[table] = {"rows": nrows, "columns": fields}
-    return schema
+        if column["name"] in enum_columns:
+            out_schema["columns"][-1]["distinct_values"] = unique_values(
+                ds, column["name"]
+            )
+    return out_schema
 
 
 def get_viz_type(data: pd.DataFrame) -> Optional[Literal["bar", "line", "map"]]:
     # convert dates
     logging.debug(f"Data types: {data.dtypes}")
+    data.rename(columns={0: "Column"}, inplace=True)
 
     # one row or empty dataframe does not need visualisation
     if len(data) <= 1:
@@ -193,8 +207,8 @@ def postprocess_data(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
-def run_sql(db: sqlite_utils.db.Database, sql_stmt: str) -> Union[str, pd.DataFrame]:
-    results = list(db.query(sql_stmt))
+def run_sql(filename: str, sql_stmt: str) -> Union[str, pd.DataFrame]:
+    results = list(duckdb.query(sql_stmt.replace("`", '"')).fetchall())
     if len(results) == 1 and len(results[0].keys()) == 1:
         return str(list(results[0].values())[0])
     else:
@@ -234,35 +248,35 @@ def show_data(
         ct.line_chart(df, x=xax, y=yax)
     elif viz_type == "bar":
         ct.bar_chart(df, x=xax, y=yax)
-    elif viz_type == "map" and ({"latitude", "lat", "longitude", "long"} & set(df.columns)):
+    elif viz_type == "map" and (
+        {"latitude", "lat", "longitude", "long"} & set(df.columns)
+    ):
         ct.map(df, size=yax)
     else:
         raise ValueError(f"Unknown viz_type {viz_type}")
     dt.dataframe(df)
 
 
-def schema_to_text(schema: dict[str, TableInfo]) -> dict[str, str]:
-    text = {t: [] for t in schema.keys()}
-    for table in sorted(schema.keys()):
-        text[table].append(f"CREATE TABLE {table} (")
-        for field in schema[table]["columns"]:
-            if not field["name"].strip():
-                continue
-            if field.get("distinct_values"):
-                text[table].append(
-                    f"  {field['name']} AS ENUM "
-                    + repr(field.get("distinct_values"))
-                    .replace("[", "(")
-                    .replace("]", ")")
-                    + ","
-                )
-            else:
-                text[table].append(f"  {field['name']} {field['type']},")
-        text[table].extend([")", ""])
-    return {k: "\n".join(v) for k, v in text.items()}
+def schema_to_text(schema: TableInfo) -> str:
+    text = ["CREATE TABLE 'ref2021.parquet' ("]
+    for field in schema["columns"]:
+        if not field["name"].strip():
+            continue
+        if field.get("distinct_values"):
+            text.append(
+                f"  {field['name']} AS ENUM "
+                + repr(field.get("distinct_values")).replace("[", "(").replace("]", ")")
+                + ","
+            )
+        else:
+            text.append(f"  {field['name']} {field['type']},")
+    text.extend([")", ""])
+    return "\n".join(text)
 
 
-def ask(user_message: str, schema: str) -> Tuple[Union[str, pd.DataFrame], Optional[str]]:
+def ask(
+    user_message: str, schema: str
+) -> Tuple[Union[str, pd.DataFrame], Optional[str]]:
     prompt = PROMPT.format(schema=schema)
     query = get_sql(user_message.replace("%", ""), prompt)
     if query is None:
@@ -273,7 +287,7 @@ def ask(user_message: str, schema: str) -> Tuple[Union[str, pd.DataFrame], Optio
             results = run_sql(DB, query)
             return results, query
 
-        except sqlite3.OperationalError:
+        except Exception:
             return NO_ANSWER, None
     else:
         return query, None
@@ -283,7 +297,8 @@ def ask(user_message: str, schema: str) -> Tuple[Union[str, pd.DataFrame], Optio
 # Streamlit code begins
 # -----------------------------------------------------------------------
 st.title(CHAT_TITLE)
-SCHEMA = get_schema(Path(DB_NAME), ENUM_COLUMNS)
+SCHEMA = get_schema(Path(DB), ENUM_COLUMNS)
+SCHEMA_TEXT = schema_to_text(SCHEMA)
 
 pprint(SCHEMA)
 
@@ -296,7 +311,7 @@ if "messages" not in st.session_state:
 
 
 def sql_query_explanation(query: str) -> str:
-    wrapped_query = '\n'.join(textwrap.wrap(query))
+    wrapped_query = "\n".join(textwrap.wrap(query))
     return f"""I used this query:
 ```sql
   {wrapped_query}
@@ -327,7 +342,7 @@ if query := st.chat_input("Enter your query here"):
         response = alternate_response
     else:
         try:
-            response, sql_query = ask(query, schema_to_text(SCHEMA)[TABLE])
+            response, sql_query = ask(query, SCHEMA_TEXT)
         except openai.AuthenticationError:  # type: ignore
             st.error("You need to supply an OpenAI API key in the sidebar", icon="🚨")
             st.stop()
