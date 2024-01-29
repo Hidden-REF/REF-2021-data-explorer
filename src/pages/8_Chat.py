@@ -4,6 +4,7 @@ REFChat module
 Interact with the REF dataset using natural language queries
 """
 
+import os
 import json
 import textwrap
 import logging
@@ -33,12 +34,7 @@ TOKEN_NOTAVAILABLE = ":warning: Open AI token not available for the chat"
 
 NULL_VALUES = ["NA", "N/A", "NK", "None"]
 
-try:
-    client = openai.OpenAI()
-except Exception:
-    OPENAITOKEN_AVAILABLE = False
-else:
-    OPENAITOKEN_AVAILABLE = True
+OPENAITOKEN_AVAILABLE = False
 
 ENUM_COLUMNS = [
     "Institution name",
@@ -238,6 +234,8 @@ def get_sql(query: str, prompt: str, model: str = DEFAULT_MODEL) -> Optional[str
     else:
         return content
 
+def clear_chat():
+    st.session_state.messages = []
 
 def show_data(
     df: pd.DataFrame,
@@ -285,7 +283,10 @@ def ask(
     user_message: str, schema: str
 ) -> Tuple[Union[str, pd.DataFrame], Optional[str]]:
     prompt = PROMPT.format(schema=schema)
-    query = get_sql(user_message.replace("%", ""), prompt)
+    try:
+        query = get_sql(user_message.replace("%", ""), prompt)
+    except NameError:  # client is not defined
+        return TOKEN_NOTAVAILABLE, None
     if query is None:
         return NO_ANSWER, None
     if query.lower().strip().startswith("select"):
@@ -319,61 +320,77 @@ SCHEMA_TEXT = schema_to_text(SCHEMA)
 
 with st.sidebar:
     st.markdown(CHAT_SIDEBAR_TEXT)
+    api_key_input = st.text_input(
+        "OpenAI API Key",
+        type="password",
+        key="OPENAI_API_KEY",
+        placeholder="Paste your OpenAI API key here (sk-...)",
+        help="You can get your API key from https://platform.openai.com/account/api-keys",  # noqa: E501
+        value=os.environ.get("OPENAI_API_KEY", st.session_state.get("OPENAI_API_KEY"))
+    )
+    st.button("Clear chat", on_click=clear_chat)
 
-if not OPENAITOKEN_AVAILABLE:
-    st.warning(TOKEN_NOTAVAILABLE)
-else:
-    # Initialize chat history
-    if "messages" not in st.session_state:
-        st.session_state.messages = []
+try:
+    client = openai.OpenAI(api_key=st.session_state["OPENAI_API_KEY"])
+    OPENAITOKEN_AVAILABLE = True
+except Exception:
+    pass
 
 
-    # Display chat messages from history on app rerun
-    for message in st.session_state.messages:
-        with st.chat_message(message["role"]):
-            if isinstance(message["content"], pd.DataFrame):
-                show_data(message["content"], message.get("viz_type"))
-            else:
-                st.markdown(message["content"])
-            if message.get("explanation"):
-                st.markdown(sql_query_explanation(message["explanation"]))
+# Initialize chat history
+if "messages" not in st.session_state:
+    st.session_state.messages = []
 
-    if query := st.chat_input("Enter your query here"):
-        # Display user message in chat message container
-        with st.chat_message("user"):
-            st.markdown(query)
-        # Add user message to chat history
-        st.session_state.messages.append({"role": "user", "content": query})
-        alternate_response = None
-        viz_type = None
-        sql_query = None
-        response = None
-        if alternate_response:
-            response = alternate_response
+    if not OPENAITOKEN_AVAILABLE:
+        st.session_state.messages.append({"role": "assistant", "content": TOKEN_NOTAVAILABLE})
+
+
+# Display chat messages from history on app rerun
+for message in st.session_state.messages:
+    with st.chat_message(message["role"]):
+        if isinstance(message["content"], pd.DataFrame):
+            show_data(message["content"], message.get("viz_type"))
         else:
-            try:
-                response, sql_query = ask(query, SCHEMA_TEXT)
-            except openai.AuthenticationError:  # type: ignore
-                st.error("You need to supply an OpenAI API key in the sidebar", icon="🚨")
-                st.stop()
+            st.markdown(message["content"])
+        if message.get("explanation"):
+            st.markdown(sql_query_explanation(message["explanation"]))
 
-        with st.chat_message("assistant"):
-            if isinstance(response, pd.DataFrame) and not response.empty:
-                print(response.dtypes)
-                viz_type = get_viz_type(response)
-                print(">> Inferred viz type:", viz_type)
-                show_data(response, viz_type)
-            elif isinstance(response, pd.DataFrame) and response.empty:
-                response = "I could not find any data for this question"
-                st.markdown(response)
-            else:
-                st.markdown(response)
-            if sql_query:
-                st.markdown(sql_query_explanation(sql_query))
-        session_state = {
-            "role": "assistant",
-            "content": response,
-            "viz_type": viz_type,
-            "explanation": sql_query,
-        }
-        st.session_state.messages.append(session_state)
+if query := st.chat_input("Enter your query here"):
+    # Display user message in chat message container
+    with st.chat_message("user"):
+        st.markdown(query)
+    # Add user message to chat history
+    st.session_state.messages.append({"role": "user", "content": query})
+    alternate_response = None
+    viz_type = None
+    sql_query = None
+    response = None
+    if alternate_response:
+        response = alternate_response
+    else:
+        try:
+            response, sql_query = ask(query, SCHEMA_TEXT)
+        except openai.AuthenticationError:  # type: ignore
+            st.error("OpenAI authentication failed, try setting another key", icon="🚨")
+            st.stop()
+
+    with st.chat_message("assistant"):
+        if isinstance(response, pd.DataFrame) and not response.empty:
+            print(response.dtypes)
+            viz_type = get_viz_type(response)
+            print(">> Inferred viz type:", viz_type)
+            show_data(response, viz_type)
+        elif isinstance(response, pd.DataFrame) and response.empty:
+            response = "I could not find any data for this question"
+            st.markdown(response)
+        else:
+            st.markdown(response)
+        if sql_query:
+            st.markdown(sql_query_explanation(sql_query))
+    session_state = {
+        "role": "assistant",
+        "content": response,
+        "viz_type": viz_type,
+        "explanation": sql_query,
+    }
+    st.session_state.messages.append(session_state)

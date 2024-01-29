@@ -42,6 +42,8 @@ above snippet, export the key to your environment:
 export OPENAI_API_KEY=<your key here>
 ```
 
+Alternatively, you can enter the OpenAI key in the sidebar.
+
 Currently REFChat is **experimental**. Always check the results before
 using it in a report. REFChat displays the SQL query used to perform the
 data analysis; if the query is correct, the resulting data will be as
