@@ -2,7 +2,7 @@ import streamlit as st
 
 import read_write as rw
 import visualisations as vis
-import shared as sh
+import shared_text as sh
 
 st.title(sh.DOCTORAL_DEGREES_TITLE)
 

@@ -11,7 +11,7 @@ import altair as alt
 
 import codebook as cb
 import process as proc
-import shared as sh
+import shared_text as sh
 
 
 USE_CONTAINER_WIDTH = True
@@ -23,26 +23,6 @@ STATS_TYPES = ["Percentages", "Counts"]
 DESCRIPTION_MEASURES = ["min", "max", "mean", "std"]
 
 BIN_OPTIONS = [5, 10, 25, 50, 75, 100, 125, 150, 175, 200, 250, 300]
-
-TO_NOT_DISPLAY = [
-    cb.COL_OUTPUT_TITLE,
-    cb.COL_OUTPUT_PUBLISHER,
-    cb.COL_OUTPUT_ISBN,
-    cb.COL_OUTPUT_ISSN,
-    cb.COL_OUTPUT_DOI,
-    cb.COL_OUTPUT_PATENT_NO,
-    cb.COL_OUTPUT_URL,
-    cb.COL_OUTPUT_PLACE,
-    cb.COL_OUTPUT_VOL_NO,
-    cb.COL_OUTPUT_VOL_TITLE,
-    cb.COL_OUTPUT_ISSUE,
-    cb.COL_OUTPUT_FIRST_PAGE,
-    cb.COL_OUTPUT_ARTICLE_NO,
-    cb.COL_OUTPUT_MONTH,
-    cb.COL_OUTPUT_SUPP,
-    cb.COL_IMPACT_SUMMARY,
-    cb.COL_IMPACT_DETAILS
-]
 
 
 def clean_titles(title):
@@ -175,7 +155,7 @@ def display_record_counts_table(dset, describe_data=True, suffix=""):
                         f"**{column_name}** - *{column_type}, "
                         f"{categories_count} {categories_count_text}*"
                     )
-                    if column_name not in TO_NOT_DISPLAY:
+                    if column_name not in cb.FILEDS_TO_NOT_DISPLAY:
                         categories = "\n".join(
                                 sorted(dset[column_name].dropna().unique())
                             )
@@ -200,9 +180,9 @@ def display_record_counts_table(dset, describe_data=True, suffix=""):
 
                     st.markdown(f"**{column_name}** - *{column_type}*")
                     st.dataframe(column_description, hide_index=True)
-                elif column_type == "object":
-                    st.markdown(f"`{column_name}` - *{sh.OBJECT_LABEL}*")
-                    if column_name not in TO_NOT_DISPLAY:
+                elif column_type in ["string", "object"]:
+                    st.markdown(f"**{column_name}** - *{sh.OBJECT_LABEL}*")
+                    if column_name not in cb.FILEDS_TO_NOT_DISPLAY:
                         items = "\n".join(sorted(dset[column_name].dropna().unique()))
                         stx.scrollableTextbox(items, key=f"stx_{column_name}")
                 else:

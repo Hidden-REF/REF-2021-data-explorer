@@ -1,5 +1,5 @@
 import streamlit as st
-import shared as sh
+import shared_text as sh
 
 st.set_page_config(page_title=sh.HOME_TITLE,
                    page_icon="📊",
