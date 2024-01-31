@@ -39,6 +39,7 @@ TO_NOT_DISPLAY = [
     cb.COL_OUTPUT_FIRST_PAGE,
     cb.COL_OUTPUT_ARTICLE_NO,
     cb.COL_OUTPUT_MONTH,
+    cb.COL_OUTPUT_SUPP,
     cb.COL_IMPACT_SUMMARY,
     cb.COL_IMPACT_DETAILS
 ]
@@ -176,9 +177,14 @@ def display_record_counts_table(dset, describe_data=True, suffix=""):
                     )
                     if column_name not in TO_NOT_DISPLAY:
                         categories = "\n".join(
-                            sorted(dset[column_name].dropna().unique())
-                        )
-                        stx.scrollableTextbox(categories, key=f"stx_{column_name}")
+                                sorted(dset[column_name].dropna().unique())
+                            )
+                        if categories_count > 1:
+                            stx.scrollableTextbox(categories, key=f"stx_{column_name}")
+                        else:
+                            with st.container(border=True):
+                                st.markdown(categories)
+
                 elif column_type in ["int64", "float64"]:
                     column_type = "number"
                     column_description = pd.DataFrame(
