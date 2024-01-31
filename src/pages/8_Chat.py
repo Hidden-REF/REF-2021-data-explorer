@@ -10,7 +10,6 @@ import textwrap
 import logging
 from pathlib import Path
 from typing import Optional, Literal, TypedDict, Union, Tuple
-from pprint import pprint
 
 import openai
 
@@ -234,8 +233,10 @@ def get_sql(query: str, prompt: str, model: str = DEFAULT_MODEL) -> Optional[str
     else:
         return content
 
+
 def clear_chat():
     st.session_state.messages = []
+
 
 def show_data(
     df: pd.DataFrame,
@@ -326,7 +327,7 @@ with st.sidebar:
         key="OPENAI_API_KEY",
         placeholder="Paste your OpenAI API key here (sk-...)",
         help="You can get your API key from https://platform.openai.com/account/api-keys",  # noqa: E501
-        value=os.environ.get("OPENAI_API_KEY", st.session_state.get("OPENAI_API_KEY"))
+        value=os.environ.get("OPENAI_API_KEY", st.session_state.get("OPENAI_API_KEY")),
     )
     st.button("Clear chat", on_click=clear_chat)
 
@@ -342,7 +343,9 @@ if "messages" not in st.session_state:
     st.session_state.messages = []
 
     if not OPENAITOKEN_AVAILABLE:
-        st.session_state.messages.append({"role": "assistant", "content": TOKEN_NOTAVAILABLE})
+        st.session_state.messages.append(
+            {"role": "assistant", "content": TOKEN_NOTAVAILABLE}
+        )
 
 
 # Display chat messages from history on app rerun
