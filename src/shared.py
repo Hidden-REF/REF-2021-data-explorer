@@ -66,6 +66,9 @@ PROC_TEXT = "Processing request..."
 # labels
 RECORDS_LABEL = "Records"
 INSTITUTIONS_LABEL = "Institutions"
+CATEGORY_LABEL_SINGULAR = "level"
+CATEGORY_LABEL_PLURAL = "levels"
+OBJECT_LABEL = "string"
 
 # prompts
 DISTRIBUTION_SELECT_PROMPT = "Select column to plot"
@@ -77,7 +80,7 @@ EXCLUDE_NEGATIVE_PROMPT = "Exclude negative values"
 
 # headers
 header_style = "######"
-DESCRIBE_HEADER = f"{header_style} Data description"
+DESCRIBE_HEADER = f"{header_style} Data fields"
 VISUALISE_HEADER = f"{header_style} Visualise data"
 EXPLORE_HEADER = f"{header_style} Select and explore data"
 

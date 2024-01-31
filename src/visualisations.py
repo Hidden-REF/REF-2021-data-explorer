@@ -4,6 +4,7 @@ import pandas as pd
 import streamlit as st
 from streamlit_extras.chart_container import chart_container
 from streamlit_extras.dataframe_explorer import dataframe_explorer
+import streamlit_scrollable_textbox as stx
 
 
 import altair as alt
@@ -22,6 +23,18 @@ STATS_TYPES = ["Percentages", "Counts"]
 DESCRIPTION_MEASURES = ["min", "max", "mean", "std"]
 
 BIN_OPTIONS = [5, 10, 25, 50, 75, 100, 125, 150, 175, 200, 250, 300]
+
+TO_NOT_DISPLAY = [
+    cb.COL_OUTPUT_PLACE,
+    cb.COL_OUTPUT_VOL_NO,
+    cb.COL_OUTPUT_VOL_TITLE,
+    cb.COL_OUTPUT_ISSUE,
+    cb.COL_OUTPUT_FIRST_PAGE,
+    cb.COL_OUTPUT_ARTICLE_NO,
+    cb.COL_OUTPUT_MONTH,
+    cb.COL_IMPACT_SUMMARY,
+    cb.COL_IMPACT_DETAILS
+]
 
 
 def clean_titles(title):
@@ -139,7 +152,7 @@ def display_record_counts_table(dset, describe_data=True, suffix=""):
 
     if describe_data:
         with st.expander(sh.DESCRIBE_HEADER):
-            st.markdown(sh.COLUMNS_TITLE)
+            # st.markdown(sh.COLUMNS_TITLE)
             column_dtypes = [
                 (column, str(dtype)) for column, dtype in dset.dtypes.items()
             ]
@@ -147,38 +160,42 @@ def display_record_counts_table(dset, describe_data=True, suffix=""):
                 if column_type == "category":
                     categories_count = dset[column_name].nunique()
                     if categories_count > 1:
-                        categories_count_text = "categories"
+                        categories_count_text = sh.CATEGORY_LABEL_PLURAL
                     else:
-                        categories_count_text = "category"
+                        categories_count_text = sh.CATEGORY_LABEL_SINGULAR
                     st.markdown(
-                        f"`{column_name}` ({column_type}, "
-                        f"{categories_count} {categories_count_text})"
+                        f"**{column_name}** - *{column_type}, "
+                        f"{categories_count} {categories_count_text}*"
                     )
-
-                    if (
-                        column_name != cb.COL_INST_NAME
-                        and column_name != cb.COL_RG_CODE
-                    ):
-                        categories = sorted(
-                            [x for x in dset[column_name].dropna().unique()]
+                    if column_name not in TO_NOT_DISPLAY:
+                        categories = "\n".join(
+                            sorted(dset[column_name].dropna().unique())
                         )
-                        st.markdown(f"- {'; '.join(categories)}")
-                else:
-                    if column_type in ["int64", "float64"]:
-                        column_type = "number"
-                        column_description = (
+                        stx.scrollableTextbox(categories, key=f"stx_{column_name}")
+                elif column_type in ["int64", "float64"]:
+                    column_type = "number"
+                    column_description = pd.DataFrame(
+                        data=[
                             dset[column_name]
                             .describe()
                             .loc[DESCRIPTION_MEASURES]
                             .round(0)
                             .astype(int)
                             .to_dict()
-                        )
+                        ]
+                    )
 
-                        st.markdown(f"`{column_name}` ({column_type})")
-                        st.markdown(f"- {column_description}")
-                    else:
-                        st.markdown(f"`{column_name}` ({column_type})")
+                    st.markdown(f"**{column_name}** - *{column_type}*")
+                    st.dataframe(column_description, hide_index=True)
+                elif column_type == "object":
+                    st.markdown(f"`{column_name}` - *{sh.OBJECT_LABEL}*")
+                    if column_name not in TO_NOT_DISPLAY:
+                        items = "\n".join(sorted(dset[column_name].dropna().unique()))
+                        stx.scrollableTextbox(items, key=f"stx_{column_name}")
+                else:
+                    st.markdown(f"`{column_name}` ({column_type})")
+                    items = "\n".join(sorted(dset[column_name].dropna().unique()))
+                    stx.scrollableTextbox(items, key=f"stx_{column_name}")
 
 
 def display_table_from_dictionary(dict):
