@@ -34,6 +34,8 @@ LOG_PPROC_RINCOME = f"{LOGS_PATH}ResearchIncome{PPROCESS_SUFFIX}{LOGS_EXT}"
 LOG_PPROC_RINCOMEINKIND = f"{LOGS_PATH}ResearchIncomeInKind{PPROCESS_SUFFIX}{LOGS_EXT}"
 LOG_PPROC_RESULTS = f"{LOGS_PATH}Results{PPROCESS_SUFFIX}{LOGS_EXT}"
 
+CHAT_DB = "db/Results_extra_preprocessed.parquet"
+
 
 @st.cache_data
 def get_data(fname):

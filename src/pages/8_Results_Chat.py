@@ -1,8 +1,3 @@
-"""
-REFChat module
-
-Interact with the REF dataset using natural language queries
-"""
 import os
 import openai
 import pandas as pd
@@ -12,24 +7,24 @@ import json
 from pathlib import Path
 
 import shared_text as sh
+import read_write as rw
 import chat
 
 
 OPENAITOKEN_AVAILABLE = False
 
 # get the categorical columns
-pfile = pq.ParquetFile(chat.DB)
+pfile = pq.ParquetFile(rw.CHAT_DB)
 json_struct = json.loads(pfile.metadata.metadata[b"pandas"])
 ENUM_COLUMNS = [
-    column["name"] for column in json_struct["columns"] if column["pandas_type"] == "categorical"
+    column["name"]
+    for column in json_struct["columns"]
+    if column["pandas_type"] == "categorical"
 ]
 
-SCHEMA = chat.get_schema(Path(chat.DB), ENUM_COLUMNS)
+SCHEMA = chat.get_schema(Path(rw.CHAT_DB), ENUM_COLUMNS)
 SCHEMA_TEXT = chat.schema_to_text(SCHEMA)
 
-# -----------------------------------------------------------------------
-# Streamlit code begins
-# -----------------------------------------------------------------------
 PAGE_TITLE = sh.CHAT_TITLE
 
 st.set_page_config(
@@ -45,14 +40,14 @@ st.title(PAGE_TITLE)
 with st.sidebar:
     st.markdown(sh.CHAT_SIDEBAR_TEXT)
     api_key_input = st.text_input(
-        "Enter your OpenAI API Key to use the chat",
+        sh.OPENAI_KEY_PROMPT,
         type="password",
         key="OPENAI_API_KEY",
-        placeholder="Paste your OpenAI API key here (sk-...)",
-        help="You can get your API key from https://platform.openai.com/account/api-keys",  # noqa: E501
+        placeholder=sh.OPENAI_KEY_PLACEHOLDER,
+        help=sh.OPENAI_KEY_HELP,  # noqa: E501
         value=os.environ.get("OPENAI_API_KEY", st.session_state.get("OPENAI_API_KEY")),
     )
-    st.button("Clear chat", on_click=chat.clear_chat)
+    st.button(sh.CLEAR_CHAT_BUTTON, on_click=chat.clear_chat)
 
 try:
     client = openai.OpenAI(api_key=st.session_state["OPENAI_API_KEY"])
@@ -97,7 +92,7 @@ if query := st.chat_input("Enter your query here"):
         try:
             response, sql_query = chat.ask(client, query, SCHEMA_TEXT)
         except openai.AuthenticationError:  # type: ignore
-            st.error("OpenAI authentication failed, try setting another key", icon="🚨")
+            st.error(sh.OPENAI_KEY_ERROR, icon="🚨")
             st.stop()
 
     with st.chat_message("assistant"):

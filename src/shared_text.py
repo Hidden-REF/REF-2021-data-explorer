@@ -1,5 +1,7 @@
 """ Shared text for the app. """
 
+import read_write as rw
+
 # settings
 LAYOUT = "wide"
 REPO_URL = "https://github.com/Hidden-REF/REF-2021-data-explorer"
@@ -119,6 +121,7 @@ VISUALISE_SELECTED_TAB_HEADER = "Visualise selected data"
 
 # buttons
 DOWNLOAD_SELECTED_DATA_BUTTON = "Download selected data as csv"
+CLEAR_CHAT_BUTTON = "Clear chat history"
 
 # warnings
 NO_SELECTED_RECORDS_WARNING = "No records match the selection"
@@ -140,20 +143,28 @@ RGROUPS_DESCRIPTION = f"""\
 CHAT_TITLE = "Results Chat"
 NO_ANSWER = "Sorry, I do not know the answer to that question."
 TOKEN_NOTAVAILABLE = ":warning: Open AI token not available for the chat"
-CHAT_PROMPT = """
+OPENAI_KEY_PROMPT = "Enter your OpenAI API Key to use the chat"
+OPENAI_KEY_PLACEHOLDER = "Paste your OpenAI API key here (sk-...)"
+OPENAI_KEY_HELP = "You can get your API key from https://platform.openai.com/account/api-keys"
+OPENAI_KEY_ERROR = "OpenAI authentication failed, try setting another key"
+
+CHAT_PROMPT = f"""
 
 You are a research assistant for the Research Excellence Framework 2021. Data
-is stored in parquet format within the 'ref2021.parquet' table. You must respond to questions
+is stored in parquet format within the '{rw.CHAT_DB}' table. You must respond to questions
 with a valid SQL query. Do not return any natural language explanation, only
 the SQL query. Ensure that columns with spaces are quoted in the query.
 
 If you are filtering using a WHERE clause, you must SELECT the columns being
 filtered.
+"""
+CHAT_PROMPT = CHAT_PROMPT + """
 
 The dataset has the following schema:
 
 {schema}
 """
+
 CHAT_SIDEBAR_TEXT = f"""
 ## {CHAT_TITLE}
 

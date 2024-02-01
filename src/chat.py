@@ -1,3 +1,5 @@
+"""Interact with the REF dataset using natural language queries to openai models.
+"""
 import duckdb
 import pandas as pd
 import pyarrow.dataset
@@ -9,6 +11,8 @@ from pathlib import Path
 import streamlit as st
 from typing import Optional, Literal, TypedDict, Union, Tuple
 
+import read_write as rw
+
 from pandas.api.types import (
     is_numeric_dtype,
     is_datetime64_dtype,
@@ -17,8 +21,7 @@ from pandas.api.types import (
 
 import shared_text as sh
 
-DB = "db/Results_extra_preprocessed.parquet"
-TABLE = "ref2021"
+
 DEFAULT_MODEL = "gpt-3.5-turbo"
 
 NULL_VALUES = ["NA", "N/A", "NK", "None"]
@@ -210,7 +213,7 @@ def show_data(
 
 
 def schema_to_text(schema: TableInfo) -> str:
-    text = ["CREATE TABLE 'ref2021.parquet' ("]
+    text = [f"CREATE TABLE '{rw.CHAT_DB}' ("]
     for field in schema["columns"]:
         if not field["name"].strip():
             continue
@@ -239,7 +242,7 @@ def ask(
     if query.lower().strip().startswith("select"):
         try:
             print("> Using query:", query)
-            results = run_sql(DB, query)
+            results = run_sql(rw.CHAT_DB, query)
             return results, query
 
         except Exception:
