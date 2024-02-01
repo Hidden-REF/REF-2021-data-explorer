@@ -125,7 +125,7 @@ def show_grouped_counts_chart(dset, x, y, colour):
     st.vega_lite_chart(dset, chart, use_container_width=True)
 
 
-def display_record_counts_table(dset, describe_data=True, suffix=""):
+def display_record_counts_table(dset, logs, describe_data=True, suffix=""):
     """Display a table with the number of records and institutions.
 
     Args:
@@ -138,12 +138,23 @@ def display_record_counts_table(dset, describe_data=True, suffix=""):
         label=f"{sh.INSTITUTIONS_LABEL}{suffix}", value=dset[cb.COL_INST_NAME].nunique()
     )
 
+    with st.expander(sh.LOGS_HEADER):
+        stx.scrollableTextbox(logs, key="stx_logs")
+
     if describe_data:
         with st.expander(sh.DESCRIBE_HEADER):
-            # st.markdown(sh.COLUMNS_TITLE)
+            columns_added = [
+                column
+                for column in dset.columns
+                if any(suffix in column for suffix in cb.ADDED_SUFFIXES)
+            ]
+            if len(columns_added) > 0:
+                st.markdown(sh.ADDED_TITLE)
+                stx.scrollableTextbox("\n".join(columns_added), key=f"stx_added")
             column_dtypes = [
                 (column, str(dtype)) for column, dtype in dset.dtypes.items()
             ]
+            st.markdown(sh.FIELDS_TITLE)
             for [column_name, column_type] in column_dtypes:
                 if column_type == "category":
                     categories_count = dset[column_name].nunique()
@@ -157,8 +168,8 @@ def display_record_counts_table(dset, describe_data=True, suffix=""):
                     )
                     if column_name not in cb.FILEDS_TO_NOT_DISPLAY:
                         categories = "\n".join(
-                                sorted(dset[column_name].dropna().unique())
-                            )
+                            sorted(dset[column_name].dropna().unique())
+                        )
                         if categories_count > 1:
                             stx.scrollableTextbox(categories, key=f"stx_{column_name}")
                         else:

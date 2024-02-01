@@ -9,8 +9,10 @@ st.title(sh.RESEARCH_GROUPS_TITLE)
 
 with st.spinner(sh.PROC_TEXT):
     dset = rw.get_data(rw.DATA_PPROC_RGROUPS)
+    logs = rw.get_logs(rw.LOG_PPROC_RGROUPS)
 
-vis.display_record_counts_table(dset)
+
+vis.display_record_counts_table(dset, logs)
 
 with st.expander(sh.VISUALISE_HEADER):
     tabs = st.tabs([sh.DISTRIBUTIONS_TAB_HEADER, sh.GROUPED_DISTRIBUTIONS_TAB_HEADER])

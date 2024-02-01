@@ -8,8 +8,10 @@ st.title(sh.DOCTORAL_DEGREES_TITLE)
 
 with st.spinner(sh.PROC_TEXT):
     dset = rw.get_data(rw.DATA_PPROC_DEGREES)
+    logs = rw.get_logs(rw.LOG_PPROC_DEGREES)
 
-vis.display_record_counts_table(dset)
+vis.display_record_counts_table(dset, logs)
+
 with st.expander(sh.VISUALISE_HEADER):
     tabs = st.tabs(
         [

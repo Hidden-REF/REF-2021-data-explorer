@@ -17,12 +17,25 @@ RESULTS_TITLE = "Results"
 # home page
 REF2021_URL = "https://results2021.ref.ac.uk/"
 PROC_URL = "https://github.com/softwaresaved/ref-2021-analysis"
-DATA_SOURCE_HEADER = "Data source"
-DATA_SOURCE_TEXT = f"The data used in this app is from the [REF 2021 website]({REF2021_URL})"\
-                   f" (accessed 2023/08/10) and has been processed with [{PROC_URL}]({PROC_URL})"
-ABOUT_HEADER = "About the REF 2021 Explorer"
-WARNING_TEXT = \
-    """
+DATA_SOURCE_HEADER = "Data"
+DATA_SOURCE_TEXT = f"""
+The raw data on this website has been sourced from the [REF 2021 website]({REF2021_URL})
+(accessed 2023/08/10). The raw data was processed to convert from raw
+data formats (excel and pdf files) to parquet files, interpret codes,
+fix alignment issues, add aggregate variables, change data structure to make
+it more suitable for analyses and visualisations, and remove some columns
+that were not useful for analyses and visualisations.
+
+The python code used to process the raw data is available from [{PROC_URL}]({PROC_URL}).
+Processing logs are also available to browse on each page and
+give details of the processing steps taken. When fields were added
+or the structure of the raw data was changed these steps
+are described in summary at the top of the page as well as in the logs.
+The fields added in the processing have the suffixes ` (added)` or ` (binned)`
+in the field names.
+"""
+
+WARNING_TEXT = """
     This site is currently under construction.
 
     Changes will be made on a frequent basis.
@@ -31,8 +44,7 @@ WARNING_TEXT = \
     analysis you conduct on this site unless you have independently verified the results.
 
     """
-ABOUT_TEXT = \
-    """
+ABOUT_TEXT = """
     The Research Excellent Framework (REF) is the UK's approach to assessing
     the excellence of UK research. It employs a process of
     expert review across all UK universities for 34 subject-based units of assessment. The
@@ -80,13 +92,15 @@ EXCLUDE_NEGATIVE_PROMPT = "Exclude negative values"
 
 # headers
 header_style = "######"
-DESCRIBE_HEADER = f"{header_style} Data fields"
+LOGS_HEADER = f"{header_style} Browse the processing logs"
+DESCRIBE_HEADER = f"{header_style} Browse the data fields"
 VISUALISE_HEADER = f"{header_style} Visualise data"
 EXPLORE_HEADER = f"{header_style} Select and explore data"
 
 # titles
 title_style = "#####"
-COLUMNS_TITLE = f"{header_style} Data columns"
+ADDED_TITLE = f"{title_style} Fields added in processing"
+FIELDS_TITLE = f"{title_style} Fields"
 
 # tabs headers
 DISTRIBUTIONS_TAB_HEADER = "Distributions (categorical)"

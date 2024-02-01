@@ -41,3 +41,5 @@ FILEDS_TO_NOT_DISPLAY = [
     COL_IMPACT_SUMMARY,
     COL_IMPACT_DETAILS,
 ]
+
+ADDED_SUFFIXES = ["(added)", "(binned)"]
