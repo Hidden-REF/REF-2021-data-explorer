@@ -158,8 +158,9 @@ def postprocess_data(df: pd.DataFrame) -> pd.DataFrame:
 
 def run_sql(filename: str, sql_stmt: str) -> Union[str, pd.DataFrame]:
     results = list(duckdb.query(sql_stmt.replace("`", '"')).fetchall())
-    if len(results) == 1 and len(results[0].keys()) == 1:
-        return str(list(results[0].values())[0])
+    print("RESULTS", results)
+    if len(results) == 1 and len(results[0]) == 1:
+        return str(results[0][0])
     else:
         return postprocess_data(pd.DataFrame(results).replace(NULL_VALUES, None))
 
