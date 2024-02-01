@@ -148,7 +148,7 @@ such as:
 > Show me universities with units that achieved more than 75% of outputs in
 > their overall evaluation 4 stars
 
-:warning: REFChat may give **incorrect or misleading** answers. Check the
+:warning: **{CHAT_TITLE}** may give **incorrect or misleading** answers. Check the
 generated query before using in reports!
 
 """

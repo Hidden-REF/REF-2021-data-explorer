@@ -2,7 +2,7 @@
 
 Data explorer app written with Streamlit
 
-The app hosted on Azure is pubicly available at [https://ref2021explorer.azurewebsites.net].
+The app hosted on Azure is pubicly available at [https://ref2021explorer.azurewebsites.net](https://ref2021explorer.azurewebsites.net).
 
 ## Setup
 

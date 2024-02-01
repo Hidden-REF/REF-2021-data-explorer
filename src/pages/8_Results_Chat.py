@@ -332,7 +332,7 @@ SCHEMA_TEXT = schema_to_text(SCHEMA)
 with st.sidebar:
     st.markdown(sh.CHAT_SIDEBAR_TEXT)
     api_key_input = st.text_input(
-        "OpenAI API Key",
+        "Enter your OpenAI API Key to use the chat",
         type="password",
         key="OPENAI_API_KEY",
         placeholder="Paste your OpenAI API key here (sk-...)",
