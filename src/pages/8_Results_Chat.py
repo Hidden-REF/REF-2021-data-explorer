@@ -8,6 +8,7 @@ import os
 import json
 import textwrap
 import logging
+import pyarrow.parquet as pq
 from pathlib import Path
 from typing import Optional, Literal, TypedDict, Union, Tuple
 
@@ -27,57 +28,15 @@ from pandas.api.types import (
 
 import shared_text as sh
 
-NO_ANSWER = "Sorry, I do not know the answer to that question."
-
-TOKEN_NOTAVAILABLE = ":warning: Open AI token not available for the chat"
 
 NULL_VALUES = ["NA", "N/A", "NK", "None"]
 
 OPENAITOKEN_AVAILABLE = False
 
-ENUM_COLUMNS = [
-    "Institution name",
-    "Main panel name",
-    "Unit of assessment name",
-    "Environment evaluation - 1 star (binned)",
-    "Environment evaluation - 2 stars (binned)",
-    "Environment evaluation - 3 stars (binned)",
-    "Environment evaluation - 4 stars (binned)",
-    "Environment evaluation - Unclassified (binned)",
-    "Impact evaluation - 1 star (binned)",
-    "Impact evaluation - 2 stars (binned)",
-    "Impact evaluation - 3 stars (binned)",
-    "Impact evaluation - 4 stars (binned)",
-    "Impact evaluation - Unclassified (binned)",
-    "Outputs evaluation - 1 star (binned)",
-    "Outputs evaluation - 2 stars (binned)",
-    "Outputs evaluation - 3 stars (binned)",
-    "Outputs evaluation - 4 stars (binned)",
-    "Outputs evaluation - Unclassified (binned)",
-    "Overall evaluation - 1 star (binned)",
-    "Overall evaluation - 2 stars (binned)",
-    "Overall evaluation - 3 stars (binned)",
-    "Overall evaluation - 4 stars (binned)",
-    "Overall evaluation - Unclassified (binned)",
-]
 
 DB = "db/Results_extra_preprocessed.parquet"
 TABLE = "ref2021"
 DEFAULT_MODEL = "gpt-3.5-turbo"
-PROMPT = """
-
-You are a research assistant for the Research Excellence Framework 2021. Data
-is stored in parquet format within the 'ref2021.parquet' table. You must respond to questions
-with a valid SQL query. Do not return any natural language explanation, only
-the SQL query. Ensure that columns with spaces are quoted in the query.
-
-If you are filtering using a WHERE clause, you must SELECT the columns being
-filtered.
-
-The dataset has the following schema:
-
-{schema}
-"""
 
 
 class SchemaField(TypedDict):
@@ -283,13 +242,13 @@ def schema_to_text(schema: TableInfo) -> str:
 def ask(
     user_message: str, schema: str
 ) -> Tuple[Union[str, pd.DataFrame], Optional[str]]:
-    prompt = PROMPT.format(schema=schema)
+    prompt = sh.CHAT_PROMPT.format(schema=schema)
     try:
         query = get_sql(user_message.replace("%", ""), prompt)
     except NameError:  # client is not defined
-        return TOKEN_NOTAVAILABLE, None
+        return sh.TOKEN_NOTAVAILABLE, None
     if query is None:
-        return NO_ANSWER, None
+        return sh.NO_ANSWER, None
     if query.lower().strip().startswith("select"):
         try:
             print("> Using query:", query)
@@ -297,7 +256,7 @@ def ask(
             return results, query
 
         except Exception:
-            return NO_ANSWER, None
+            return sh.NO_ANSWER, None
     else:
         return query, None
 
@@ -324,10 +283,15 @@ st.set_page_config(
 
 st.title(PAGE_TITLE)
 
+# get the categorical columns
+pfile = pq.ParquetFile(DB)
+json_struct = json.loads(pfile.metadata.metadata[b"pandas"])
+ENUM_COLUMNS = [
+    column["name"] for column in json_struct["columns"] if column["pandas_type"] == "categorical"
+]
+
 SCHEMA = get_schema(Path(DB), ENUM_COLUMNS)
 SCHEMA_TEXT = schema_to_text(SCHEMA)
-
-# pprint(SCHEMA)
 
 with st.sidebar:
     st.markdown(sh.CHAT_SIDEBAR_TEXT)
@@ -354,7 +318,7 @@ if "messages" not in st.session_state:
 
     if not OPENAITOKEN_AVAILABLE:
         st.session_state.messages.append(
-            {"role": "assistant", "content": TOKEN_NOTAVAILABLE}
+            {"role": "assistant", "content": sh.TOKEN_NOTAVAILABLE}
         )
 
 

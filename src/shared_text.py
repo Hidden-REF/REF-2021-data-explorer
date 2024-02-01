@@ -138,6 +138,22 @@ RGROUPS_DESCRIPTION = f"""\
 
 # chat
 CHAT_TITLE = "Results Chat"
+NO_ANSWER = "Sorry, I do not know the answer to that question."
+TOKEN_NOTAVAILABLE = ":warning: Open AI token not available for the chat"
+CHAT_PROMPT = """
+
+You are a research assistant for the Research Excellence Framework 2021. Data
+is stored in parquet format within the 'ref2021.parquet' table. You must respond to questions
+with a valid SQL query. Do not return any natural language explanation, only
+the SQL query. Ensure that columns with spaces are quoted in the query.
+
+If you are filtering using a WHERE clause, you must SELECT the columns being
+filtered.
+
+The dataset has the following schema:
+
+{schema}
+"""
 CHAT_SIDEBAR_TEXT = f"""
 ## {CHAT_TITLE}
 
