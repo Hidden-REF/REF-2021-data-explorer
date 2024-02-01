@@ -19,6 +19,25 @@ COL_OUTPUT_URL = "URL"
 COL_OUTPUT_SUPP = "Supplementary information"
 COL_IMPACT_SUMMARY = "1. Summary of the impact"
 COL_IMPACT_DETAILS = "4. Details of the impact"
+COL_RESULTS_DEGREES = "Total number of doctoral degrees awarded  (added)"
+COL_RESULTS_EVALUATION_ENV_ONE_STAR_BINNED = "Environment evaluation - 1 star (binned)"
+COL_RESULTS_EVALUATION_IMPACT_ONE_STAR_BINNED = "Impact evaluation - 1 star (binned)"
+COL_RESULTS_EVALUATION_OUTPUTS_ONE_STAR_BINNED = "Outputs evaluation - 1 star (binned)"
+COL_RESULTS_EVALUATION_OVERALL_ONE_STAR_BINNED = "Overall evaluation - 1 star (binned)"
+COL_RESULTS_RGROUPS_SUBMISSIONS = "Research group submissions (added)"
+COL_RESULTS_OUTPUTS_SUBMISSIONS = "Output submissions (added)"
+COL_RESULTS_OUTPUTS_SUBMISSIONS_CHAPTER_IN_BOOK = (
+    "Output submissions - Chapter in book (added)"
+)
+COL_RESULTS_IMPACT_SUBMISSIONS = "Impact case study submissions (added)"
+COL_RESULTS_UNIT_ENV_CONTEXT = (
+    "Unit context and structure, research and impact strategy (added)"
+)
+COL_RESULTS_UNIT_ENV_PEOPLE = "People (added)"
+COL_RESULTS_UNIT_ENV_INCOME_ETC = "Income, infrastructure and facilities (added)"
+COL_RESULTS_UNIT_ENV_COLAB_CONTRIB = (
+    "Collaboration and contribution to the research base, economy and society (added)"
+)
 
 CATEGORY_FIELDS_EXCLUDE_CHARTS = []
 
@@ -40,33 +59,41 @@ FILEDS_TO_NOT_DISPLAY = [
     COL_OUTPUT_SUPP,
     COL_IMPACT_SUMMARY,
     COL_IMPACT_DETAILS,
+    COL_RESULTS_UNIT_ENV_CONTEXT,
+    COL_RESULTS_UNIT_ENV_PEOPLE,
+    COL_RESULTS_UNIT_ENV_INCOME_ETC,
+    COL_RESULTS_UNIT_ENV_COLAB_CONTRIB,
 ]
 
 ADDED_SUFFIXES = ["(added)", "(binned)"]
 
 ADDED_DESCRIPTIONS = {
-    "Total number of doctoral degrees awarded  (added)": "sum of doctoral degrees awarded from 2013 to 2019",
-    "Environment evaluation - 1 star (binned)": (
+    COL_RESULTS_DEGREES: "total doctoral degrees awarded from 2013 to 2019",
+    COL_RESULTS_EVALUATION_ENV_ONE_STAR_BINNED: (
         "binned percentages for the environment evaluation for 1*;"
         " applies respectivelly to all `Environment evaluation` fields below"
     ),
-    "Impact evaluation - 1 star (binned)": (
+    COL_RESULTS_EVALUATION_IMPACT_ONE_STAR_BINNED: (
         "binned percentages for the impact case studies evaluation for 1*;"
         " applies respectivelly to all `Impact evaluation` fields below"
     ),
-    "Outputs evaluation - 1 star (binned)": (
+    COL_RESULTS_EVALUATION_OUTPUTS_ONE_STAR_BINNED: (
         "binned percentages for the outputs evaluation for 1*;"
         " applies respectivelly to all `Outputs evaluation` fields below"
     ),
-    "Overall evaluation - 1 star (binned)": (
+    COL_RESULTS_EVALUATION_OVERALL_ONE_STAR_BINNED: (
         "binned percentages for the outputs evaluation for 1*;"
         " applies respectivelly to all `Overall evaluation` fields below"
     ),
-    "Research group submissions (added)": "number of research group submissions",
-    "Output submissions (added)": "number of output submissions",
-    "Output submissions - Chapter in book (added)": (
+    COL_RESULTS_RGROUPS_SUBMISSIONS: "number of research group submissions",
+    COL_RESULTS_OUTPUTS_SUBMISSIONS: "number of output submissions",
+    COL_RESULTS_OUTPUTS_SUBMISSIONS_CHAPTER_IN_BOOK: (
         "number of output submissions for chapter in book;"
         " applies respectivelly to all `Output submissions` fields below"
     ),
-    "Impact case study submissions (added)": "number of impact case study submissions",
+    COL_RESULTS_IMPACT_SUBMISSIONS: "number of impact case study submissions",
+    COL_RESULTS_UNIT_ENV_CONTEXT: (
+        "unit context and structure, research and impact strategy section"
+        " from the unit environment statement; applies respectively to the next three fields"
+    )
 }

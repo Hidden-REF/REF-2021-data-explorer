@@ -138,40 +138,41 @@ def display_record_counts_table(dset, logs, describe_data=True, suffix="", descr
         label=f"{sh.INSTITUTIONS_LABEL}{suffix}", value=dset[cb.COL_INST_NAME].nunique()
     )
 
-    with st.expander(sh.LOGS_HEADER):
-        stx.scrollableTextbox(logs, key="stx_logs")
+    # with st.expander(sh.LOGS_HEADER):
+    #     stx.scrollableTextbox(logs, key="stx_logs")
 
     if describe_data:
         with st.expander(sh.DESCRIBE_HEADER):
-            print(description)
+            # summary description
             if description != "":
                 st.markdown(description)
 
+            # list and describe columns added
             columns_added = [
                 column
                 for column in dset.columns
                 if any(suffix in column for suffix in cb.ADDED_SUFFIXES)
             ]
-            # add descriptions if available
-            columns_added_to_print = []
-            for column in columns_added:
-                if column in cb.ADDED_DESCRIPTIONS.keys():
-                    columns_added_to_print.append(
-                        f"{column}: {cb.ADDED_DESCRIPTIONS[column]}"
-                    )
-                else:
-                    columns_added_to_print.append(column)
-
             if len(columns_added) > 0:
-                st.markdown(sh.ADDED_TITLE)
-                stx.scrollableTextbox(
-                    "\n".join(columns_added_to_print), key="stx_added"
-                )
+                columns_added_to_print = []
+                for column in columns_added:
+                    if column in cb.ADDED_DESCRIPTIONS.keys():
+                        columns_added_to_print.append(
+                            f"{column}: {cb.ADDED_DESCRIPTIONS[column]}"
+                        )
+                    else:
+                        columns_added_to_print.append(column)
+            
+                    st.markdown(sh.ADDED_TITLE)
+                    stx.scrollableTextbox(
+                        "\n".join(columns_added_to_print), key="stx_added"
+                    )
 
+            # list fields
+            st.markdown(sh.FIELDS_TITLE)
             column_dtypes = [
                 (column, str(dtype)) for column, dtype in dset.dtypes.items()
             ]
-            st.markdown(sh.FIELDS_TITLE)
             for [column_name, column_type] in column_dtypes:
                 if column_type == "category":
                     categories_count = dset[column_name].nunique()
@@ -217,6 +218,9 @@ def display_record_counts_table(dset, logs, describe_data=True, suffix="", descr
                     st.markdown(f"`{column_name}` ({column_type})")
                     items = "\n".join(sorted(dset[column_name].dropna().unique()))
                     stx.scrollableTextbox(items, key=f"stx_{column_name}")
+            
+            st.markdown(sh.LOGS_TITLE)
+            stx.scrollableTextbox(logs, key="stx_logs")
 
 
 def display_table_from_dictionary(dict):

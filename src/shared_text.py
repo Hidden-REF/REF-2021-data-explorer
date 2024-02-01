@@ -99,8 +99,8 @@ EXCLUDE_NEGATIVE_PROMPT = "Exclude negative values"
 
 # headers
 header_style = "######"
-LOGS_HEADER = f"{header_style} Browse the processing logs"
-DESCRIBE_HEADER = f"{header_style} Browse the data fields"
+
+DESCRIBE_HEADER = f"{header_style} Browse the data fields and processing logs"
 VISUALISE_HEADER = f"{header_style} Visualise data"
 EXPLORE_HEADER = f"{header_style} Select and explore data"
 
@@ -108,6 +108,7 @@ EXPLORE_HEADER = f"{header_style} Select and explore data"
 title_style = "#####"
 ADDED_TITLE = f"{title_style} Fields added in processing"
 FIELDS_TITLE = f"{title_style} Fields"
+LOGS_TITLE = f"{title_style} Processing logs"
 
 # tabs headers
 DISTRIBUTIONS_TAB_HEADER = "Distributions (categorical)"
@@ -125,17 +126,17 @@ NOT_SUITABLE_FOR_HISTOGRAM_WARNING = "The data is not suitable for a histogram"
 
 # descriptions
 RESULTS_DESCRIPTION = """
-The Results data was pivoted by the values of the `Profile` field 
+The Results data was pivoted by the values of the `Profile` field
 to convert the data to a wide format with one (institution, unit of assessment)
 pair per row to enable more flexible analyses and visualisations.
 """
 
 # chat
-CHAT_TITLE = "REF2021 Chat"
-CHAT_SIDEBAR_TEXT = """
-## REF2021 Chat
+CHAT_TITLE = "Results Chat"
+CHAT_SIDEBAR_TEXT = f"""
+## {CHAT_TITLE}
 
-REF2021 Chat is an **experimental** interface utilising GPT models to provide a
+This is an **experimental** interface utilising GPT models to provide a
 natural language query to the the REF 2021 dataset. You can ask it questions
 such as:
 
