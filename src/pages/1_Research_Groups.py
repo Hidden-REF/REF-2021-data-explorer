@@ -20,7 +20,7 @@ with st.spinner(sh.PROC_TEXT):
     logs = rw.get_logs(rw.LOG_PPROC_RGROUPS)
 
 
-vis.display_record_counts_table(dset, logs)
+vis.display_record_counts_table(dset, logs, description=sh.RGROUPS_DESCRIPTION)
 
 with st.expander(sh.VISUALISE_HEADER):
     tabs = st.tabs([sh.DISTRIBUTIONS_TAB_HEADER, sh.GROUPED_DISTRIBUTIONS_TAB_HEADER])

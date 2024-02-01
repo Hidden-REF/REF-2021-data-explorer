@@ -125,7 +125,9 @@ def show_grouped_counts_chart(dset, x, y, colour):
     st.vega_lite_chart(dset, chart, use_container_width=True)
 
 
-def display_record_counts_table(dset, logs, describe_data=True, suffix="", description=""):
+def display_record_counts_table(
+    dset, logs, describe_data=True, suffix="", description=""
+):
     """Display a table with the number of records and institutions.
 
     Args:
@@ -145,7 +147,10 @@ def display_record_counts_table(dset, logs, describe_data=True, suffix="", descr
         with st.expander(sh.DESCRIBE_HEADER):
             # summary description
             if description != "":
-                st.markdown(description)
+                if description.startswith(sh.PREFIX_WARNING):
+                    st.warning(description.replace(sh.PREFIX_WARNING, ""), icon="⚠️")
+                else:
+                    st.markdown(description)
 
             # list and describe columns added
             columns_added = [
@@ -162,11 +167,11 @@ def display_record_counts_table(dset, logs, describe_data=True, suffix="", descr
                         )
                     else:
                         columns_added_to_print.append(column)
-            
-                    st.markdown(sh.ADDED_TITLE)
-                    stx.scrollableTextbox(
-                        "\n".join(columns_added_to_print), key="stx_added"
-                    )
+
+                st.markdown(sh.ADDED_TITLE)
+                stx.scrollableTextbox(
+                    "\n".join(columns_added_to_print), key="stx_added"
+                )
 
             # list fields
             st.markdown(sh.FIELDS_TITLE)
@@ -218,7 +223,7 @@ def display_record_counts_table(dset, logs, describe_data=True, suffix="", descr
                     st.markdown(f"`{column_name}` ({column_type})")
                     items = "\n".join(sorted(dset[column_name].dropna().unique()))
                     stx.scrollableTextbox(items, key=f"stx_{column_name}")
-            
+
             st.markdown(sh.LOGS_TITLE)
             stx.scrollableTextbox(logs, key="stx_logs")
 

@@ -74,10 +74,10 @@ DATA_EXPORT_FORMATS = ["CSV"]
 
 INITIAL_SIDEBAR_STATE = "expanded"
 MENU_ITEMS = {
-        "Get Help": REPO_URL,
-        "Report a bug": REPO_URL,
-        "About": DATA_SOURCE_TEXT,
-    }
+    "Get Help": REPO_URL,
+    "Report a bug": REPO_URL,
+    "About": DATA_SOURCE_TEXT,
+}
 
 # feedback
 PROC_TEXT = "Processing request..."
@@ -123,12 +123,17 @@ DOWNLOAD_SELECTED_DATA_BUTTON = "Download selected data as csv"
 # warnings
 NO_SELECTED_RECORDS_WARNING = "No records match the selection"
 NOT_SUITABLE_FOR_HISTOGRAM_WARNING = "The data is not suitable for a histogram"
+PREFIX_WARNING = "Warning: "
 
 # descriptions
-RESULTS_DESCRIPTION = """
+RESULTS_DESCRIPTION = """\
 The Results data was pivoted by the values of the `Profile` field
 to convert the data to a wide format with one (institution, unit of assessment)
 pair per row to enable more flexible analyses and visualisations.
+"""
+
+RGROUPS_DESCRIPTION = f"""\
+{PREFIX_WARNING}Information was not available to decode the **Research group code** field.
 """
 
 # chat
