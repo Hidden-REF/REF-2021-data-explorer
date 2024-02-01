@@ -72,6 +72,13 @@ ABOUT_TEXT = """
 # formats
 DATA_EXPORT_FORMATS = ["CSV"]
 
+INITIAL_SIDEBAR_STATE = "expanded"
+MENU_ITEMS = {
+        "Get Help": REPO_URL,
+        "Report a bug": REPO_URL,
+        "About": DATA_SOURCE_TEXT,
+    }
+
 # feedback
 PROC_TEXT = "Processing request..."
 

@@ -25,7 +25,7 @@ from pandas.api.types import (
     is_datetime64_ns_dtype,
 )
 
-from shared import CHAT_TITLE, CHAT_SIDEBAR_TEXT
+import shared_text as sh
 
 NO_ANSWER = "Sorry, I do not know the answer to that question."
 
@@ -313,14 +313,24 @@ def sql_query_explanation(query: str) -> str:
 # -----------------------------------------------------------------------
 # Streamlit code begins
 # -----------------------------------------------------------------------
-st.title(CHAT_TITLE)
+PAGE_TITLE = sh.CHAT_TITLE
+
+st.set_page_config(
+    page_title=PAGE_TITLE,
+    layout=sh.LAYOUT,
+    initial_sidebar_state=sh.INITIAL_SIDEBAR_STATE,
+    menu_items=sh.MENU_ITEMS,
+)
+
+st.title(PAGE_TITLE)
+
 SCHEMA = get_schema(Path(DB), ENUM_COLUMNS)
 SCHEMA_TEXT = schema_to_text(SCHEMA)
 
 # pprint(SCHEMA)
 
 with st.sidebar:
-    st.markdown(CHAT_SIDEBAR_TEXT)
+    st.markdown(sh.CHAT_SIDEBAR_TEXT)
     api_key_input = st.text_input(
         "OpenAI API Key",
         type="password",

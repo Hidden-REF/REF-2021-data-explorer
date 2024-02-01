@@ -4,7 +4,16 @@ import read_write as rw
 import visualisations as vis
 import shared_text as sh
 
-st.title(sh.RESULTS_TITLE)
+PAGE_TITLE = sh.RESULTS_TITLE
+
+st.set_page_config(
+    page_title=PAGE_TITLE,
+    layout=sh.LAYOUT,
+    initial_sidebar_state=sh.INITIAL_SIDEBAR_STATE,
+    menu_items=sh.MENU_ITEMS,
+)
+
+st.title(PAGE_TITLE)
 
 with st.spinner(sh.PROC_TEXT):
     dset = rw.get_data(rw.DATA_PPROC_RESULTS)
