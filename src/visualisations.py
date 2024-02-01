@@ -125,7 +125,7 @@ def show_grouped_counts_chart(dset, x, y, colour):
     st.vega_lite_chart(dset, chart, use_container_width=True)
 
 
-def display_record_counts_table(dset, logs, describe_data=True, suffix=""):
+def display_record_counts_table(dset, logs, describe_data=True, suffix="", description=""):
     """Display a table with the number of records and institutions.
 
     Args:
@@ -143,14 +143,31 @@ def display_record_counts_table(dset, logs, describe_data=True, suffix=""):
 
     if describe_data:
         with st.expander(sh.DESCRIBE_HEADER):
+            print(description)
+            if description != "":
+                st.markdown(description)
+
             columns_added = [
                 column
                 for column in dset.columns
                 if any(suffix in column for suffix in cb.ADDED_SUFFIXES)
             ]
+            # add descriptions if available
+            columns_added_to_print = []
+            for column in columns_added:
+                if column in cb.ADDED_DESCRIPTIONS.keys():
+                    columns_added_to_print.append(
+                        f"{column}: {cb.ADDED_DESCRIPTIONS[column]}"
+                    )
+                else:
+                    columns_added_to_print.append(column)
+
             if len(columns_added) > 0:
                 st.markdown(sh.ADDED_TITLE)
-                stx.scrollableTextbox("\n".join(columns_added), key=f"stx_added")
+                stx.scrollableTextbox(
+                    "\n".join(columns_added_to_print), key="stx_added"
+                )
+
             column_dtypes = [
                 (column, str(dtype)) for column, dtype in dset.dtypes.items()
             ]

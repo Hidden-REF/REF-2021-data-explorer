@@ -43,3 +43,30 @@ FILEDS_TO_NOT_DISPLAY = [
 ]
 
 ADDED_SUFFIXES = ["(added)", "(binned)"]
+
+ADDED_DESCRIPTIONS = {
+    "Total number of doctoral degrees awarded  (added)": "sum of doctoral degrees awarded from 2013 to 2019",
+    "Environment evaluation - 1 star (binned)": (
+        "binned percentages for the environment evaluation for 1*;"
+        " applies respectivelly to all `Environment evaluation` fields below"
+    ),
+    "Impact evaluation - 1 star (binned)": (
+        "binned percentages for the impact case studies evaluation for 1*;"
+        " applies respectivelly to all `Impact evaluation` fields below"
+    ),
+    "Outputs evaluation - 1 star (binned)": (
+        "binned percentages for the outputs evaluation for 1*;"
+        " applies respectivelly to all `Outputs evaluation` fields below"
+    ),
+    "Overall evaluation - 1 star (binned)": (
+        "binned percentages for the outputs evaluation for 1*;"
+        " applies respectivelly to all `Overall evaluation` fields below"
+    ),
+    "Research group submissions (added)": "number of research group submissions",
+    "Output submissions (added)": "number of output submissions",
+    "Output submissions - Chapter in book (added)": (
+        "number of output submissions for chapter in book;"
+        " applies respectivelly to all `Output submissions` fields below"
+    ),
+    "Impact case study submissions (added)": "number of impact case study submissions",
+}

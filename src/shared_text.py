@@ -116,6 +116,13 @@ DOWNLOAD_SELECTED_DATA_BUTTON = "Download selected data as csv"
 NO_SELECTED_RECORDS_WARNING = "No records match the selection"
 NOT_SUITABLE_FOR_HISTOGRAM_WARNING = "The data is not suitable for a histogram"
 
+# descriptions
+RESULTS_DESCRIPTION = """
+The Results data was pivoted by the values of the `Profile` field 
+to convert the data to a wide format with one (institution, unit of assessment)
+pair per row to enable more flexible analyses and visualisations.
+"""
+
 # chat
 CHAT_TITLE = "REF2021 Chat"
 CHAT_SIDEBAR_TEXT = """

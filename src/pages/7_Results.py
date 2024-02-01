@@ -10,12 +10,16 @@ with st.spinner(sh.PROC_TEXT):
     dset = rw.get_data(rw.DATA_PPROC_RESULTS)
     logs = rw.get_logs(rw.LOG_PPROC_RESULTS)
 
-vis.display_record_counts_table(dset, logs)
+vis.display_record_counts_table(dset, logs, description=sh.RESULTS_DESCRIPTION)
 
 with st.expander(sh.VISUALISE_HEADER):
-    tabs = st.tabs([sh.DISTRIBUTIONS_TAB_HEADER,
-                    sh.GROUPED_DISTRIBUTIONS_TAB_HEADER,
-                    sh.HISTOGRAMS_TAB_HEADER])
+    tabs = st.tabs(
+        [
+            sh.DISTRIBUTIONS_TAB_HEADER,
+            sh.GROUPED_DISTRIBUTIONS_TAB_HEADER,
+            sh.HISTOGRAMS_TAB_HEADER,
+        ]
+    )
     with tabs[0]:
         vis.display_distributions(dset)
     with tabs[1]:
