@@ -4,20 +4,18 @@ import read_write as rw
 import visualisations as vis
 import shared_text as sh
 
-PAGE_TITLE = sh.DOCTORAL_DEGREES_TITLE
+page = "degrees"
 
 st.set_page_config(
-    page_title=PAGE_TITLE,
+    page_title=sh.PAGE_TITLES[page],
     layout=sh.LAYOUT,
     initial_sidebar_state=sh.INITIAL_SIDEBAR_STATE,
     menu_items=sh.MENU_ITEMS,
 )
 
-st.title(PAGE_TITLE)
+st.title(sh.PAGE_TITLES[page])
 
-with st.spinner(sh.PROC_TEXT):
-    dset = rw.get_data(rw.DATA_DEGREES)
-    logs = rw.get_logs(rw.LOGS_DEGREES)
+(dset, logs) = rw.get_dataframes(page)
 
 vis.display_record_counts_table(dset, logs)
 

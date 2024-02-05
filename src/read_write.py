@@ -1,6 +1,8 @@
 import pandas as pd
 import streamlit as st
 
+FETCHING_DATA = "Fetching data..."
+
 # data paths
 DATA_PATH = (
     "https://github.com/softwaresaved/ref-2021-analysis/raw/main/data/processed/sheets/"
@@ -10,27 +12,23 @@ LOGS_PATH = "https://github.com/softwaresaved/ref-2021-analysis/raw/main/logs/"
 DATA_EXT = ".parquet"
 LOGS_EXT = ".log"
 
+sources = {
+    "data": {
+        "groups": "ResearchGroups",
+        "outputs": "Outputs",
+        "impacts": "ImpactCaseStudies",
+        "degrees": "ResearchDoctoralDegreesAwarded",
+        "income": "ResearchIncome",
+        "income_in_kind": "ResearchIncomeInKind",
+        "results": "Results",
+    },
+}
+sources["logs"] = sources["data"].copy()
 
-DATA_GROUPS = f"{DATA_PATH}ResearchGroups{DATA_EXT}"
-DATA_OUTPUTS = f"{DATA_PATH}Outputs{DATA_EXT}"
-DATA_IMPACTS = f"{DATA_PATH}ImpactCaseStudies{DATA_EXT}"
-DATA_DEGREES = (
-    f"{DATA_PATH}ResearchDoctoralDegreesAwarded{DATA_EXT}"
-)
+for source in sources["data"]:
+    sources["data"][source] = f"{DATA_PATH}{sources['data'][source]}{DATA_EXT}"
+    sources["logs"][source] = f"{LOGS_PATH}{sources['logs'][source]}{LOGS_EXT}"
 
-DATA_INCOME = f"{DATA_PATH}ResearchIncome{DATA_EXT}"
-DATA_INCOMEINKIND = f"{DATA_PATH}ResearchIncomeInKind{DATA_EXT}"
-DATA_RESULTS = f"{DATA_PATH}Results{DATA_EXT}"
-
-LOGS_GROUPS = f"{LOGS_PATH}ResearchGroups{LOGS_EXT}"
-LOGS_OUTPUTS = f"{LOGS_PATH}Outputs{LOGS_EXT}"
-LOGS_IMPACTS = f"{LOGS_PATH}ImpactCaseStudies{LOGS_EXT}"
-LOGS_DEGREES = (
-    f"{LOGS_PATH}ResearchDoctoralDegreesAwarded{LOGS_EXT}"
-)
-LOGS_INCOME = f"{LOGS_PATH}ResearchIncome{LOGS_EXT}"
-LOGS_INCOMEINKIND = f"{LOGS_PATH}ResearchIncomeInKind{LOGS_EXT}"
-LOGS_RESULTS = f"{LOGS_PATH}Results{LOGS_EXT}"
 
 CHAT_DB = "db/Results_extra_preprocessed.parquet"
 
@@ -66,3 +64,12 @@ def get_logs(fname):
     logs = logs.to_csv(header=False, index=False).replace('"', "")
 
     return logs
+
+
+def get_dataframes(page):
+
+    with st.spinner(FETCHING_DATA):
+        dset = get_data(sources["data"][page])
+        logs = get_logs(sources["logs"][page])
+
+    return dset, logs

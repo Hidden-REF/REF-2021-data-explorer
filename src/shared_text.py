@@ -7,14 +7,17 @@ LAYOUT = "wide"
 REPO_URL = "https://github.com/Hidden-REF/REF-2021-data-explorer"
 
 # titles
-HOME_TITLE = "REF 2021 Data Explorer"
-RESEARCH_GROUPS_TITLE = "Research Groups"
-OUTPUTS_TITLE = "Outputs"
-IMPACT_CASE_STUDIES_TITLE = "Impact Case Studies"
-DOCTORAL_DEGREES_TITLE = "Doctoral Degrees Awarded"
-RESEARCH_INCOME_TITLE = "Research Income"
-RESEARCH_INCOME_IN_KIND_TITLE = "Research Income in Kind"
-RESULTS_TITLE = "Results"
+PAGE_TITLES = {
+    "home": "REF 2021 Data Explorer",
+    "groups": "Research Groups",
+    "outputs": "Outputs",
+    "impacts": "Impact Case Studies",
+    "degrees": "Doctoral Degrees Awarded",
+    "income": "Research Income",
+    "income_in_kind": "Research Income in Kind",
+    "results": "Results",
+}
+
 
 # home page
 REF2021_URL = "https://results2021.ref.ac.uk/"
