@@ -135,7 +135,7 @@ to convert the data to a wide format with one (institution, unit of assessment)
 pair per row to enable more flexible analyses and visualisations.
 """
 
-RGROUPS_DESCRIPTION = f"""\
+GROUPS_DESCRIPTION = f"""\
 {PREFIX_WARNING}Information was not available to decode the **Research group code** field.
 """
 

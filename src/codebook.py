@@ -24,7 +24,7 @@ COL_RESULTS_EVALUATION_ENV_ONE_STAR_BINNED = "Environment evaluation - 1 star (b
 COL_RESULTS_EVALUATION_IMPACT_ONE_STAR_BINNED = "Impact evaluation - 1 star (binned)"
 COL_RESULTS_EVALUATION_OUTPUTS_ONE_STAR_BINNED = "Outputs evaluation - 1 star (binned)"
 COL_RESULTS_EVALUATION_OVERALL_ONE_STAR_BINNED = "Overall evaluation - 1 star (binned)"
-COL_RESULTS_RGROUPS_SUBMISSIONS = "Research group submissions (added)"
+COL_RESULTS_GROUPS_SUBMISSIONS = "Research group submissions (added)"
 COL_RESULTS_OUTPUTS_SUBMISSIONS = "Output submissions (added)"
 COL_RESULTS_OUTPUTS_SUBMISSIONS_CHAPTER_IN_BOOK = (
     "Output submissions - Chapter in book (added)"
@@ -85,7 +85,7 @@ ADDED_DESCRIPTIONS = {
         "binned percentages for the outputs evaluation for 1*;"
         " applies respectivelly to all `Overall evaluation` fields below"
     ),
-    COL_RESULTS_RGROUPS_SUBMISSIONS: "number of research group submissions",
+    COL_RESULTS_GROUPS_SUBMISSIONS: "number of research group submissions",
     COL_RESULTS_OUTPUTS_SUBMISSIONS: "number of output submissions",
     COL_RESULTS_OUTPUTS_SUBMISSIONS_CHAPTER_IN_BOOK: (
         "number of output submissions for chapter in book;"

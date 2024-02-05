@@ -16,11 +16,11 @@ st.set_page_config(
 st.title(PAGE_TITLE)
 
 with st.spinner(sh.PROC_TEXT):
-    dset = rw.get_data(rw.DATA_PPROC_RGROUPS)
-    logs = rw.get_logs(rw.LOG_PPROC_RGROUPS)
+    dset = rw.get_data(rw.DATA_GROUPS)
+    logs = rw.get_logs(rw.LOGS_GROUPS)
 
 
-vis.display_record_counts_table(dset, logs, description=sh.RGROUPS_DESCRIPTION)
+vis.display_record_counts_table(dset, logs, description=sh.GROUPS_DESCRIPTION)
 
 with st.expander(sh.VISUALISE_HEADER):
     tabs = st.tabs([sh.DISTRIBUTIONS_TAB_HEADER, sh.GROUPED_DISTRIBUTIONS_TAB_HEADER])

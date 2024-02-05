@@ -16,8 +16,8 @@ st.set_page_config(
 st.title(PAGE_TITLE)
 
 with st.spinner(sh.PROC_TEXT):
-    dset = rw.get_data(rw.DATA_PPROC_RINCOME)
-    logs = rw.get_logs(rw.LOG_PPROC_RINCOME)
+    dset = rw.get_data(rw.DATA_INCOME)
+    logs = rw.get_logs(rw.LOGS_INCOME)
 
 vis.display_record_counts_table(dset, logs)
 
