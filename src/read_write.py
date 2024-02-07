@@ -30,7 +30,7 @@ for source in sources["data"]:
     sources["logs"][source] = f"{LOGS_PATH}{sources['logs'][source]}{LOGS_EXT}"
 
 
-CHAT_DB = "db/Results_extra_preprocessed.parquet"
+CHAT_DB = "db/Results_preprocessed.parquet"
 
 
 @st.cache_data
