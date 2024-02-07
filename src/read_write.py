@@ -35,7 +35,7 @@ CHAT_DB = "db/Results.parquet"
 
 
 @st.cache_data
-def get_data(fname):
+def get_data(fname, columns=None):
     """Read the data from a parquet file.
 
     Args:
@@ -45,7 +45,7 @@ def get_data(fname):
         (pandas.DataFrame): The data read from the file.
     """
 
-    dset = pd.read_parquet(fname, engine="pyarrow")
+    dset = pd.read_parquet(fname, columns=columns, engine="fastparquet")
 
     return dset
 
@@ -67,7 +67,7 @@ def get_logs(fname):
     return logs
 
 
-def get_dataframes(page):
+def get_dataframes(page, columns=None):
     """Get the data and logs for a page.
 
     Args:
@@ -78,7 +78,7 @@ def get_dataframes(page):
     """
 
     with st.spinner(FETCHING_DATA):
-        dset = get_data(sources["data"][page])
+        dset = get_data(sources["data"][page], columns=columns)
         logs = get_logs(sources["logs"][page])
 
     return dset, logs

@@ -1,11 +1,13 @@
 """ Results page"""
 import streamlit as st
 
+import codebook as cb
 import read_write as rw
 import visualisations as vis
 import shared_text as sh
 
 PAGE = "results"
+
 
 st.set_page_config(
     page_title=sh.PAGE_TITLES[PAGE],
@@ -16,7 +18,8 @@ st.set_page_config(
 
 st.title(sh.PAGE_TITLES[PAGE])
 
-(dset, logs) = rw.get_dataframes(PAGE)
+(dset, logs) = rw.get_dataframes(PAGE, columns=cb.COLUMNS_REDUCED_RESULTS)
+print(dset.columns)
 
 vis.display_record_counts_table(dset, logs, description=sh.RESULTS_DESCRIPTION)
 
