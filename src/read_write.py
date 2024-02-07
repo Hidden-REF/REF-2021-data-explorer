@@ -45,7 +45,7 @@ def get_data(fname, columns=None):
         (pandas.DataFrame): The data read from the file.
     """
 
-    dset = pd.read_parquet(fname, columns=columns, engine="fastparquet")
+    dset = pd.read_parquet(fname, columns=columns, engine="pyarrow")
 
     return dset
 
