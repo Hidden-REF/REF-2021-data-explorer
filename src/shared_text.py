@@ -103,17 +103,17 @@ SELECT_DATA_RANGE_PROMPT = "Select data range"
 EXCLUDE_NEGATIVE_PROMPT = "Exclude negative values"
 
 # headers
-header_style = "######"
+HEADER_STYLE = "######"
 
-DESCRIBE_HEADER = f"{header_style} Browse the data fields and processing logs"
-VISUALISE_HEADER = f"{header_style} Visualise data"
-EXPLORE_HEADER = f"{header_style} Select and explore data"
+DESCRIBE_HEADER = f"{HEADER_STYLE} Browse the data fields and processing logs"
+VISUALISE_HEADER = f"{HEADER_STYLE} Visualise data"
+EXPLORE_HEADER = f"{HEADER_STYLE} Select and explore data"
 
 # titles
-title_style = "#####"
-ADDED_TITLE = f"{title_style} Fields added in processing"
-FIELDS_TITLE = f"{title_style} Fields"
-LOGS_TITLE = f"{title_style} Processing logs"
+TITLE_STYLE = "#####"
+ADDED_TITLE = f"{TITLE_STYLE} Fields added in processing"
+FIELDS_TITLE = f"{TITLE_STYLE} Fields"
+LOGS_TITLE = f"{TITLE_STYLE} Processing logs"
 
 # tabs headers
 DISTRIBUTIONS_TAB_HEADER = "Distributions (categorical)"

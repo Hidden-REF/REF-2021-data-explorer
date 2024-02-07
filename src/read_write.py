@@ -1,3 +1,4 @@
+""" Module to read and write data from and to files. """
 import pandas as pd
 import streamlit as st
 
@@ -30,7 +31,7 @@ for source in sources["data"]:
     sources["logs"][source] = f"{LOGS_PATH}{sources['logs'][source]}{LOGS_EXT}"
 
 
-CHAT_DB = "db/Results_preprocessed.parquet"
+CHAT_DB = "db/Results.parquet"
 
 
 @st.cache_data
@@ -67,6 +68,14 @@ def get_logs(fname):
 
 
 def get_dataframes(page):
+    """Get the data and logs for a page.
+
+    Args:
+        page (str): The page to get the data for.
+
+    Returns:
+        (pandas.DataFrame, pandas.DataFrame): The data and logs.
+    """
 
     with st.spinner(FETCHING_DATA):
         dset = get_data(sources["data"][page])

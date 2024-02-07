@@ -1,17 +1,18 @@
+""" Home page of the app. """
 import streamlit as st
 import shared_text as sh
 
-page = "home"
+PAGE = "home"
 
 st.set_page_config(
-    page_title=sh.PAGE_TITLES[page],
+    page_title=sh.PAGE_TITLES[PAGE],
     layout=sh.LAYOUT,
     initial_sidebar_state=sh.INITIAL_SIDEBAR_STATE,
     menu_items=sh.MENU_ITEMS,
 )
 
 
-st.title(sh.PAGE_TITLES[page])
+st.title(sh.PAGE_TITLES[PAGE])
 st.warning(sh.WARNING_TEXT, icon="⚠️")
 
 

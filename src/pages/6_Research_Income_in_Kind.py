@@ -1,21 +1,22 @@
+""" Research Income in Kind page """
 import streamlit as st
 
 import read_write as rw
 import visualisations as vis
 import shared_text as sh
 
-page = "income_in_kind"
+PAGE = "income_in_kind"
 
 st.set_page_config(
-    page_title=sh.PAGE_TITLES[page],
+    page_title=sh.PAGE_TITLES[PAGE],
     layout=sh.LAYOUT,
     initial_sidebar_state=sh.INITIAL_SIDEBAR_STATE,
     menu_items=sh.MENU_ITEMS,
 )
 
-st.title(sh.PAGE_TITLES[page])
+st.title(sh.PAGE_TITLES[PAGE])
 
-(dset, logs) = rw.get_dataframes(page)
+(dset, logs) = rw.get_dataframes(PAGE)
 
 vis.display_record_counts_table(dset, logs)
 

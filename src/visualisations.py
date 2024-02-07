@@ -35,7 +35,7 @@ def clean_titles(title):
         str: cleaned title
     """
 
-    for key in TO_REPLACE_TITLES.keys():
+    for (key, _) in TO_REPLACE_TITLES.items():
         title = title.replace(key, TO_REPLACE_TITLES[key])
 
     return title
@@ -47,7 +47,6 @@ def show_counts_percent_chart(
     column_name,
     column_count="records",
     column_percent="records (%)",
-    use_container_width=USE_CONTAINER_WIDTH,
     stats_type="Percentages",
 ):
     """Draw a chart with counts and percentages.
@@ -161,7 +160,7 @@ def display_record_counts_table(
             if len(columns_added) > 0:
                 columns_added_to_print = []
                 for column in columns_added:
-                    if column in cb.ADDED_DESCRIPTIONS.keys():
+                    if column in cb.ADDED_DESCRIPTIONS:
                         columns_added_to_print.append(
                             f"{column}: {cb.ADDED_DESCRIPTIONS[column]}"
                         )
@@ -228,13 +227,13 @@ def display_record_counts_table(
             stx.scrollableTextbox(logs, key="stx_logs")
 
 
-def display_table_from_dictionary(dict):
+def display_table_from_dictionary(dict_data):
     """Display a table from a dictionary.
 
     Args:
         dict (dict): dictionary
     """
-    for items in dict.items():
+    for items in dict_data.items():
         st.text(f"{items[0]} \t{items[1]}")
 
 
@@ -269,7 +268,7 @@ def display_distributions(dset, key=None):
             )
 
 
-def display_histograms(dset, key=None, bin_size=None):
+def display_histograms(dset, key=None):
     """Display histograms for a selected column.
 
     Args:

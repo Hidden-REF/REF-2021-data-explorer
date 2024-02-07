@@ -95,5 +95,5 @@ ADDED_DESCRIPTIONS = {
     COL_RESULTS_UNIT_ENV_CONTEXT: (
         "unit context and structure, research and impact strategy section"
         " from the unit environment statement; applies respectively to the next three fields"
-    )
+    ),
 }

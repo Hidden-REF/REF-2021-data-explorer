@@ -1,10 +1,11 @@
+""" Results chat page """
 import os
-import openai
-import pandas as pd
-import streamlit as st
-import pyarrow.parquet as pq
 import json
 from pathlib import Path
+import pandas as pd
+import openai
+import streamlit as st
+import pyarrow.parquet as pq
 
 import shared_text as sh
 import read_write as rw
@@ -52,7 +53,7 @@ with st.sidebar:
 try:
     client = openai.OpenAI(api_key=st.session_state["OPENAI_API_KEY"])
     OPENAITOKEN_AVAILABLE = True
-except Exception:
+except openai.OpenAIError:
     pass
 
 
@@ -82,36 +83,36 @@ if query := st.chat_input("Enter your query here"):
         st.markdown(query)
     # Add user message to chat history
     st.session_state.messages.append({"role": "user", "content": query})
-    alternate_response = None
-    viz_type = None
-    sql_query = None
-    response = None
-    if alternate_response:
-        response = alternate_response
+    ALTERNATE_RESPONSES = None
+    VIZ_TYPE = None
+    SQL_QUERY = None
+    RESPONSE = None
+    if ALTERNATE_RESPONSES:
+        RESPONSE = ALTERNATE_RESPONSES
     else:
         try:
-            response, sql_query = chat.ask(client, query, SCHEMA_TEXT)
+            RESPONSE, SQL_QUERY = chat.ask(client, query, SCHEMA_TEXT)
         except openai.AuthenticationError:  # type: ignore
             st.error(sh.OPENAI_KEY_ERROR, icon="🚨")
             st.stop()
 
     with st.chat_message("assistant"):
-        if isinstance(response, pd.DataFrame) and not response.empty:
-            print(response.dtypes)
-            viz_type = chat.get_viz_type(response)
-            print(">> Inferred viz type:", viz_type)
-            chat.show_data(response, viz_type)
-        elif isinstance(response, pd.DataFrame) and response.empty:
-            response = "I could not find any data for this question"
-            st.markdown(response)
+        if isinstance(RESPONSE, pd.DataFrame) and not RESPONSE.empty:
+            print(RESPONSE.dtypes)
+            VIZ_TYPE = chat.get_viz_type(RESPONSE)
+            print(">> Inferred viz type:", VIZ_TYPE)
+            chat.show_data(RESPONSE, VIZ_TYPE)
+        elif isinstance(RESPONSE, pd.DataFrame) and RESPONSE.empty:
+            RESPONSE = "I could not find any data for this question"
+            st.markdown(RESPONSE)
         else:
-            st.markdown(response)
-        if sql_query:
-            st.markdown(chat.sql_query_explanation(sql_query))
+            st.markdown(RESPONSE)
+        if SQL_QUERY:
+            st.markdown(chat.sql_query_explanation(SQL_QUERY))
     session_state = {
         "role": "assistant",
-        "content": response,
-        "viz_type": viz_type,
-        "explanation": sql_query,
+        "content": RESPONSE,
+        "viz_type": VIZ_TYPE,
+        "explanation": SQL_QUERY,
     }
     st.session_state.messages.append(session_state)
