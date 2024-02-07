@@ -71,7 +71,7 @@ def get_data(page):
             for column in pf.columns
             if column not in cb.COLUMNS_UNIT_ENVIRONMENT_STATEMENTS
         ]
-    
+
     dset = pd.read_parquet(fname, columns=columns_to_read, engine=PARQUET_ENGINE)
 
     return dset

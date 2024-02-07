@@ -21,10 +21,9 @@ st.title(sh.PAGE_TITLES[PAGE])
 vis.display_record_counts_table(dset, logs, description=sh.GROUPS_DESCRIPTION)
 
 with st.expander(sh.VISUALISE_HEADER):
-    tabs = st.tabs([sh.DISTRIBUTIONS_TAB_HEADER, sh.GROUPED_DISTRIBUTIONS_TAB_HEADER])
+    tabs = st.tabs([sh.DISTRIBUTIONS_TAB_HEADER])
     with tabs[0]:
         vis.display_distributions(dset)
-    with tabs[1]:
-        vis.display_grouped_distribution(dset)
+
 with st.expander(sh.EXPLORE_HEADER):
     vis.display_data_explorer(dset)

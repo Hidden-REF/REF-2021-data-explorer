@@ -66,10 +66,10 @@ FIELDS_TO_NOT_DISPLAY = [
 ]
 
 COLUMNS_UNIT_ENVIRONMENT_STATEMENTS = [
-    'Unit context and structure, research and impact strategy', 
-    'People', 
-    'Income, infrastructure and facilities', 
-    'Collaboration and contribution to the research base, economy and society'
+    "Unit context and structure, research and impact strategy",
+    "People",
+    "Income, infrastructure and facilities",
+    "Collaboration and contribution to the research base, economy and society",
 ]
 
 ADDED_SUFFIXES = ["(added)", "(binned)"]

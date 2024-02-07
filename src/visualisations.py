@@ -295,7 +295,7 @@ def display_histograms(dset, key=None):
     Args:
         dset (pandas.DataFrame): dataset
     """
-    
+
     fields = proc.get_column_lists(dset, "number")
     nrecords = dset.shape[0]
     column_selected = st.selectbox(
@@ -448,17 +448,12 @@ def display_data_explorer(dset, do_histograms=False):
             with tabs[0]:
                 st.dataframe(dset_explore, use_container_width=False)
             with tabs[1]:
-                tabs_list = [
-                    sh.DISTRIBUTIONS_TAB_HEADER,
-                    sh.GROUPED_DISTRIBUTIONS_TAB_HEADER,
-                ]
+                tabs_list = [sh.DISTRIBUTIONS_TAB_HEADER]
                 if do_histograms:
                     tabs_list.append(sh.HISTOGRAMS_TAB_HEADER)
                 tabs = st.tabs(tabs_list)
                 with tabs[0]:
                     display_distributions(dset_explore, key="d_selected")
-                with tabs[1]:
-                    display_grouped_distribution(dset_explore, key="g_selected")
                 if do_histograms:
-                    with tabs[2]:
+                    with tabs[1]:
                         display_histograms(dset_explore, key="h_selected")
