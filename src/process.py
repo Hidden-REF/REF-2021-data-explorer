@@ -3,7 +3,7 @@ import codebook as cb
 
 
 def calculate_counts(dset, col, sort=True):
-    """ Calculate counts and percentages for a column.
+    """Calculate counts and percentages for a column.
 
     Args:
         dset (pandas.DataFrame): The dataset to use.
@@ -13,8 +13,12 @@ def calculate_counts(dset, col, sort=True):
 
     col_count = "records"
     col_perc = "records (%)"
-    dset_stats = dset[col].cat.remove_unused_categories().value_counts(sort=sort)\
-                          .to_frame(name=col_count)
+    dset_stats = (
+        dset[col]
+        .cat.remove_unused_categories()
+        .value_counts(sort=sort)
+        .to_frame(name=col_count)
+    )
     dset_stats[col_perc] = 100 * dset_stats[col_count] / dset.shape[0]
     dset_stats.index.name = col
 
@@ -22,7 +26,7 @@ def calculate_counts(dset, col, sort=True):
 
 
 def calculate_grouped_counts(dset, columns):
-    """ Calculate counts and percentages for a grouped dataset.
+    """Calculate counts and percentages for a grouped dataset.
 
     Args:
         dset (pandas.DataFrame): The dataset to use.
@@ -44,7 +48,7 @@ def calculate_grouped_counts(dset, columns):
 
 
 def get_column_lists(dset, dtype):
-    """ Get a list of columns of a given data type.
+    """Get a list of columns of a given data type.
 
     Args:
         dset (pandas.DataFrame): The dataset to use.
@@ -53,11 +57,19 @@ def get_column_lists(dset, dtype):
     Returns:
         columns (list): The list of columns.
     """
+
+    column_list = []
     if dtype == "category":
-        return [column for column in dset.columns
-                if (dset[column].dtype.name == dtype)
-                & (column not in cb.CATEGORY_FIELDS_EXCLUDE_CHARTS)]
+        column_list = [
+            column
+            for column in dset.columns
+            if (dset[column].dtype.name == dtype)
+            & (column not in cb.CATEGORY_FIELDS_EXCLUDE_CHARTS)
+        ]
     elif dtype == "number":
         dtypes = ["int64", "float64"]
-        return [column for column in dset.columns
-                if dset[column].dtype.name in dtypes]
+        column_list = [
+            column for column in dset.columns if dset[column].dtype.name in dtypes
+        ]
+
+    return column_list

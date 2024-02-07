@@ -65,8 +65,8 @@ def get_column_type(column: dict[str, Optional[str]]) -> str:
 
     if column.get("numpy_type") == "object" or column.get("pandas_type") == "unicode":
         return "string"
-    else:
-        return column.get("pandas_type") or column.get("numpy_type") or "string"
+
+    return column.get("pandas_type") or column.get("numpy_type") or "string"
 
 
 def get_schema(file: Path, enum_columns: list[str] = []) -> TableInfo:
@@ -138,10 +138,11 @@ def get_viz_type(data: pd.DataFrame) -> Optional[Literal["bar", "line", "map"]]:
         for c in data.columns
     ):
         return "line"  # display time series as a line chart
-    elif {"Country_ISO3", "Location"} & set(data.columns):
+
+    if {"Country_ISO3", "Location"} & set(data.columns):
         return "map"
-    else:
-        return "bar"
+
+    return "bar"
 
 
 def postprocess_data(df: pd.DataFrame) -> pd.DataFrame:
@@ -194,8 +195,8 @@ def run_sql(sql_stmt: str) -> Union[str, pd.DataFrame]:
     print("RESULTS", results)
     if len(results) == 1 and len(results[0]) == 1:
         return str(results[0][0])
-    else:
-        return postprocess_data(pd.DataFrame(results).replace(NULL_VALUES, None))
+
+    return postprocess_data(pd.DataFrame(results).replace(NULL_VALUES, None))
 
 
 def get_sql(
@@ -223,10 +224,11 @@ def get_sql(
     content = completion.choices[0].message.content
     if content is None:
         return None
+
     if content.lower().startswith("select"):
         return content.replace("\n", " ")
-    else:
-        return content
+
+    return content
 
 
 def clear_chat():

@@ -35,8 +35,8 @@ def clean_titles(title):
         str: cleaned title
     """
 
-    for (key, _) in TO_REPLACE_TITLES.items():
-        title = title.replace(key, TO_REPLACE_TITLES[key])
+    for key, item in TO_REPLACE_TITLES.items():
+        title = title.replace(key, item)
 
     return title
 
@@ -45,16 +45,14 @@ def show_counts_percent_chart(
     dset,
     title,
     column_name,
-    column_count="records",
-    column_percent="records (%)",
+    columns_stats=["records", "records (%)"],
     stats_type="Percentages",
 ):
     """Draw a chart with counts and percentages.
 
     Args:
         dset (pandas.DataFrame): dataset
-        column_name (str): column name
-        column_count (str): column name for the counts
+        column_stats (list): column names for the stats
         column_percent (str): column name for the percentages
         use_container_width (bool): use container width
     """
@@ -63,13 +61,15 @@ def show_counts_percent_chart(
     title = alt.TitleParams(text=title, anchor="middle", fontSize=14, dy=-10)
     if stats_type == STATS_TYPES[1]:
         # counts
-        x = alt.X(column_count, type="quantitative", axis=alt.Axis(title=column_count))
+        x = alt.X(
+            columns_stats[0], type="quantitative", axis=alt.Axis(title=columns_stats[0])
+        )
     else:
         # percentages
         x = alt.X(
-            column_percent,
+            columns_stats[1],
             type="quantitative",
-            axis=alt.Axis(title=column_percent),
+            axis=alt.Axis(title=columns_stats[1]),
             scale=alt.Scale(domain=[0, 100]),
         )
 
@@ -77,7 +77,7 @@ def show_counts_percent_chart(
         column_name, type="nominal", sort="-x", axis=alt.Axis(title="", labelLimit=400)
     )
 
-    tooltip = [column_name, column_count, column_percent]
+    tooltip = [column_name, columns_stats[0], columns_stats[1]]
 
     # add chart to display
     chart = (
@@ -124,6 +124,110 @@ def show_grouped_counts_chart(dset, x, y, colour):
     st.vega_lite_chart(dset, chart, use_container_width=True)
 
 
+def display_description(description):
+    """Display a description.
+
+    Args:
+        description (str): description
+    """
+
+    if description != "":
+        if description.startswith(sh.PREFIX_WARNING):
+            st.warning(description.replace(sh.PREFIX_WARNING, ""), icon="⚠️")
+        else:
+            st.markdown(description)
+
+
+def display_added_columns(dset):
+    """Display added columns.
+
+    Args:
+        dset (pandas.DataFrame): dataset
+    """
+
+    columns_added = [
+        column
+        for column in dset.columns
+        if any(suffix in column for suffix in cb.ADDED_SUFFIXES)
+    ]
+    if len(columns_added) > 0:
+        columns_added_to_print = []
+        for column in columns_added:
+            if column in cb.ADDED_DESCRIPTIONS:
+                columns_added_to_print.append(
+                    f"{column}: {cb.ADDED_DESCRIPTIONS[column]}"
+                )
+            else:
+                columns_added_to_print.append(column)
+
+        st.markdown(sh.ADDED_TITLE)
+        stx.scrollableTextbox("\n".join(columns_added_to_print), key="stx_added")
+
+
+def display_data_description(dset, logs, description=""):
+    """Display a description of the data.
+
+    Args:
+        dset (pandas.DataFrame): dataset
+        logs (str): logs
+        description (str): description
+    """
+
+    display_description(description)
+
+    display_added_columns(dset)
+
+    # list fields
+    st.markdown(sh.FIELDS_TITLE)
+    column_dtypes = [(column, str(dtype)) for column, dtype in dset.dtypes.items()]
+    for [column_name, column_type] in column_dtypes:
+        if column_type == "category":
+            categories_count = dset[column_name].nunique()
+            if categories_count > 1:
+                categories_count_text = sh.CATEGORY_LABEL_PLURAL
+            else:
+                categories_count_text = sh.CATEGORY_LABEL_SINGULAR
+            st.markdown(
+                f"**{column_name}** - *{column_type}, "
+                f"{categories_count} {categories_count_text}*"
+            )
+            if column_name not in cb.FILEDS_TO_NOT_DISPLAY:
+                categories = "\n".join(sorted(dset[column_name].dropna().unique()))
+                if categories_count > 1:
+                    stx.scrollableTextbox(categories, key=f"stx_{column_name}")
+                else:
+                    with st.container(border=True):
+                        st.markdown(categories)
+
+        elif column_type in ["int64", "float64"]:
+            column_type = "number"
+            column_description = pd.DataFrame(
+                data=[
+                    dset[column_name]
+                    .describe()
+                    .loc[DESCRIPTION_MEASURES]
+                    .round(0)
+                    .astype(int)
+                    .to_dict()
+                ]
+            )
+
+            st.markdown(f"**{column_name}** - *{column_type}*")
+            st.dataframe(column_description, hide_index=True)
+        elif column_type in ["string", "object"]:
+            st.markdown(f"**{column_name}** - *{sh.OBJECT_LABEL}*")
+            if column_name not in cb.FILEDS_TO_NOT_DISPLAY:
+                items = "\n".join(sorted(dset[column_name].dropna().unique()))
+                stx.scrollableTextbox(items, key=f"stx_{column_name}")
+        else:
+            st.markdown(f"`{column_name}` ({column_type})")
+            items = "\n".join(sorted(dset[column_name].dropna().unique()))
+            stx.scrollableTextbox(items, key=f"stx_{column_name}")
+
+    st.markdown(sh.LOGS_TITLE)
+    stx.scrollableTextbox(logs, key="stx_logs")
+
+
 def display_record_counts_table(
     dset, logs, describe_data=True, suffix="", description=""
 ):
@@ -133,98 +237,15 @@ def display_record_counts_table(
         dset (pandas.DataFrame): dataset
     """
 
-    (s1, s2) = st.columns(2)
-    s1.metric(label=f"{sh.RECORDS_LABEL}{suffix}", value=dset.shape[0])
-    s2.metric(
+    cols = st.columns(2)
+    cols[0].metric(label=f"{sh.RECORDS_LABEL}{suffix}", value=dset.shape[0])
+    cols[1].metric(
         label=f"{sh.INSTITUTIONS_LABEL}{suffix}", value=dset[cb.COL_INST_NAME].nunique()
     )
 
-    # with st.expander(sh.LOGS_HEADER):
-    #     stx.scrollableTextbox(logs, key="stx_logs")
-
     if describe_data:
         with st.expander(sh.DESCRIBE_HEADER):
-            # summary description
-            if description != "":
-                if description.startswith(sh.PREFIX_WARNING):
-                    st.warning(description.replace(sh.PREFIX_WARNING, ""), icon="⚠️")
-                else:
-                    st.markdown(description)
-
-            # list and describe columns added
-            columns_added = [
-                column
-                for column in dset.columns
-                if any(suffix in column for suffix in cb.ADDED_SUFFIXES)
-            ]
-            if len(columns_added) > 0:
-                columns_added_to_print = []
-                for column in columns_added:
-                    if column in cb.ADDED_DESCRIPTIONS:
-                        columns_added_to_print.append(
-                            f"{column}: {cb.ADDED_DESCRIPTIONS[column]}"
-                        )
-                    else:
-                        columns_added_to_print.append(column)
-
-                st.markdown(sh.ADDED_TITLE)
-                stx.scrollableTextbox(
-                    "\n".join(columns_added_to_print), key="stx_added"
-                )
-
-            # list fields
-            st.markdown(sh.FIELDS_TITLE)
-            column_dtypes = [
-                (column, str(dtype)) for column, dtype in dset.dtypes.items()
-            ]
-            for [column_name, column_type] in column_dtypes:
-                if column_type == "category":
-                    categories_count = dset[column_name].nunique()
-                    if categories_count > 1:
-                        categories_count_text = sh.CATEGORY_LABEL_PLURAL
-                    else:
-                        categories_count_text = sh.CATEGORY_LABEL_SINGULAR
-                    st.markdown(
-                        f"**{column_name}** - *{column_type}, "
-                        f"{categories_count} {categories_count_text}*"
-                    )
-                    if column_name not in cb.FILEDS_TO_NOT_DISPLAY:
-                        categories = "\n".join(
-                            sorted(dset[column_name].dropna().unique())
-                        )
-                        if categories_count > 1:
-                            stx.scrollableTextbox(categories, key=f"stx_{column_name}")
-                        else:
-                            with st.container(border=True):
-                                st.markdown(categories)
-
-                elif column_type in ["int64", "float64"]:
-                    column_type = "number"
-                    column_description = pd.DataFrame(
-                        data=[
-                            dset[column_name]
-                            .describe()
-                            .loc[DESCRIPTION_MEASURES]
-                            .round(0)
-                            .astype(int)
-                            .to_dict()
-                        ]
-                    )
-
-                    st.markdown(f"**{column_name}** - *{column_type}*")
-                    st.dataframe(column_description, hide_index=True)
-                elif column_type in ["string", "object"]:
-                    st.markdown(f"**{column_name}** - *{sh.OBJECT_LABEL}*")
-                    if column_name not in cb.FILEDS_TO_NOT_DISPLAY:
-                        items = "\n".join(sorted(dset[column_name].dropna().unique()))
-                        stx.scrollableTextbox(items, key=f"stx_{column_name}")
-                else:
-                    st.markdown(f"`{column_name}` ({column_type})")
-                    items = "\n".join(sorted(dset[column_name].dropna().unique()))
-                    stx.scrollableTextbox(items, key=f"stx_{column_name}")
-
-            st.markdown(sh.LOGS_TITLE)
-            stx.scrollableTextbox(logs, key="stx_logs")
+            display_data_description(dset, logs, description)
 
 
 def display_table_from_dictionary(dict_data):
@@ -274,6 +295,7 @@ def display_histograms(dset, key=None):
     Args:
         dset (pandas.DataFrame): dataset
     """
+    
     fields = proc.get_column_lists(dset, "number")
     nrecords = dset.shape[0]
     column_selected = st.selectbox(

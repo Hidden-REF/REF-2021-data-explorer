@@ -16,7 +16,7 @@ st.set_page_config(
 
 st.title(sh.PAGE_TITLES[PAGE])
 
-(dset, logs) = rw.get_dataframes(paPAGEge)
+(dset, logs) = rw.get_dataframes(PAGE)
 
 vis.display_record_counts_table(dset, logs, description=sh.RESULTS_DESCRIPTION)
 
