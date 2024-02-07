@@ -1,4 +1,6 @@
 """ Results page"""
+import pyarrow.parquet as pq
+import fastparquet as fp
 import streamlit as st
 
 import codebook as cb
@@ -18,8 +20,7 @@ st.set_page_config(
 
 st.title(sh.PAGE_TITLES[PAGE])
 
-(dset, logs) = rw.get_dataframes(PAGE, columns=cb.COLUMNS_REDUCED_RESULTS)
-print(dset.columns)
+(dset, logs) = rw.get_dataframes(PAGE)
 
 vis.display_record_counts_table(dset, logs, description=sh.RESULTS_DESCRIPTION)
 

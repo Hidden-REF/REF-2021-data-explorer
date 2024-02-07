@@ -191,7 +191,7 @@ def display_data_description(dset, logs, description=""):
                 f"**{column_name}** - *{column_type}, "
                 f"{categories_count} {categories_count_text}*"
             )
-            if column_name not in cb.FILEDS_TO_NOT_DISPLAY:
+            if column_name not in cb.FIELDS_TO_NOT_DISPLAY:
                 categories = "\n".join(sorted(dset[column_name].dropna().unique()))
                 if categories_count > 1:
                     stx.scrollableTextbox(categories, key=f"stx_{column_name}")
@@ -216,7 +216,7 @@ def display_data_description(dset, logs, description=""):
             st.dataframe(column_description, hide_index=True)
         elif column_type in ["string", "object"]:
             st.markdown(f"**{column_name}** - *{sh.OBJECT_LABEL}*")
-            if column_name not in cb.FILEDS_TO_NOT_DISPLAY:
+            if column_name not in cb.FIELDS_TO_NOT_DISPLAY:
                 items = "\n".join(sorted(dset[column_name].dropna().unique()))
                 stx.scrollableTextbox(items, key=f"stx_{column_name}")
         else:
