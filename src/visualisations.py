@@ -412,7 +412,7 @@ def display_data_explorer(dset, do_histograms=False):
             st.warning(sh.NO_SELECTED_RECORDS_WARNING)
         else:
             display_record_counts_table(
-                dset_explore, describe_data=False, suffix=" selected"
+                dset_explore, None, describe_data=False, suffix=" selected"
             )
             st.download_button(
                 label=sh.DOWNLOAD_SELECTED_DATA_BUTTON,
