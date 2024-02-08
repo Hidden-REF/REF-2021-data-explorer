@@ -1,7 +1,6 @@
 """ Research Groups page """
 import streamlit as st
 
-import read_write as rw
 import visualisations as vis
 import shared_content as sh
 

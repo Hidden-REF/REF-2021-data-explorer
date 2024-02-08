@@ -16,7 +16,7 @@ LOGS_PATH = "https://github.com/softwaresaved/ref-2021-analysis/raw/main/logs/"
 LOCAL_DATA_PATH = "data/"
 
 # local data for use with fastparquet
-LOCAL_SOURCES = ["results"]
+LOCAL_SOURCES = ["results", "inst_env_statements", "unit_env_statements"]
 
 DATA_EXT = ".parquet"
 LOGS_EXT = ".log"
@@ -31,6 +31,8 @@ sources = {
         "degrees": "ResearchDoctoralDegreesAwarded",
         "income": "ResearchIncome",
         "income_in_kind": "ResearchIncomeInKind",
+        "inst_env_statements": "EnvironmentStatementsInstitutionLevel",
+        "unit_env_statements": "EnvironmentStatementsUnitLevel",
         "results": "Results",
     },
 }
@@ -72,7 +74,7 @@ def get_data(page):
             if column not in cb.COLUMNS_UNIT_ENVIRONMENT_STATEMENTS
         ]
 
-    dset = pd.read_parquet(fname, columns=columns_to_read, engine=PARQUET_ENGINE)
+    dset = read_parquet(fname, columns_to_read)
 
     # move institution name column to the back which works better for visualisations
     if cb.COL_INST_NAME in dset.columns:
@@ -117,3 +119,19 @@ def get_dataframes(page):
         logs = get_logs(page)
 
     return dset, logs
+
+
+def read_parquet(fname, columns_to_read=None):
+    """Read a parquet file.
+
+    Args:
+        fname (str): The file name.
+        columns_to_read (list): The columns to read.
+
+    Returns:
+        (pandas.DataFrame): The data read from the file.
+    """
+
+    dset = pd.read_parquet(fname, columns=columns_to_read, engine=PARQUET_ENGINE)
+
+    return dset

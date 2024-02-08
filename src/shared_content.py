@@ -15,6 +15,8 @@ PAGE_TITLES = {
     "degrees": "Doctoral Degrees Awarded",
     "income": "Research Income",
     "income_in_kind": "Research Income in Kind",
+    "inst_env_statements": "Institution Environment Statements",
+    "unit_env_statements": "Unit Environment Statements",
     "results": "Results",
     "results_chat": "Results Chat",
 }
@@ -42,9 +44,7 @@ in the field names.
 """
 
 WARNING_TEXT = """
-    This site is currently under construction.
-
-    Changes will be made on a frequent basis.
+    This site is currently under construction and changes will be made on a frequent basis.
 
     Until we announce that the website is complete, please do not use any of the results from
     analysis you conduct on this site unless you have independently verified the results.
@@ -152,6 +152,8 @@ GROUPS_DESCRIPTION = f"""\
 {PREFIX_WARNING}Information was not available to decode the **Research group code** field.
 """
 
+EXTRACTED_TEXT_DESCRIPTION = "extracted and processed text"
+
 # chat
 CHAT_TITLE = "Results Chat"
 NO_ANSWER = "Sorry, I do not know the answer to that question."
@@ -203,7 +205,7 @@ You can ask questions such as:
 
 def page_config(page):
     """Set the page configuration.
-    
+
     Args:
         page (str): The page name.
     """

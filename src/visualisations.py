@@ -177,7 +177,29 @@ def display_data_description(dset, logs, description=""):
 
     display_added_columns(dset)
 
-    # list fields
+    display_fields(dset)
+    
+    display_logs(logs)
+
+
+def display_logs(logs):
+    """Display logs.
+
+    Args:
+        logs (str): logs
+    """
+
+    st.markdown(sh.LOGS_TITLE)
+    stx.scrollableTextbox(logs, key="stx_logs")
+
+
+def display_fields(dset):
+    """Display fields.
+
+    Args:
+        dset (pandas.DataFrame): dataset
+    """
+
     st.markdown(sh.FIELDS_TITLE)
     column_dtypes = [(column, str(dtype)) for column, dtype in dset.dtypes.items()]
     for [column_name, column_type] in column_dtypes:
@@ -224,14 +246,24 @@ def display_data_description(dset, logs, description=""):
             items = "\n".join(sorted(dset[column_name].dropna().unique()))
             stx.scrollableTextbox(items, key=f"stx_{column_name}")
 
-    st.markdown(sh.LOGS_TITLE)
-    stx.scrollableTextbox(logs, key="stx_logs")
-
-
 def display_record_counts_table(
     dset, logs, describe_data=True, suffix="", description=""
 ):
     """Display a table with the number of records and institutions.
+
+    Args:
+        dset (pandas.DataFrame): dataset
+    """
+
+    display_metrics(dset, suffix=suffix)
+
+    if describe_data:
+        with st.expander(sh.DESCRIBE_HEADER):
+            display_data_description(dset, logs, description)
+
+
+def display_metrics(dset, suffix=""):
+    """Display metrics for a dataset.
 
     Args:
         dset (pandas.DataFrame): dataset
@@ -242,10 +274,6 @@ def display_record_counts_table(
     cols[1].metric(
         label=f"{sh.INSTITUTIONS_LABEL}{suffix}", value=dset[cb.COL_INST_NAME].nunique()
     )
-
-    if describe_data:
-        with st.expander(sh.DESCRIBE_HEADER):
-            display_data_description(dset, logs, description)
 
 
 def display_table_from_dictionary(dict_data):

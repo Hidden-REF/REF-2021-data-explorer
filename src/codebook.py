@@ -2,6 +2,8 @@
 
 
 COL_INST_NAME = "Institution name"
+COL_UNIT_OF_ASSESSMENT = "Unit of assessment name"
+COL_MULIPLE_SUBMISSION_LETTER = "Multiple submission letter"
 COL_OUTPUT_TITLE = "Title"
 COL_OUTPUT_PLACE = "Place"
 COL_OUTPUT_PUBLISHER = "Publisher"
@@ -64,6 +66,7 @@ FIELDS_TO_NOT_DISPLAY = [
     COL_RESULTS_UNIT_ENV_INCOME_ETC,
     COL_RESULTS_UNIT_ENV_COLAB_CONTRIB,
 ]
+
 
 COLUMNS_UNIT_ENVIRONMENT_STATEMENTS = [
     "Unit context and structure, research and impact strategy",
