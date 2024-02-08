@@ -102,6 +102,10 @@ BIN_NUMBER_PROMPT = "Select number of bins"
 SELECT_STATS_PROMPT = "Select what to plot"
 SELECT_DATA_RANGE_PROMPT = "Select data range"
 EXCLUDE_NEGATIVE_PROMPT = "Exclude negative values"
+SIDEBAR_HOME_PROMPT = """
+Select a data set from the side bar, then use the main section of the website
+to choose elements of the data set to visualise for the entire data set or a subset.
+"""
 
 # headers
 HEADER_STYLE = "######"
@@ -208,6 +212,10 @@ def sidebar_content(path):
 
         if path != "results_chat":
             st.warning(WARNING_TEXT, icon="⚠️")
+            if path == "home":
+                st.markdown(SIDEBAR_HOME_PROMPT)
+
+
 
 
 def sidebar_settings():
