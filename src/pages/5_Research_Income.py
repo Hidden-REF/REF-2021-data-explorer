@@ -3,7 +3,7 @@ import streamlit as st
 
 import read_write as rw
 import visualisations as vis
-import shared_text as sh
+import shared_content as sh
 
 PAGE = "income"
 
@@ -13,6 +13,8 @@ st.set_page_config(
     initial_sidebar_state=sh.INITIAL_SIDEBAR_STATE,
     menu_items=sh.MENU_ITEMS,
 )
+
+sh.sidebar_content(PAGE)
 
 st.title(sh.PAGE_TITLES[PAGE])
 

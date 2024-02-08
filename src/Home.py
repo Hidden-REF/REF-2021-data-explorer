@@ -1,6 +1,8 @@
 """ Home page of the app. """
 import streamlit as st
-import shared_text as sh
+from streamlit_extras.app_logo import add_logo
+import shared_content as sh
+import visualisations as vis
 
 PAGE = "home"
 
@@ -11,6 +13,7 @@ st.set_page_config(
     menu_items=sh.MENU_ITEMS,
 )
 
+sh.sidebar_content(PAGE)
 
 st.title(sh.PAGE_TITLES[PAGE])
 st.warning(sh.WARNING_TEXT, icon="⚠️")

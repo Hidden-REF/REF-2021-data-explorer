@@ -7,12 +7,14 @@ import openai
 import streamlit as st
 import pyarrow.parquet as pq
 
-import shared_text as sh
+import shared_content as sh
 import read_write as rw
 import chat
 
 
 OPENAITOKEN_AVAILABLE = False
+
+PAGE = "results_chat"
 
 # get the categorical columns
 pfile = pq.ParquetFile(rw.CHAT_DB)
@@ -26,17 +28,16 @@ ENUM_COLUMNS = [
 SCHEMA = chat.get_schema(Path(rw.CHAT_DB), ENUM_COLUMNS)
 SCHEMA_TEXT = chat.schema_to_text(SCHEMA)
 
-PAGE_TITLE = sh.CHAT_TITLE
-
 st.set_page_config(
-    page_title=PAGE_TITLE,
+    page_title=sh.PAGE_TITLES[PAGE],
     layout=sh.LAYOUT,
     initial_sidebar_state=sh.INITIAL_SIDEBAR_STATE,
     menu_items=sh.MENU_ITEMS,
 )
 
-st.title(PAGE_TITLE)
+st.title(sh.PAGE_TITLES[PAGE])
 
+sh.sidebar_content(PAGE)
 
 with st.sidebar:
     st.markdown(sh.CHAT_SIDEBAR_TEXT)

@@ -1,5 +1,5 @@
 """ Shared text for the app. """
-
+import streamlit as st
 import read_write as rw
 
 # settings
@@ -16,6 +16,7 @@ PAGE_TITLES = {
     "income": "Research Income",
     "income_in_kind": "Research Income in Kind",
     "results": "Results",
+    "results_chat": "Results Chat"
 }
 
 
@@ -95,7 +96,7 @@ CATEGORY_LABEL_PLURAL = "levels"
 OBJECT_LABEL = "string"
 
 # prompts
-DISTRIBUTION_SELECT_PROMPT = "Select column to plot"
+DISTRIBUTION_SELECT_PROMPT = "Select the categorical field of interest"
 GROUPED_DISTRIBUTION_SELECT_PROMPT = "Select columns to plot"
 BIN_NUMBER_PROMPT = "Select number of bins"
 SELECT_STATS_PROMPT = "Select what to plot"
@@ -116,11 +117,16 @@ FIELDS_TITLE = f"{TITLE_STYLE} Fields"
 LOGS_TITLE = f"{TITLE_STYLE} Processing logs"
 
 # tabs headers
-DISTRIBUTIONS_TAB_HEADER = "Distributions (categorical)"
+DISTRIBUTIONS_TAB_HEADER = "Distributions"
 GROUPED_DISTRIBUTIONS_TAB_HEADER = "Grouped distributions (categorical)"
 HISTOGRAMS_TAB_HEADER = "Histograms"
 SHOW_SELECTED_TAB_HEADER = "Show selected data"
 VISUALISE_SELECTED_TAB_HEADER = "Visualise selected data"
+
+# tabs descriptions
+DISTRIBUTIONS_TAB_DESCRIPTION = """
+Explore the distribution of record numbers across different levels of the categorical fields in this dataset. 
+"""
 
 # buttons
 DOWNLOAD_SELECTED_DATA_BUTTON = "Download selected data as csv"
@@ -148,7 +154,9 @@ NO_ANSWER = "Sorry, I do not know the answer to that question."
 TOKEN_NOTAVAILABLE = ":warning: Open AI token not available for the chat"
 OPENAI_KEY_PROMPT = "Enter your OpenAI API Key to use the chat"
 OPENAI_KEY_PLACEHOLDER = "Paste your OpenAI API key here (sk-...)"
-OPENAI_KEY_HELP = "You can get your API key from https://platform.openai.com/account/api-keys"
+OPENAI_KEY_HELP = (
+    "You can get your API key from https://platform.openai.com/account/api-keys"
+)
 OPENAI_KEY_ERROR = "OpenAI authentication failed, try setting another key"
 
 CHAT_PROMPT = f"""
@@ -161,12 +169,15 @@ the SQL query. Ensure that columns with spaces are quoted in the query.
 If you are filtering using a WHERE clause, you must SELECT the columns being
 filtered.
 """
-CHAT_PROMPT = CHAT_PROMPT + """
+CHAT_PROMPT = (
+    CHAT_PROMPT
+    + """
 
 The dataset has the following schema:
 
 {schema}
 """
+)
 
 CHAT_SIDEBAR_TEXT = f"""
 ## {CHAT_TITLE}
@@ -182,3 +193,13 @@ such as:
 generated query before using in reports!
 
 """
+
+
+def sidebar_content(path):
+    """Add logos to the sidebar."""
+    with st.sidebar:
+        cols = st.columns([0.35, 0.65])
+        with cols[0]:
+            st.image("assets/rse_skyline_reverse.png")
+        with cols[1]:
+            st.image("assets/SSI_PRIMARY-LOGO.svg")

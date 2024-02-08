@@ -18,7 +18,7 @@ from pandas.api.types import (
 )
 
 import read_write as rw
-import shared_text as sh
+import shared_content as sh
 
 DEFAULT_MODEL = "gpt-3.5-turbo"
 

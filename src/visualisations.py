@@ -11,7 +11,7 @@ import altair as alt
 
 import codebook as cb
 import process as proc
-import shared_text as sh
+import shared_content as sh
 
 
 USE_CONTAINER_WIDTH = True
@@ -264,6 +264,8 @@ def display_distributions(dset, key=None):
     Args:
         dset (pandas.DataFrame): dataset
     """
+
+    st.markdown(sh.DISTRIBUTIONS_TAB_DESCRIPTION)
 
     fields = proc.get_column_lists(dset, "category")
 
