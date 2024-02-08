@@ -74,6 +74,13 @@ def get_data(page):
 
     dset = pd.read_parquet(fname, columns=columns_to_read, engine=PARQUET_ENGINE)
 
+    # move institution name column to the back which works better for visualisations
+    if cb.COL_INST_NAME in dset.columns:
+        columns = dset.columns.tolist()
+        columns.remove(cb.COL_INST_NAME)
+        columns.append(cb.COL_INST_NAME)
+        dset = dset[columns]
+
     return dset
 
 
