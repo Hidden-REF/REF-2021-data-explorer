@@ -201,6 +201,21 @@ You can ask questions such as:
 """
 
 
+def page_config(page):
+    """Set the page configuration.
+    
+    Args:
+        page (str): The page name.
+    """
+
+    st.set_page_config(
+        page_title=PAGE_TITLES[page],
+        layout=LAYOUT,
+        initial_sidebar_state=INITIAL_SIDEBAR_STATE,
+        menu_items=MENU_ITEMS,
+    )
+
+
 def sidebar_content(path):
     """Add logos to the sidebar."""
     with st.sidebar:
@@ -216,14 +231,36 @@ def sidebar_content(path):
                 st.markdown(SIDEBAR_HOME_PROMPT)
 
 
+def prepare_page(page):
+    """Prepare the page.
+
+    Args:
+        page (str): The page name.
+
+    Returns:
+        tuple: The data set and logs.
+    """
+
+    page_config(page)
+    sidebar_content(page)
+    st.title(PAGE_TITLES[page])
+    (dset, logs) = rw.get_dataframes(page)
+
+    return (dset, logs)
 
 
 def sidebar_settings():
     """Set the sidebar settings."""
 
+    # css = """
+    # [data-testid="stSidebar"] {
+    # min-height: 50vh
+    # }
+    # """
+    # st.markdown(f"<style>{css}</style>", unsafe_allow_html=True)
+
     css = """
-    [data-testid="stSidebar"] {
-    min-height: 50vh
-    }
+    <style>
+    div[data-testid='stSidebarNav'] ul {max-height:none}</style>
     """
-    st.markdown(f"<style>{css}</style>", unsafe_allow_html=True)
+    st.markdown(css, unsafe_allow_html=True)

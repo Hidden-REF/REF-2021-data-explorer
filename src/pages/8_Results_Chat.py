@@ -28,12 +28,7 @@ ENUM_COLUMNS = [
 SCHEMA = chat.get_schema(Path(rw.CHAT_DB), ENUM_COLUMNS)
 SCHEMA_TEXT = chat.schema_to_text(SCHEMA)
 
-st.set_page_config(
-    page_title=sh.PAGE_TITLES[PAGE],
-    layout=sh.LAYOUT,
-    initial_sidebar_state=sh.INITIAL_SIDEBAR_STATE,
-    menu_items=sh.MENU_ITEMS,
-)
+sh.page_config(PAGE)
 
 st.title(sh.PAGE_TITLES[PAGE])
 
@@ -119,3 +114,5 @@ if query := st.chat_input("Enter your query here"):
         "explanation": SQL_QUERY,
     }
     st.session_state.messages.append(session_state)
+
+sh.sidebar_settings()

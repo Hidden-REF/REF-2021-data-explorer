@@ -1,8 +1,6 @@
 """ Home page of the app. """
 import streamlit as st
-from streamlit_extras.app_logo import add_logo
 import shared_content as sh
-import visualisations as vis
 
 PAGE = "home"
 
