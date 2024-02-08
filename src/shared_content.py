@@ -16,7 +16,7 @@ PAGE_TITLES = {
     "income": "Research Income",
     "income_in_kind": "Research Income in Kind",
     "results": "Results",
-    "results_chat": "Results Chat"
+    "results_chat": "Results Chat",
 }
 
 
@@ -106,9 +106,9 @@ EXCLUDE_NEGATIVE_PROMPT = "Exclude negative values"
 # headers
 HEADER_STYLE = "######"
 
-DESCRIBE_HEADER = f"{HEADER_STYLE} Browse the data fields and processing logs"
-VISUALISE_HEADER = f"{HEADER_STYLE} Visualise data"
-EXPLORE_HEADER = f"{HEADER_STYLE} Select and explore data"
+DESCRIBE_HEADER = f"{HEADER_STYLE} :book: Browse the data fields and processing logs"
+VISUALISE_HEADER = f"{HEADER_STYLE} :bar_chart: Visualise data "
+EXPLORE_HEADER = f"{HEADER_STYLE} :mag: :bar_chart: Select and explore data"
 
 # titles
 TITLE_STYLE = "#####"
@@ -179,18 +179,20 @@ The dataset has the following schema:
 """
 )
 
-CHAT_SIDEBAR_TEXT = f"""
-## {CHAT_TITLE}
-
+CHAT_WARNING_TEXT = """
 This is an **experimental** interface utilising GPT models to provide a
-natural language query to the the REF 2021 dataset. You can ask it questions
-such as:
+natural language query to the the REF 2021 dataset.
+
+This chat may give **incorrect or misleading** answers. Check the
+generated query before using in reports!
+"""
+
+CHAT_SIDEBAR_TEXT = """
+
+You can ask questions such as:
 
 > Show me universities with units that achieved more than 75% of outputs in
 > their overall evaluation 4 stars
-
-:warning: **{CHAT_TITLE}** may give **incorrect or misleading** answers. Check the
-generated query before using in reports!
 
 """
 

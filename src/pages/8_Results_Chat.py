@@ -40,6 +40,8 @@ st.title(sh.PAGE_TITLES[PAGE])
 sh.sidebar_content(PAGE)
 
 with st.sidebar:
+    st.title(sh.CHAT_TITLE)
+    st.warning(sh.CHAT_WARNING_TEXT, icon="⚠️")
     st.markdown(sh.CHAT_SIDEBAR_TEXT)
     api_key_input = st.text_input(
         sh.OPENAI_KEY_PROMPT,
