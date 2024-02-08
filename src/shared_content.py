@@ -205,3 +205,17 @@ def sidebar_content(path):
             st.image("assets/rse_skyline_reverse.png")
         with cols[1]:
             st.image("assets/SSI_PRIMARY-LOGO.svg")
+
+        if path != "results_chat":
+            st.warning(WARNING_TEXT, icon="⚠️")
+
+
+def sidebar_settings():
+    """Set the sidebar settings."""
+
+    css = """
+    [data-testid="stSidebar"] {
+    min-height: 50vh
+    }
+    """
+    st.markdown(f"<style>{css}</style>", unsafe_allow_html=True)

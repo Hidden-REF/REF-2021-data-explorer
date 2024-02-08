@@ -16,7 +16,6 @@ st.set_page_config(
 sh.sidebar_content(PAGE)
 
 st.title(sh.PAGE_TITLES[PAGE])
-st.warning(sh.WARNING_TEXT, icon="⚠️")
 
 
 # page content
@@ -25,3 +24,5 @@ st.markdown(sh.ABOUT_TEXT)
 
 st.header(sh.DATA_SOURCE_HEADER)
 st.markdown(sh.DATA_SOURCE_TEXT)
+
+sh.sidebar_settings()
