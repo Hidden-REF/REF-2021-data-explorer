@@ -242,9 +242,14 @@ def prepare_page(page):
     """
 
     page_config(page)
+    sidebar_settings()
     sidebar_content(page)
     st.title(PAGE_TITLES[page])
-    (dset, logs) = rw.get_dataframes(page)
+    if page == "home":
+        dset = None
+        logs = None
+    else:
+        (dset, logs) = rw.get_dataframes(page)
 
     return (dset, logs)
 

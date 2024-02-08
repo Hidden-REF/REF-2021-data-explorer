@@ -18,5 +18,3 @@ with st.expander(sh.VISUALISE_HEADER):
 
 with st.expander(sh.EXPLORE_HEADER):
     vis.display_data_explorer(dset)
-
-sh.sidebar_settings()

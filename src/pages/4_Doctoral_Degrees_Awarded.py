@@ -25,5 +25,3 @@ with st.expander(sh.VISUALISE_HEADER):
 
 with st.expander(sh.EXPLORE_HEADER):
     vis.display_data_explorer(dset, do_histograms=True)
-
-sh.sidebar_settings()
