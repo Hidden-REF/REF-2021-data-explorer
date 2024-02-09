@@ -13,6 +13,16 @@ DATA_PATH = (
 )
 LOGS_PATH = "https://github.com/softwaresaved/ref-2021-analysis/raw/main/logs/"
 
+INSTITUTION_ENV_PATH = (
+    "https://github.com/softwaresaved/ref-2021-analysis/tree/main/"
+    "data/raw/environment_statements/institution"
+)
+
+UNIT_ENV_PATH = (
+    "https://github.com/softwaresaved/ref-2021-analysis/tree/main/"
+    "data/raw/environment_statements/unit"
+)
+
 LOCAL_DATA_PATH = "data/"
 
 # local data for use with fastparquet

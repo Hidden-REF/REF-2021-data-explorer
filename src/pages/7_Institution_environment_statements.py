@@ -28,9 +28,13 @@ logs = rw.get_logs(PAGE)
 
 vis.display_metrics(dset)
 
+st.link_button(
+    sh.BROWSE_STATEMENTS_HEADER,
+    rw.INSTITUTION_ENV_PATH
+)
+
 with st.expander(sh.DESCRIBE_HEADER):
     vis.display_fields(dset)
     for column_name in columns_with_text:
         st.markdown(f"**{column_name}** - *{sh.EXTRACTED_TEXT_DESCRIPTION}*")
     vis.display_logs(logs)
-    

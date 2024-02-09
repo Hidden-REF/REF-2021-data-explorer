@@ -110,10 +110,10 @@ to choose elements of the data set to visualise for the entire data set or a sub
 # headers
 HEADER_STYLE = "######"
 
-DESCRIBE_HEADER = f"{HEADER_STYLE} :book: Browse the processed fields and processing logs"
+DESCRIBE_HEADER = f"{HEADER_STYLE} :card_index_dividers: Browse the processed fields and processing logs"
 VISUALISE_HEADER = f"{HEADER_STYLE} :bar_chart: Visualise data "
-EXPLORE_HEADER = f"{HEADER_STYLE} :mag: :bar_chart: Select and explore data"
-BROWSE_STATEMENTS_HEADER = f"{HEADER_STYLE} :book: Browse and view the submitted statements"
+EXPLORE_HEADER = f"{HEADER_STYLE} :flashlight: Select, explore and visualise data"
+BROWSE_STATEMENTS_HEADER = f"{HEADER_STYLE} :bookmark_tabs: Browse and view the submitted statements"
 
 # titles
 TITLE_STYLE = "#####"
@@ -222,13 +222,12 @@ def page_config(page):
 def sidebar_content(path):
     """Add logos to the sidebar."""
     with st.sidebar:
-        cols = st.columns([0.4, 0.6])
+        cols = st.columns([0.5, 0.5])
         with cols[0]:
-            st.image("assets/rse_skyline_reverse.png")
+            st.image("assets/rse_skyline_university_reverse.png")
         with cols[1]:
             st.image("assets/rsg_logo_orange_soton-4.png")
-        
-        st.image("assets/SSI_PRIMARY-LOGO.svg")
+            st.image("assets/SSI_PRIMARY-LOGO.svg")
 
         if path != "results_chat":
             st.warning(WARNING_TEXT, icon="⚠️")
