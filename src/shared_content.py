@@ -91,6 +91,7 @@ PROC_TEXT = "Processing request..."
 # labels
 RECORDS_LABEL = "Records"
 INSTITUTIONS_LABEL = "Institutions"
+HITS_LABEL = "Number of search hits"
 CATEGORY_LABEL_SINGULAR = "level"
 CATEGORY_LABEL_PLURAL = "levels"
 OBJECT_LABEL = "string"
@@ -106,6 +107,13 @@ SIDEBAR_HOME_PROMPT = """
 Select a data set from the side bar, then use the main section of the website
 to choose elements of the data set to visualise for the entire data set or a subset.
 """
+
+SELECT_INSTITUTION_PROMPT = "Select institutions to search"
+SELECT_INSTITUTION_PLACEHOLDER = "Select institutions to include or leave empty to include all"
+SELECT_SECTION_PROMPT = "Select the section to search in"
+SEARCH_TERM_PROMPT = "Search term(s)"
+SELECT_UOA_PROMPT = "Select the unit of assessment"
+
 
 # headers
 HEADER_STYLE = "######"

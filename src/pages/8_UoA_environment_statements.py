@@ -1,6 +1,7 @@
 """ Unit of assessment environment statements page """
 import streamlit as st
 import fastparquet as fp
+import duckdb
 
 import codebook as cb
 import read_write as rw
@@ -29,19 +30,53 @@ columns_with_text = [
 ]
 dset = rw.read_parquet(fname, columns_to_read)
 
+print(dset.columns)
+
 # logs
 logs = rw.get_logs(PAGE)
 
 vis.display_metrics(dset)
 
-st.link_button(
-    sh.BROWSE_STATEMENTS_HEADER,
-    rw.UNIT_ENV_PATH
-)
+st.link_button(sh.BROWSE_STATEMENTS_HEADER, rw.UNIT_ENV_PATH)
 
 with st.expander(sh.DESCRIBE_HEADER):
     vis.display_fields(dset)
     for column_name in columns_with_text:
         st.markdown(f"**{column_name}** - *{sh.EXTRACTED_TEXT_DESCRIPTION}*")
     vis.display_logs(logs)
-    
+
+with st.expander(sh.EXPLORE_HEADER):
+    institutions = st.multiselect(
+        sh.SELECT_INSTITUTION_PROMPT,
+        dset[cb.COL_INST_NAME].unique(),
+        placeholder=sh.SELECT_INSTITUTION_PLACEHOLDER,
+    )
+    section = st.selectbox(sh.SELECT_SECTION_PROMPT, metadata.columns[3:-1])
+
+    uoa_selections = ["All"]
+    uoa_selections.extend(dset[cb.COL_UNIT_OF_ASSESSMENT].unique().tolist())
+    # uoa = st.selectbox(sh.SELECT_UOA_PROMPT, uoa_selections)
+    keyword = st.text_input(sh.SEARCH_TERM_PROMPT, key="inst_search_term")
+
+    if section and keyword:
+        if not institutions:
+            query_result = duckdb.query(
+                f"""
+                SELECT * FROM read_parquet('{fname}')
+                WHERE "{section}" ILIKE '%{keyword}%'
+            """
+            )
+        else:
+            institutions = str(tuple(institutions))
+            query_result = duckdb.query(
+                f"""
+                SELECT * FROM read_parquet('{fname}')
+                WHERE "{cb.COL_INST_NAME}" IN {institutions} AND "{section}" ILIKE '%{keyword}%'
+            """
+            )
+        qdset = query_result.to_df()
+        if qdset.shape[0] == 0:
+            st.error(sh.NO_SELECTED_RECORDS_WARNING)
+        else:
+            st.metric(sh.HITS_LABEL, qdset.shape[0])
+            st.dataframe(qdset[[cb.COL_INST_NAME, cb.COL_UNIT_OF_ASSESSMENT, section]])
