@@ -9,7 +9,6 @@ on:
       - requirements.txt
       - Dockerfile
       - .github/workflows/build.yml
-  workflow_dispatch:
  
 jobs:
   build:
