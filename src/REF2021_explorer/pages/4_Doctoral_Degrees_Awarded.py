@@ -13,7 +13,7 @@ PAGE = "degrees"
 
 vis.display_metrics(dset)
 
-vis.display_data_explorer(dset)
+vis.display_data_explorer(dset, do_histograms=True)
 
 with st.expander(sh.DESCRIBE_HEADER):
     vis.display_data_description(dset, description=sh.GROUPS_DESCRIPTION)

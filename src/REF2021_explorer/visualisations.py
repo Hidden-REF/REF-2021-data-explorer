@@ -19,7 +19,7 @@ USE_CONTAINER_WIDTH = True
 
 TO_REPLACE_TITLES = {" stars": "* rating", " star": "* rating", " (binned)": ""}
 
-STATS_TYPES = ["Percentages", "Counts"]
+STATS_TYPES = ["Counts", "Percentages"]
 
 COLUMN_STATS = ["records", "records (%)"]
 
@@ -63,39 +63,37 @@ def show_counts_percent_chart(
     if columns_stats is None:
         columns_stats = COLUMN_STATS
 
-    # define the chart elements
-    title = alt.TitleParams(text=title, anchor="start", fontSize=14, dy=-10)
-    if stats_type == STATS_TYPES[1]:
-        # counts
-        x = alt.X(
-            columns_stats[0], type="quantitative", axis=alt.Axis(title=columns_stats[0])
-        )
+    stats_type_index = STATS_TYPES.index(stats_type)
+    if stats_type_index == 0:
+        domain = [0, dset[columns_stats[0]].max()]
     else:
-        # percentages
-        x = alt.X(
-            columns_stats[1],
-            type="quantitative",
-            axis=alt.Axis(title=columns_stats[1]),
-            scale=alt.Scale(domain=[0, 100]),
-        )
-
-    y = alt.Y(
-        column_name, type="nominal", sort="-x", axis=alt.Axis(title="", labelLimit=400)
-    )
-
-    tooltip = [column_name, columns_stats[0], columns_stats[1]]
-
-    # add chart to display
-    chart = (
-        alt.Chart(dset.reset_index())
-        .mark_bar()
-        .encode(x=x, y=y, tooltip=tooltip)
-        .properties(title=title)
-        .interactive()
-    ).properties(width="container")
+        domain = [0, 100]
 
     with st.container(border=True):
-        st.altair_chart(chart, use_container_width=True)
+        st.altair_chart(
+            alt.Chart(dset.reset_index())
+            .mark_bar()
+            .encode(
+                x=alt.X(
+                    columns_stats[stats_type_index],
+                    type="quantitative",
+                    axis=alt.Axis(title=columns_stats[stats_type_index]),
+                    scale=alt.Scale(domain=domain),
+                ),
+                y=alt.Y(
+                    column_name,
+                    type="nominal",
+                    sort="-x",
+                    axis=alt.Axis(title="", labelLimit=400),
+                ),
+                tooltip=[column_name, columns_stats[0], columns_stats[1]],
+            )
+            .properties(
+                width="container", title=alt.TitleParams(text=title, anchor="start")
+            )
+            .interactive(),
+            use_container_width=True,
+        )
 
 
 def show_grouped_counts_chart(dset, x, y, colour):
@@ -277,9 +275,11 @@ def display_dataframe(dset, data_prefix=""):
         data_prefix (str): data prefix
     """
 
-    st.markdown(sh.BROWSE_DATA_TAB_DESCRIPTION.replace(
-                        sh.DATA_TEXT_TO_REPLACE, f"{data_prefix}{sh.DATA_TEXT_TO_REPLACE}"
-                    ))
+    st.markdown(
+        sh.BROWSE_DATA_TAB_DESCRIPTION.replace(
+            sh.DATA_TEXT_TO_REPLACE, f"{data_prefix}{sh.DATA_TEXT_TO_REPLACE}"
+        )
+    )
     st.dataframe(dset, use_container_width=False)
 
 
@@ -302,9 +302,11 @@ def display_distributions(dset, data_prefix="", key=None):
         key (str): key
     """
 
-    st.markdown(sh.DISTRIBUTIONS_TAB_DESCRIPTION.replace(
-                        sh.DATA_TEXT_TO_REPLACE, f"{data_prefix}{sh.DATA_TEXT_TO_REPLACE}"
-                    ))
+    st.markdown(
+        sh.DISTRIBUTIONS_TAB_DESCRIPTION.replace(
+            sh.DATA_TEXT_TO_REPLACE, f"{data_prefix}{sh.DATA_TEXT_TO_REPLACE}"
+        )
+    )
 
     fields = proc.get_column_lists(dset, "category")
 
@@ -326,13 +328,14 @@ def display_distributions(dset, data_prefix="", key=None):
 
         show_counts_percent_chart(
             dset_stats,
-            f"{clean_titles(column_to_plot)} " f"(N = {dset.shape[0]}{data_prefix} records)",
+            f"{clean_titles(column_to_plot)} "
+            f"(N = {dset.shape[0]}{data_prefix} records)",
             column_to_plot,
             stats_type=stats_type,
         )
 
 
-def display_histograms(dset, key=None):
+def display_histograms(dset, data_prefix="", key=None):
     """Display histograms for a selected column.
 
     Args:
@@ -344,53 +347,23 @@ def display_histograms(dset, key=None):
     column_selected = st.selectbox(
         sh.DISTRIBUTION_SELECT_PROMPT, fields, key=key, index=0
     )
+    stats_type = st.radio(
+        sh.SELECT_STATS_PROMPT,
+        options=STATS_TYPES,
+        index=0,
+        horizontal=True,
+        key=f"radio_{key}_{column_selected}",
+    )
     if column_selected:
-        nnegative = dset[dset[column_selected] < 0].shape[0]
-        cols = st.columns(2)
-        with cols[0]:
-            bins = st.select_slider(
-                sh.BIN_NUMBER_PROMPT,
-                options=BIN_OPTIONS,
-                value=10,
-                key=f"slider_bins_{key}_{column_selected}",
-            )
-        with cols[1]:
-            stats_type = st.radio(
-                sh.SELECT_STATS_PROMPT,
-                options=STATS_TYPES,
-                index=0,
-                horizontal=True,
-                key=f"radio_{key}_{column_selected}",
-            )
-            if nnegative > 0:
-                exclude_negative = st.toggle(
-                    sh.EXCLUDE_NEGATIVE_PROMPT,
-                    value=False,
-                    key=f"toggle_{key}_{column_selected}",
-                )
-            else:
-                exclude_negative = False
-        min_max = [
-            int(np.ceil(dset[column_selected].min())),
-            int(np.floor(dset[column_selected].max())),
-        ]
-        if exclude_negative:
-            min_max[0] = 0
-        limits = st.slider(
-            sh.SELECT_DATA_RANGE_PROMPT,
-            min_max[0],
-            min_max[1],
-            min_max,
-            key=f"slider_limits_{key}_{column_selected}",
+        bins = st.select_slider(
+            sh.BIN_NUMBER_PROMPT,
+            options=BIN_OPTIONS,
+            value=10,
+            key=f"slider_bins_{key}_{column_selected}",
         )
+
         if bins:
-            indices_selected = (dset[column_selected] >= limits[0]) & (
-                dset[column_selected] <= limits[1]
-            )
-            nselected = dset[indices_selected].shape[0]
-            hcounts, bin_edges = np.histogram(
-                dset.loc[indices_selected, column_selected], bins=bins
-            )
+            hcounts, bin_edges = np.histogram(dset[column_selected], bins=bins)
             x_limits = [min(bin_edges), max(bin_edges)]
             hpercs = np.round(100 * hcounts / hcounts.sum(), 0)
             bin_edges = np.round(bin_edges).astype(int)
@@ -409,12 +382,12 @@ def display_histograms(dset, key=None):
                 }
             )
             dset_plot.set_index(column_label, inplace=True)
-            with chart_container(dset_plot, export_formats=sh.DATA_EXPORT_FORMATS):
+            with st.container(border=True):
                 # define the chart elements
                 dset_to_plot = dset_plot.copy()
                 dset_to_plot[column_x] = bin_edges[:-1]
 
-                title_text = f"{column_selected}: {nselected} of {nrecords} records"
+                title_text = f"{column_selected} (N = {nrecords} {data_prefix} records)"
                 x = alt.X(
                     column_x,
                     type="quantitative",
@@ -429,7 +402,7 @@ def display_histograms(dset, key=None):
                 )
                 tooltip = [column_label, column_counts, column_percs]
                 title = alt.TitleParams(
-                    text=title_text, anchor="middle", fontSize=14, dy=-10
+                    text=title_text, anchor="start", fontSize=14, dy=-10
                 )
                 # add chart to display
                 chart = (
@@ -438,8 +411,118 @@ def display_histograms(dset, key=None):
                     .encode(x=x, y=y, tooltip=tooltip)
                     .properties(title=title)
                     .interactive()
-                )
-                st.altair_chart(chart, use_container_width=USE_CONTAINER_WIDTH)
+                ).properties(width="container")
+                st.altair_chart(chart, use_container_width=True)
+
+
+# def display_histograms_old(dset, key=None):
+#     """Display histograms for a selected column.
+
+#     Args:
+#         dset (pandas.DataFrame): dataset
+#     """
+
+#     fields = proc.get_column_lists(dset, "number")
+#     nrecords = dset.shape[0]
+#     column_selected = st.selectbox(
+#         sh.DISTRIBUTION_SELECT_PROMPT, fields, key=key, index=0
+#     )
+#     if column_selected:
+#         nnegative = dset[dset[column_selected] < 0].shape[0]
+#         cols = st.columns(2)
+#         with cols[0]:
+#             bins = st.select_slider(
+#                 sh.BIN_NUMBER_PROMPT,
+#                 options=BIN_OPTIONS,
+#                 value=10,
+#                 key=f"slider_bins_{key}_{column_selected}",
+#             )
+#         with cols[1]:
+#             stats_type = st.radio(
+#                 sh.SELECT_STATS_PROMPT,
+#                 options=STATS_TYPES,
+#                 index=0,
+#                 horizontal=True,
+#                 key=f"radio_{key}_{column_selected}",
+#             )
+#             if nnegative > 0:
+#                 exclude_negative = st.toggle(
+#                     sh.EXCLUDE_NEGATIVE_PROMPT,
+#                     value=False,
+#                     key=f"toggle_{key}_{column_selected}",
+#                 )
+#             else:
+#                 exclude_negative = False
+#         min_max = [
+#             int(np.ceil(dset[column_selected].min())),
+#             int(np.floor(dset[column_selected].max())),
+#         ]
+#         if exclude_negative:
+#             min_max[0] = 0
+#         limits = st.slider(
+#             sh.SELECT_DATA_RANGE_PROMPT,
+#             min_max[0],
+#             min_max[1],
+#             min_max,
+#             key=f"slider_limits_{key}_{column_selected}",
+#         )
+#         if bins:
+#             indices_selected = (dset[column_selected] >= limits[0]) & (
+#                 dset[column_selected] <= limits[1]
+#             )
+#             nselected = dset[indices_selected].shape[0]
+#             hcounts, bin_edges = np.histogram(
+#                 dset.loc[indices_selected, column_selected], bins=bins
+#             )
+#             x_limits = [min(bin_edges), max(bin_edges)]
+#             hpercs = np.round(100 * hcounts / hcounts.sum(), 0)
+#             bin_edges = np.round(bin_edges).astype(int)
+#             bin_labels = [
+#                 f"{bin_edges[i]} to {bin_edges[i+1]}" for i in range(len(bin_edges) - 1)
+#             ]
+#             column_x = "value"
+#             column_label = "Interval"
+#             column_counts = STATS_TYPES[1][:-1]
+#             column_percs = STATS_TYPES[0][:-1]
+#             dset_plot = pd.DataFrame.from_dict(
+#                 {
+#                     column_label: bin_labels,
+#                     column_counts: hcounts,
+#                     column_percs: hpercs,
+#                 }
+#             )
+#             dset_plot.set_index(column_label, inplace=True)
+#             with st.container(border=True):
+#                 # define the chart elements
+#                 dset_to_plot = dset_plot.copy()
+#                 dset_to_plot[column_x] = bin_edges[:-1]
+
+#                 title_text = f"{column_selected}: {nselected} of {nrecords} records"
+#                 x = alt.X(
+#                     column_x,
+#                     type="quantitative",
+#                     axis=alt.Axis(title=""),
+#                     scale=alt.Scale(domain=x_limits),
+#                 )
+#                 y = alt.Y(
+#                     stats_type[:-1],
+#                     type="quantitative",
+#                     axis=alt.Axis(title=stats_type, labelLimit=400),
+#                     sort="y",
+#                 )
+#                 tooltip = [column_label, column_counts, column_percs]
+#                 title = alt.TitleParams(
+#                     text=title_text, anchor="middle", fontSize=14, dy=-10
+#                 )
+#                 # add chart to display
+#                 chart = (
+#                     alt.Chart(dset_to_plot.reset_index())
+#                     .mark_bar()
+#                     .encode(x=x, y=y, tooltip=tooltip)
+#                     .properties(title=title)
+#                     .interactive()
+#                 )
+#                 st.altair_chart(chart, use_container_width=USE_CONTAINER_WIDTH)
 
 
 def display_grouped_distribution(dset, key=None):
@@ -489,17 +572,32 @@ def display_data_explorer(dset, do_histograms=False):
 
             tabs = st.tabs(
                 [
-                    sh.SHOW_TAB_HEADER.replace(
-                        sh.DATA_TEXT_TO_REPLACE, f"{data_prefix}{sh.DATA_TEXT_TO_REPLACE}"
-                    ),
                     sh.VISUALISE_TAB_HEADER.replace(
-                        sh.DATA_TEXT_TO_REPLACE, f"{data_prefix}{sh.DATA_TEXT_TO_REPLACE}"),
+                        sh.DATA_TEXT_TO_REPLACE,
+                        f"{data_prefix}{sh.DATA_TEXT_TO_REPLACE}",
+                    ),
+                    sh.SHOW_TAB_HEADER.replace(
+                        sh.DATA_TEXT_TO_REPLACE,
+                        f"{data_prefix}{sh.DATA_TEXT_TO_REPLACE}",
+                    ),
                 ]
             )
             with tabs[0]:
-                display_dataframe(dset_explore, data_prefix=data_prefix)
+                if not do_histograms:
+                    display_distributions(
+                        dset_explore, data_prefix=data_prefix, key="distributions"
+                    )
+                else:
+                    vtabs = st.tabs(
+                        [sh.DISTRIBUTIONS_TAB_HEADER, sh.HISTOGRAMS_TAB_HEADER]
+                    )
+                    with vtabs[0]:
+                        display_distributions(
+                            dset_explore, data_prefix=data_prefix, key="distributions"
+                        )
+                    with vtabs[1]:
+                        display_histograms(
+                            dset_explore, data_prefix=data_prefix, key="histograms"
+                        )
             with tabs[1]:
-                display_distributions(dset_explore, data_prefix=data_prefix, key="distributions")
-
-                if do_histograms:
-                    display_histograms(dset_explore, key="h_selected")
+                display_dataframe(dset_explore, data_prefix=data_prefix)
