@@ -1,3 +1,4 @@
+# pylint: disable=E0401
 """ Setuptools configuration for the project. """
 #!/usr/bin/env python
 import setuptools
