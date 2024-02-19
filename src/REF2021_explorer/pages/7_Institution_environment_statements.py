@@ -1,12 +1,15 @@
+# pylint: disable=C0103
+# pylint: disable=R0801
 """ Institution environment statements page """
 import streamlit as st
 import fastparquet as fp
 import duckdb
 
-import codebook as cb
-import read_write as rw
-import visualisations as vis
-import shared_content as sh
+import REF2021_explorer.codebook as cb
+import REF2021_explorer.read_write as rw
+import REF2021_explorer.visualisations as vis
+import REF2021_explorer.shared_content as sh
+
 
 PAGE = "inst_env_statements"
 
@@ -27,17 +30,13 @@ dset = rw.read_parquet(fname, columns_to_read)
 # logs
 logs = rw.get_logs(PAGE)
 
-vis.display_metrics(dset)
+cols = st.columns(2)
+with cols[0]:
+    vis.display_metrics(dset)
+with cols[1]:
+    st.link_button(sh.BROWSE_STATEMENTS_HEADER, rw.INSTITUTION_ENV_PATH)
 
-st.link_button(sh.BROWSE_STATEMENTS_HEADER, rw.INSTITUTION_ENV_PATH)
-
-with st.expander(sh.DESCRIBE_HEADER):
-    vis.display_fields(dset)
-    for column_name in columns_with_text:
-        st.markdown(f"**{column_name}** - *{sh.EXTRACTED_TEXT_DESCRIPTION}*")
-    vis.display_logs(logs)
-
-with st.expander(sh.EXPLORE_HEADER):
+with st.container(border=True):
     institutions = st.multiselect(
         sh.SELECT_INSTITUTION_PROMPT,
         dset[cb.COL_INST_NAME].unique(),
@@ -69,3 +68,9 @@ with st.expander(sh.EXPLORE_HEADER):
         else:
             st.metric(sh.HITS_LABEL, qdset.shape[0])
             st.dataframe(qdset[[cb.COL_INST_NAME, section]])
+
+with st.expander(sh.DESCRIBE_HEADER):
+    vis.display_fields(dset)
+    for column_name in columns_with_text:
+        st.markdown(f"**{column_name}** - *{sh.EXTRACTED_TEXT_DESCRIPTION}*")
+    vis.display_logs(logs)

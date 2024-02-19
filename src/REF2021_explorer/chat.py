@@ -17,8 +17,8 @@ from pandas.api.types import (
     is_datetime64_ns_dtype,
 )
 
-import read_write as rw
-import shared_content as sh
+import REF2021_explorer.read_write as rw
+import REF2021_explorer.shared_content as sh
 
 DEFAULT_MODEL = "gpt-3.5-turbo"
 
@@ -69,18 +69,21 @@ def get_column_type(column: dict[str, Optional[str]]) -> str:
     return column.get("pandas_type") or column.get("numpy_type") or "string"
 
 
-def get_schema(file: Path, enum_columns: list[str] = []) -> TableInfo:
+def get_schema(file: Path, enum_columns: None) -> TableInfo:
     """Returns parquet file schema as a dictionary of tables that can be passed to the LLM
 
     Args:
         db (str): Filename of file in parquet format
         enum_columns (list[str]): List of columns that should be considered
             enumerations, i.e the unique items in that column will be
-            visible to the LLM.
+            visible to the LLM; defaults to None
 
     Returns:
         Mapping of table names to list of SchemaField dictionaries
     """
+
+    if enum_columns is None:
+        enum_columns = []
     ds = pyarrow.dataset.dataset(file)
     metadata = ds.schema.metadata
     metadata_schema_bytes = metadata[list(metadata.keys())[0]]

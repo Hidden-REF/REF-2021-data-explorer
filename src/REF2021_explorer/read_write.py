@@ -3,7 +3,7 @@ import pandas as pd
 import fastparquet as fp
 import streamlit as st
 
-import codebook as cb
+import REF2021_explorer.codebook as cb
 
 FETCHING_DATA = "Fetching data..."
 

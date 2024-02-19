@@ -1,6 +1,6 @@
 """ Shared text for the app. """
 import streamlit as st
-import read_write as rw
+import REF2021_explorer.read_write as rw
 
 # settings
 LAYOUT = "wide"
@@ -95,9 +95,10 @@ HITS_LABEL = "Number of search hits"
 CATEGORY_LABEL_SINGULAR = "level"
 CATEGORY_LABEL_PLURAL = "levels"
 OBJECT_LABEL = "string"
+SELECTED_LABEL = "Selected"
 
 # prompts
-DISTRIBUTION_SELECT_PROMPT = "Select the categorical field of interest"
+DISTRIBUTION_SELECT_PROMPT = "Select the categorical field to plot"
 GROUPED_DISTRIBUTION_SELECT_PROMPT = "Select columns to plot"
 BIN_NUMBER_PROMPT = "Select number of bins"
 SELECT_STATS_PROMPT = "Select what to plot"
@@ -109,7 +110,9 @@ to choose elements of the data set to visualise for the entire data set or a sub
 """
 
 SELECT_INSTITUTION_PROMPT = "Select institutions to search"
-SELECT_INSTITUTION_PLACEHOLDER = "Select institutions to include or leave empty to include all"
+SELECT_INSTITUTION_PLACEHOLDER = (
+    "Select institutions to include or leave empty to include all"
+)
 SELECT_SECTION_PROMPT = "Select the section to search in"
 SEARCH_TERM_PROMPT = "Search term(s)"
 SELECT_UOA_PROMPT = "Select the unit of assessment"
@@ -118,10 +121,13 @@ SELECT_UOA_PROMPT = "Select the unit of assessment"
 # headers
 HEADER_STYLE = "######"
 
-DESCRIBE_HEADER = f"{HEADER_STYLE} :card_index_dividers: Browse the processed fields and processing logs"
+DESCRIBE_HEADER = f"{HEADER_STYLE} :card_index_dividers: View the fields description"
+LOGS_HEADER = f"{HEADER_STYLE} :spiral_note_pad: View the processing logs"
 VISUALISE_HEADER = f"{HEADER_STYLE} :bar_chart: Visualise data "
 EXPLORE_HEADER = f"{HEADER_STYLE} :flashlight: Select, explore and visualise data"
-BROWSE_STATEMENTS_HEADER = f"{HEADER_STYLE} :bookmark_tabs: Browse and view the submitted statements"
+BROWSE_STATEMENTS_HEADER = (
+    f"{HEADER_STYLE} :bookmark_tabs: Browse the submitted statements"
+)
 
 # titles
 TITLE_STYLE = "#####"
@@ -133,16 +139,27 @@ LOGS_TITLE = f"{TITLE_STYLE} Processing logs"
 DISTRIBUTIONS_TAB_HEADER = "Distributions"
 GROUPED_DISTRIBUTIONS_TAB_HEADER = "Grouped distributions (categorical)"
 HISTOGRAMS_TAB_HEADER = "Histograms"
-SHOW_SELECTED_TAB_HEADER = "Show selected data"
-VISUALISE_SELECTED_TAB_HEADER = "Visualise selected data"
+SHOW_TAB_HEADER = "Explore data"
+VISUALISE_TAB_HEADER = "Visualise data"
+
+DATA_TEXT_TO_REPLACE = " data"
 
 # tabs descriptions
+BROWSE_DATA_TAB_DESCRIPTION = """
+Navigate the data by scrolling up and down
+the dataframe display below. 
+You can sort the data in ascending or descending order
+based on the values of a column by clicking on its header.
+To download the data as a CSV file, use the controls located in the top right corner of the data display.
+"""
+
 DISTRIBUTIONS_TAB_DESCRIPTION = """
-Explore the distribution of record numbers across different levels of the categorical fields in this dataset. 
+Visualise how records are distributed across different levels of the categorical fields
+in the data.
 """
 
 # buttons
-DOWNLOAD_SELECTED_DATA_BUTTON = "Download selected data as csv"
+DOWNLOAD_DATA_BUTTON = "Download data as csv"
 CLEAR_CHAT_BUTTON = "Clear chat history"
 
 # warnings
@@ -151,6 +168,10 @@ NOT_SUITABLE_FOR_HISTOGRAM_WARNING = "The data is not suitable for a histogram"
 PREFIX_WARNING = "Warning: "
 
 # descriptions
+DATA_EXPLORER_DESCRIPTION = """
+Use the controls below to select data to browse and visualise. Leave empty to include all data.
+"""
+
 RESULTS_DESCRIPTION = """\
 The Results data was pivoted by the values of the `Profile` field
 to convert the data to a wide format with one (institution, unit of assessment)

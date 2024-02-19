@@ -63,6 +63,7 @@ pyparsing==3.1.1
 python-dateutil==2.8.2
 pytz==2024.1
 PyYAML==6.0.1
+-e .
 referencing==0.33.0
 requests==2.31.0
 rich==13.7.0

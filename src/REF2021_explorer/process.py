@@ -1,5 +1,5 @@
 """ Functions for processing the data. """
-import codebook as cb
+import REF2021_explorer.codebook as cb
 
 
 def calculate_counts(dset, col, sort=True):

@@ -1,3 +1,4 @@
+# pylint: disable=C0103
 """ Home page of the app. """
 import streamlit as st
 import shared_content as sh

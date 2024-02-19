@@ -1,24 +1,26 @@
 """ Visualisation functions. """
+import importlib
 import numpy as np
 import pandas as pd
 import streamlit as st
 from streamlit_extras.chart_container import chart_container
 from streamlit_extras.dataframe_explorer import dataframe_explorer
 import streamlit_scrollable_textbox as stx
-
-
 import altair as alt
 
-import codebook as cb
-import process as proc
-import shared_content as sh
+import REF2021_explorer.codebook as cb
+import REF2021_explorer.process as proc
+import REF2021_explorer.shared_content as sh
 
+importlib.reload(sh)
 
 USE_CONTAINER_WIDTH = True
 
 TO_REPLACE_TITLES = {" stars": "* rating", " star": "* rating", " (binned)": ""}
 
 STATS_TYPES = ["Percentages", "Counts"]
+
+COLUMN_STATS = ["records", "records (%)"]
 
 DESCRIPTION_MEASURES = ["min", "max", "mean", "std"]
 
@@ -45,7 +47,7 @@ def show_counts_percent_chart(
     dset,
     title,
     column_name,
-    columns_stats=["records", "records (%)"],
+    columns_stats=None,
     stats_type="Percentages",
 ):
     """Draw a chart with counts and percentages.
@@ -57,8 +59,11 @@ def show_counts_percent_chart(
         use_container_width (bool): use container width
     """
 
+    if columns_stats is None:
+        columns_stats = COLUMN_STATS
+
     # define the chart elements
-    title = alt.TitleParams(text=title, anchor="middle", fontSize=14, dy=-10)
+    title = alt.TitleParams(text=title, anchor="start", fontSize=14, dy=-10)
     if stats_type == STATS_TYPES[1]:
         # counts
         x = alt.X(
@@ -86,9 +91,10 @@ def show_counts_percent_chart(
         .encode(x=x, y=y, tooltip=tooltip)
         .properties(title=title)
         .interactive()
-    )
+    ).properties(width="container")
 
-    st.altair_chart(chart, use_container_width=USE_CONTAINER_WIDTH)
+    with st.container(border=True):
+        st.altair_chart(chart, use_container_width=True)
 
 
 def show_grouped_counts_chart(dset, x, y, colour):
@@ -164,7 +170,7 @@ def display_added_columns(dset):
         stx.scrollableTextbox("\n".join(columns_added_to_print), key="stx_added")
 
 
-def display_data_description(dset, logs, description=""):
+def display_data_description(dset, description=""):
     """Display a description of the data.
 
     Args:
@@ -178,8 +184,6 @@ def display_data_description(dset, logs, description=""):
     display_added_columns(dset)
 
     display_fields(dset)
-    
-    display_logs(logs)
 
 
 def display_logs(logs):
@@ -189,7 +193,6 @@ def display_logs(logs):
         logs (str): logs
     """
 
-    st.markdown(sh.LOGS_TITLE)
     stx.scrollableTextbox(logs, key="stx_logs")
 
 
@@ -246,34 +249,37 @@ def display_fields(dset):
             items = "\n".join(sorted(dset[column_name].dropna().unique()))
             stx.scrollableTextbox(items, key=f"stx_{column_name}")
 
-def display_record_counts_table(
-    dset, logs, describe_data=True, suffix="", description=""
-):
-    """Display a table with the number of records and institutions.
 
-    Args:
-        dset (pandas.DataFrame): dataset
-    """
-
-    display_metrics(dset, suffix=suffix)
-
-    if describe_data:
-        with st.expander(sh.DESCRIBE_HEADER):
-            display_data_description(dset, logs, description)
-
-
-def display_metrics(dset, suffix=""):
+def display_metrics(dset, labels=None):
     """Display metrics for a dataset.
 
     Args:
         dset (pandas.DataFrame): dataset
     """
 
-    cols = st.columns(2)
-    cols[0].metric(label=f"{sh.RECORDS_LABEL}{suffix}", value=dset.shape[0])
-    cols[1].metric(
-        label=f"{sh.INSTITUTIONS_LABEL}{suffix}", value=dset[cb.COL_INST_NAME].nunique()
-    )
+    if labels is None:
+        labels = [sh.RECORDS_LABEL, sh.INSTITUTIONS_LABEL]
+    with st.container(border=True):
+        cols = st.columns(2)
+        cols[0].metric(label=labels[0], value=dset.shape[0])
+        cols[1].metric(
+            label=labels[1],
+            value=dset[cb.COL_INST_NAME].nunique(),
+        )
+
+
+def display_dataframe(dset, data_prefix=""):
+    """Display a dataframe.
+
+    Args:
+        dset (pandas.DataFrame): dataset
+        data_prefix (str): data prefix
+    """
+
+    st.markdown(sh.BROWSE_DATA_TAB_DESCRIPTION.replace(
+                        sh.DATA_TEXT_TO_REPLACE, f"{data_prefix}{sh.DATA_TEXT_TO_REPLACE}"
+                    ))
+    st.dataframe(dset, use_container_width=False)
 
 
 def display_table_from_dictionary(dict_data):
@@ -286,23 +292,27 @@ def display_table_from_dictionary(dict_data):
         st.text(f"{items[0]} \t{items[1]}")
 
 
-def display_distributions(dset, key=None):
+def display_distributions(dset, data_prefix="", key=None):
     """Display distributions for a selected column.
 
     Args:
         dset (pandas.DataFrame): dataset
+        data_prefix (str): data prefix
+        key (str): key
     """
 
-    st.markdown(sh.DISTRIBUTIONS_TAB_DESCRIPTION)
+    st.markdown(sh.DISTRIBUTIONS_TAB_DESCRIPTION.replace(
+                        sh.DATA_TEXT_TO_REPLACE, f"{data_prefix}{sh.DATA_TEXT_TO_REPLACE}"
+                    ))
 
     fields = proc.get_column_lists(dset, "category")
 
-    column_to_plot = st.selectbox(
-        sh.DISTRIBUTION_SELECT_PROMPT, fields, key=key, index=0
-    )
-    if column_to_plot:
-        dset_stats = proc.calculate_counts(dset, column_to_plot, sort=True)
-
+    cols = st.columns(2)
+    with cols[0]:
+        column_to_plot = st.selectbox(
+            sh.DISTRIBUTION_SELECT_PROMPT, fields, key=key, index=0
+        )
+    with cols[1]:
         stats_type = st.radio(
             sh.SELECT_STATS_PROMPT,
             options=STATS_TYPES,
@@ -310,13 +320,15 @@ def display_distributions(dset, key=None):
             horizontal=True,
             key=f"radio_{key}_{column_to_plot}",
         )
-        with chart_container(dset_stats, export_formats=sh.DATA_EXPORT_FORMATS):
-            show_counts_percent_chart(
-                dset_stats,
-                f"{clean_titles(column_to_plot)} " f"(N = {dset.shape[0]} records)",
-                column_to_plot,
-                stats_type=stats_type,
-            )
+    if column_to_plot:
+        dset_stats = proc.calculate_counts(dset, column_to_plot, sort=True)
+
+        show_counts_percent_chart(
+            dset_stats,
+            f"{clean_titles(column_to_plot)} " f"(N = {dset.shape[0]}{data_prefix} records)",
+            column_to_plot,
+            stats_type=stats_type,
+        )
 
 
 def display_histograms(dset, key=None):
@@ -457,33 +469,36 @@ def display_data_explorer(dset, do_histograms=False):
     Args:
         dset (pandas.DataFrame): dataset
     """
-    dset_explore = dataframe_explorer(dset)
-    if dset_explore.shape[0] < dset.shape[0]:
+
+    with st.container(border=True):
+        st.markdown(sh.DATA_EXPLORER_DESCRIPTION)
+        dset_explore = dataframe_explorer(dset)
+
         if dset_explore.shape[0] == 0:
             st.warning(sh.NO_SELECTED_RECORDS_WARNING)
         else:
-            display_record_counts_table(
-                dset_explore, None, describe_data=False, suffix=" selected"
-            )
-            st.download_button(
-                label=sh.DOWNLOAD_SELECTED_DATA_BUTTON,
-                data=dset_explore.to_csv().encode("utf-8"),
-                file_name="selected_data.csv",
-                mime="text/csv",
-            )
+            data_prefix = ""
+            if dset_explore.shape[0] < dset.shape[0]:
+                data_prefix = " selected"
+                labels = [
+                    f"{sh.SELECTED_LABEL} {sh.RECORDS_LABEL.lower()}",
+                    f"{sh.SELECTED_LABEL} {sh.INSTITUTIONS_LABEL.lower()}",
+                ]
+                display_metrics(dset_explore, labels=labels)
 
             tabs = st.tabs(
-                [sh.SHOW_SELECTED_TAB_HEADER, sh.VISUALISE_SELECTED_TAB_HEADER]
+                [
+                    sh.SHOW_TAB_HEADER.replace(
+                        sh.DATA_TEXT_TO_REPLACE, f"{data_prefix}{sh.DATA_TEXT_TO_REPLACE}"
+                    ),
+                    sh.VISUALISE_TAB_HEADER.replace(
+                        sh.DATA_TEXT_TO_REPLACE, f"{data_prefix}{sh.DATA_TEXT_TO_REPLACE}"),
+                ]
             )
             with tabs[0]:
-                st.dataframe(dset_explore, use_container_width=False)
+                display_dataframe(dset_explore, data_prefix=data_prefix)
             with tabs[1]:
-                tabs_list = [sh.DISTRIBUTIONS_TAB_HEADER]
+                display_distributions(dset_explore, data_prefix=data_prefix, key="distributions")
+
                 if do_histograms:
-                    tabs_list.append(sh.HISTOGRAMS_TAB_HEADER)
-                tabs = st.tabs(tabs_list)
-                with tabs[0]:
-                    display_distributions(dset_explore, key="d_selected")
-                if do_histograms:
-                    with tabs[1]:
-                        display_histograms(dset_explore, key="h_selected")
+                    display_histograms(dset_explore, key="h_selected")

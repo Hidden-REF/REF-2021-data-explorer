@@ -1,3 +1,5 @@
+# pylint: disable=C0103
+# pylint: disable=R0801
 """ Results chat page """
 import os
 import json
@@ -7,10 +9,9 @@ import openai
 import streamlit as st
 import pyarrow.parquet as pq
 
-import shared_content as sh
-import read_write as rw
-import chat
-
+import REF2021_explorer.shared_content as sh
+import REF2021_explorer.read_write as rw
+from REF2021_explorer import chat
 
 OPENAITOKEN_AVAILABLE = False
 
