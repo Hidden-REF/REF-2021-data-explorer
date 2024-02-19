@@ -1,3 +1,4 @@
+# pylint: disable=E0401
 """ Visualisation functions. """
 import importlib
 import numpy as np

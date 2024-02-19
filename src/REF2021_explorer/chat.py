@@ -1,3 +1,4 @@
+# pylint: disable=E0401
 """Interact with the REF dataset using natural language queries to openai models.
 """
 import textwrap

@@ -1,5 +1,6 @@
 # pylint: disable=C0103
 # pylint: disable=R0801
+# pylint: disable=E0401
 """ Unit of assessment environment statements page """
 import streamlit as st
 import fastparquet as fp

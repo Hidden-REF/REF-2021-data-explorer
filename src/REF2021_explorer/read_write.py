@@ -1,3 +1,4 @@
+# pylint: disable=E0401
 """ Module to read and write data from and to files. """
 import pandas as pd
 import fastparquet as fp

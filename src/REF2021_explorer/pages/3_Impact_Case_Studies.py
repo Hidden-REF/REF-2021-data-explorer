@@ -1,5 +1,6 @@
 # pylint: disable=C0103
 # pylint: disable=R0801
+# pylint: disable=E0401
 """ Impact Case Studies page """
 import streamlit as st
 

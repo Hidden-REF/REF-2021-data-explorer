@@ -1,3 +1,4 @@
+# pylint: disable=E0401
 """ Shared text for the app. """
 import streamlit as st
 import REF2021_explorer.read_write as rw

@@ -1,3 +1,4 @@
+# pylint: disable=E0401
 """ Codebook for REF 2021 data """
 
 

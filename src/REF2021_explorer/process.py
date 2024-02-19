@@ -1,3 +1,4 @@
+# pylint: disable=E0401
 """ Functions for processing the data. """
 import REF2021_explorer.codebook as cb
 
