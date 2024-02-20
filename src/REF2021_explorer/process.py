@@ -1,5 +1,6 @@
 # pylint: disable=E0401
 """ Functions for processing the data. """
+import numpy as np
 import REF2021_explorer.codebook as cb
 
 
@@ -20,7 +21,7 @@ def calculate_counts(dset, col, sort=True):
         .value_counts(sort=sort)
         .to_frame(name=col_count)
     )
-    dset_stats[col_perc] = 100 * dset_stats[col_count] / dset.shape[0]
+    dset_stats[col_perc] = np.round(100 * dset_stats[col_count] / dset.shape[0])
     dset_stats.index.name = col
 
     return dset_stats
