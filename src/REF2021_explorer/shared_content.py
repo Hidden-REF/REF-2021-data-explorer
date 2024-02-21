@@ -104,6 +104,8 @@ SELECTED_LABEL = "Selected"
 
 # prompts
 DISTRIBUTION_SELECT_PROMPT = "Select the categorical field to plot"
+DISTRIBUTION_SELECT_PROMPT_1 = "Select the first categorical field to plot"
+DISTRIBUTION_SELECT_PROMPT_2 = "Select the second categorical field to plot"
 GROUPED_DISTRIBUTION_SELECT_PROMPT = "Select columns to plot"
 BIN_NUMBER_PROMPT = "Select number of bins"
 SELECT_STATS_PROMPT = "Select what to plot"
@@ -133,6 +135,9 @@ EXPLORE_HEADER = f"{HEADER_STYLE} :flashlight: Select, explore and visualise dat
 BROWSE_STATEMENTS_HEADER = (
     f"{HEADER_STYLE} :bookmark_tabs: Browse the submitted statements"
 )
+
+ONE_VARIABLE_DISTRIBUTION_TITLE = f"{HEADER_STYLE} One variable distribution"
+TWO_VARIABLE_DISTRIBUTION_TITLE = f"{HEADER_STYLE} Grouped distribution"
 
 # titles
 TITLE_STYLE = "#####"

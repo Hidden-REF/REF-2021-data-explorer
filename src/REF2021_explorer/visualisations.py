@@ -96,6 +96,64 @@ def show_counts_percent_chart(
         )
 
 
+def show_counts_percent_grouped_chart(
+    dset,
+    title,
+    column_names,
+    columns_stats=None,
+    stats_type="Percentages",
+):
+    """Draw a grouped distribution chart with counts and percentages.
+
+    Args:
+        dset (pandas.DataFrame): dataset
+        column_stats (list): column names for the stats
+        column_percent (str): column name for the percentages
+        use_container_width (bool): use container width
+    """
+
+    if columns_stats is None:
+        columns_stats = COLUMN_STATS
+
+    stats_type_index = STATS_TYPES.index(stats_type)
+
+    dset = dset[dset[columns_stats[0]] > 0]
+
+    with st.container(border=True):
+        st.altair_chart(
+            alt.Chart(dset.reset_index())
+            .mark_bar()
+            .encode(
+                x=alt.X(f"{columns_stats[stats_type_index]}:Q").title(""),
+                y=alt.Y(f"{column_names[0]}:N").title(""),
+                yOffset=f"{column_names[1]}:N",
+                color=alt.Color(
+                    f"{column_names[1]}:N",
+                    scale=alt.Scale(),
+                    legend=alt.Legend(
+                        title="",
+                        orient="top",
+                        legendX=130,
+                        legendY=40,
+                        direction="horizontal",
+                        titleAnchor="middle",
+                    ),
+                ),
+                tooltip=[
+                    column_names[0],
+                    column_names[1],
+                    columns_stats[0],
+                    columns_stats[1],
+                ],
+            )
+            .properties(
+                width="container", title=alt.TitleParams(text=title, anchor="start")
+            )
+            .interactive(),
+            use_container_width=True,
+        )
+
+
 def show_grouped_counts_chart(dset, x, y, colour):
     """Draw a chart with grouped counts.
 
@@ -310,20 +368,24 @@ def display_distributions(dset, data_prefix="", key=None):
 
     fields = proc.get_column_lists(dset, "category")
 
+    # one-variable distribution
+    st.divider()
+    st.markdown(sh.ONE_VARIABLE_DISTRIBUTION_TITLE)
     cols = st.columns(2)
     with cols[0]:
         column_to_plot = st.selectbox(
-            sh.DISTRIBUTION_SELECT_PROMPT, fields, key=key, index=0
-        )
-    with cols[1]:
-        stats_type = st.radio(
-            sh.SELECT_STATS_PROMPT,
-            options=STATS_TYPES,
-            index=0,
-            horizontal=True,
-            key=f"radio_{key}_{column_to_plot}",
+            sh.DISTRIBUTION_SELECT_PROMPT, fields, key=f"{key}_one", index=None
         )
     if column_to_plot:
+        with cols[1]:
+            stats_type = st.radio(
+                sh.SELECT_STATS_PROMPT,
+                options=STATS_TYPES,
+                index=0,
+                horizontal=True,
+                key=f"radio_{key}_{column_to_plot}",
+            )
+
         dset_stats = proc.calculate_counts(dset, column_to_plot, sort=True)
 
         show_counts_percent_chart(
@@ -333,6 +395,48 @@ def display_distributions(dset, data_prefix="", key=None):
             column_to_plot,
             stats_type=stats_type,
         )
+
+    # two-variable distribution
+    st.divider()
+    st.markdown(sh.TWO_VARIABLE_DISTRIBUTION_TITLE)
+    cols = st.columns(3)
+    with cols[0]:
+        column_one_to_plot = st.selectbox(
+            sh.DISTRIBUTION_SELECT_PROMPT_1, fields, key=f"{key}_two_1", index=None
+        )
+    if column_one_to_plot:
+        print(column_one_to_plot)
+        fields_2 = [field for field in fields if field != column_one_to_plot]
+        with cols[1]:
+            column_two_to_plot = st.selectbox(
+                sh.DISTRIBUTION_SELECT_PROMPT_2,
+                fields_2,
+                key=f"{key}_two_2",
+                index=None,
+            )
+        if column_two_to_plot:
+            with cols[2]:
+                stats_type = st.radio(
+                    sh.SELECT_STATS_PROMPT,
+                    options=STATS_TYPES,
+                    index=0,
+                    horizontal=True,
+                    key=f"radio_{key}_{column_one_to_plot}_{column_two_to_plot}",
+                )
+            dset_stats = proc.calculate_grouped_counts(
+                dset, [column_one_to_plot, column_two_to_plot]
+            )
+            show_counts_percent_grouped_chart(
+                dset_stats,
+                f"{clean_titles(column_one_to_plot)} by {clean_titles(column_two_to_plot)} "
+                f"(N = {dset.shape[0]}{data_prefix} records)",
+                [
+                    column_one_to_plot,
+                    column_two_to_plot,
+                ],
+                column_to_plot,
+                stats_type=stats_type,
+            )
 
 
 def display_histograms(dset, data_prefix="", key=None):

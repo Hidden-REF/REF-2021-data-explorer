@@ -38,15 +38,17 @@ def calculate_grouped_counts(dset, columns):
         dset_stats (pandas.DataFrame): The grouped dataset.
     """
 
-    col_counts = "records"
-    dset2plot = dset.copy()
-    for column in columns:
-        dset2plot[column] = dset2plot[column].cat.remove_unused_categories()
+    col_count = "records"
+    col_perc = "records (%)"
 
-    dset_stats = dset2plot[columns].groupby(columns).size().reset_index(name=col_counts)
-    del dset2plot
+    dset_stats = (
+        dset[columns].groupby(columns, observed=True).size().to_frame(name=col_count)
+    )
+    dset_stats[col_perc] = np.round(
+        100 * dset_stats[col_count] / dset_stats[col_count].sum()
+    )
 
-    return dset_stats
+    return dset_stats.reset_index()
 
 
 def get_column_lists(dset, dtype):
