@@ -1,3 +1,5 @@
+[![Pylint](https://github.com/Hidden-REF/REF-2021-data-explorer/actions/workflows/pylint.yml/badge.svg)](https://github.com/Hidden-REF/REF-2021-data-explorer/actions/workflows/pylint.yml)
+
 # REF-2021-data-explorer
 
 Data explorer app written with Streamlit
