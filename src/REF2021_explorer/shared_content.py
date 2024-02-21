@@ -35,7 +35,8 @@ fix alignment issues, add aggregate variables, change data structure to make
 it more suitable for analyses and visualisations, and remove some columns
 that were not useful for analyses and visualisations.
 
-The python code used to process the raw data is available from [ref-2021-analysis repository]({PROC_URL}).
+The python code used to process the raw data is available from
+[ref-2021-analysis repository]({PROC_URL}).
 Processing logs are also available to browse for each dataset and
 give details of the processing steps taken. When fields were added
 or the structure of the raw data was changed these steps
@@ -57,7 +58,7 @@ ABOUT_TEXT = """
     expert review across all UK universities for 34 subject-based units of assessment. The
     REF is conducted around every seven years, with the most recent taking place in 2021.
 
-    All the raw data on this website is published openly on the REF 2021 website. 
+    All the raw data on this website is published openly on the REF 2021 website.
     The raw data has been processed as described in the [Data](#Data) section below
     before being made available on this site.
     This site is dedicated to understanding the results of the REF 2021 by
@@ -151,7 +152,7 @@ DATA_TEXT_TO_REPLACE = " data"
 # tabs descriptions
 BROWSE_DATA_TAB_DESCRIPTION = """
 Navigate the data by scrolling up and down
-the dataframe display below. 
+the dataframe display below.
 You can sort the data in ascending or descending order
 based on the values of a column by clicking on its header.
 To download the data as a CSV file, use the controls located in the top right corner of the data display.
