@@ -35,13 +35,13 @@ fix alignment issues, add aggregate variables, change data structure to make
 it more suitable for analyses and visualisations, and remove some columns
 that were not useful for analyses and visualisations.
 
-The python code used to process the raw data is available from [{PROC_URL}]({PROC_URL}).
-Processing logs are also available to browse on each page and
+The python code used to process the raw data is available from [ref-2021-analysis repository]({PROC_URL}).
+Processing logs are also available to browse for each dataset and
 give details of the processing steps taken. When fields were added
 or the structure of the raw data was changed these steps
 are described in summary at the top of the page as well as in the logs.
 The fields added in the processing have the suffixes ` (added)` or ` (binned)`
-in the field names.
+in the field names of the processed data.
 """
 
 WARNING_TEXT = """
@@ -57,9 +57,11 @@ ABOUT_TEXT = """
     expert review across all UK universities for 34 subject-based units of assessment. The
     REF is conducted around every seven years, with the most recent taking place in 2021.
 
-    All of the data on this website is published openly on the REF 2021 website.
+    All the raw data on this website is published openly on the REF 2021 website. 
+    The raw data has been processed as described in the [Data](#Data) section below
+    before being made available on this site.
     This site is dedicated to understanding the results of the REF 2021 by
-    providing users with the ability to analyse and search the REF data.
+    providing users with the ability to search, filter, visualise and download the processed REF data.
 
     Submissions for REF 2021 consisted of data sets on
     - Research Groups
@@ -68,11 +70,12 @@ ABOUT_TEXT = """
     - Doctoral Degrees Awarded
     - Research Income
     - Research Income in Kind
-    - Research Environment
+    - Research Environment at institution level
+    - Research Environment at unit of assessment level
 
-    The website currently allows for any of the above information to be analysed and visualised.
+    The website currently allows for any of the above information to be searched, filtered, analysed and visualised.
     Select a data set from the side bar, then use the main section of the website
-    to choose elements of the data set to visualise.
+    to choose the actions.
     You can also compare elements of the data set and visualise the results.
     """
 
