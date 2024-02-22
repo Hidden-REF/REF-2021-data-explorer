@@ -65,7 +65,6 @@ ABOUT_TEXT = """
     providing users with the ability to search, filter, visualise and download the processed REF data.
 
     Submissions for REF 2021 consisted of data sets on
-    - Research Groups
     - Outputs (e.g. journal articles, books, datasets, etc.)
     - Impact Case Studies
     - Doctoral Degrees Awarded
