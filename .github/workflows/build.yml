@@ -6,6 +6,8 @@ on:
     paths:
       - 'src/**'
       - '.streamlit/**'
+      - 'data/**'
+      - 'assets/**'
       - requirements.txt
       - Dockerfile
       - .github/workflows/build.yml
