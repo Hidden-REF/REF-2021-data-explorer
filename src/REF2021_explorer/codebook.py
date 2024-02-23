@@ -3,8 +3,12 @@
 
 
 COL_INST_NAME = "Institution name"
+COL_MAIN_PANEL_NAME = "Main panel name"
 COL_UNIT_OF_ASSESSMENT = "Unit of assessment name"
+COL_MULTIPLE_SUBMISSION_NAME = "Multiple submission name"
 COL_MULIPLE_SUBMISSION_LETTER = "Multiple submission letter"
+COL_JOINT_SUBMISSION = "Joint submission"
+COL_TOTAL_FTE_JOINT = "Total FTE of submitted staff for joint submission"
 COL_OUTPUT_TITLE = "Title"
 COL_OUTPUT_PLACE = "Place"
 COL_OUTPUT_PUBLISHER = "Publisher"

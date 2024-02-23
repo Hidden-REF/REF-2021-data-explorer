@@ -134,6 +134,13 @@ EXPLORE_HEADER = f"{HEADER_STYLE} :flashlight: Select, explore and visualise dat
 BROWSE_STATEMENTS_HEADER = (
     f"{HEADER_STYLE} :bookmark_tabs: Browse the submitted statements"
 )
+PROFILE_HEADERS = {
+    "Outputs": f"{HEADER_STYLE} Outputs",
+    "Impact": f"{HEADER_STYLE} Impact",
+    "Environment": f"{HEADER_STYLE} Environment",
+    "Overall": f"{HEADER_STYLE} Overall",
+}
+
 
 ONE_VARIABLE_DISTRIBUTION_TITLE = f"{HEADER_STYLE} One variable distribution"
 TWO_VARIABLE_DISTRIBUTION_TITLE = f"{HEADER_STYLE} Grouped distribution"

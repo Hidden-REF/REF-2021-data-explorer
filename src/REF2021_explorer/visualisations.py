@@ -374,7 +374,7 @@ def display_distributions(dset, data_prefix="", key=None):
     cols = st.columns(2)
     with cols[0]:
         column_to_plot = st.selectbox(
-            sh.DISTRIBUTION_SELECT_PROMPT, fields, key=f"{key}_one", index=None
+            sh.DISTRIBUTION_SELECT_PROMPT, fields, key=f"select_{key}_one", index=None
         )
     if column_to_plot:
         with cols[1]:
@@ -402,7 +402,7 @@ def display_distributions(dset, data_prefix="", key=None):
     cols = st.columns(3)
     with cols[0]:
         column_one_to_plot = st.selectbox(
-            sh.DISTRIBUTION_SELECT_PROMPT_1, fields, key=f"{key}_two_1", index=None
+            sh.DISTRIBUTION_SELECT_PROMPT_1, fields, key=f"select_{key}_two_1", index=None
         )
     if column_one_to_plot:
         print(column_one_to_plot)
@@ -411,7 +411,7 @@ def display_distributions(dset, data_prefix="", key=None):
             column_two_to_plot = st.selectbox(
                 sh.DISTRIBUTION_SELECT_PROMPT_2,
                 fields_2,
-                key=f"{key}_two_2",
+                key=f"select_{key}_two_2",
                 index=None,
             )
         if column_two_to_plot:
@@ -517,7 +517,7 @@ def display_grouped_distribution(dset, key=None):
             )
 
 
-def display_data_explorer(dset, do_histograms=False):
+def display_data_explorer(dset, key=None, do_histograms=False):
     """Display a data explorer for a selected dataset.
 
     Args:
@@ -555,7 +555,7 @@ def display_data_explorer(dset, do_histograms=False):
             with tabs[0]:
                 if not do_histograms:
                     display_distributions(
-                        dset_explore, data_prefix=data_prefix, key="distributions"
+                        dset_explore, data_prefix=data_prefix, key=key
                     )
                 else:
                     vtabs = st.tabs(
@@ -563,7 +563,7 @@ def display_data_explorer(dset, do_histograms=False):
                     )
                     with vtabs[0]:
                         display_distributions(
-                            dset_explore, data_prefix=data_prefix, key="distributions"
+                            dset_explore, data_prefix=data_prefix, key=key
                         )
                     with vtabs[1]:
                         display_histograms(

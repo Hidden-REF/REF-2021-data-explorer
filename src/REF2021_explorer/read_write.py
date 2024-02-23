@@ -8,6 +8,13 @@ import REF2021_explorer.codebook as cb
 
 FETCHING_DATA = "Fetching data..."
 
+MOVE_TO_BACK = [
+    cb.COL_MULTIPLE_SUBMISSION_NAME,
+    cb.COL_MULIPLE_SUBMISSION_LETTER,
+    cb.COL_JOINT_SUBMISSION,
+    cb.COL_TOTAL_FTE_JOINT
+]
+
 # data paths
 DATA_PATH = (
     "https://github.com/softwaresaved/ref-2021-analysis/raw/main/data/processed/sheets/"
@@ -88,11 +95,18 @@ def get_data(page):
     dset = read_parquet(fname, columns_to_read)
 
     # move institution name column to the back which works better for visualisations
-    if cb.COL_INST_NAME in dset.columns:
-        columns = dset.columns.tolist()
-        columns.remove(cb.COL_INST_NAME)
-        columns.append(cb.COL_INST_NAME)
-        dset = dset[columns]
+    # if cb.COL_INST_NAME in dset.columns:
+    #     columns = dset.columns.tolist()
+    #     columns.remove(cb.COL_INST_NAME)
+    #     columns.append(cb.COL_INST_NAME)
+    #     dset = dset[columns]
+
+    for column in MOVE_TO_BACK:
+        if column in dset.columns:
+            columns = dset.columns.tolist()
+            columns.remove(column)
+            columns.append(column)
+            dset = dset[columns]
 
     return dset
 
