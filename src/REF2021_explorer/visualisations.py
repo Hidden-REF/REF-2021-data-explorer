@@ -378,7 +378,7 @@ def display_distributions(dset, data_prefix="", key=None):
         )
     if column_to_plot:
         with cols[1]:
-            stats_type = st.radio(
+            stats_type_one_var = st.radio(
                 sh.SELECT_STATS_PROMPT,
                 options=STATS_TYPES,
                 index=0,
@@ -386,14 +386,14 @@ def display_distributions(dset, data_prefix="", key=None):
                 key=f"radio_{key}_{column_to_plot}",
             )
 
-        dset_stats = proc.calculate_counts(dset, column_to_plot, sort=True)
+        dset_stats_one_var = proc.calculate_counts(dset, column_to_plot, sort=True)
 
         show_counts_percent_chart(
-            dset_stats,
+            dset_stats_one_var,
             f"{clean_titles(column_to_plot)} "
             f"(N = {dset.shape[0]}{data_prefix} records)",
             column_to_plot,
-            stats_type=stats_type,
+            stats_type=stats_type_one_var,
         )
 
     # two-variable distribution
@@ -405,7 +405,6 @@ def display_distributions(dset, data_prefix="", key=None):
             sh.DISTRIBUTION_SELECT_PROMPT_1, fields, key=f"select_{key}_two_1", index=None
         )
     if column_one_to_plot:
-        print(column_one_to_plot)
         fields_2 = [field for field in fields if field != column_one_to_plot]
         with cols[1]:
             column_two_to_plot = st.selectbox(
@@ -416,26 +415,26 @@ def display_distributions(dset, data_prefix="", key=None):
             )
         if column_two_to_plot:
             with cols[2]:
-                stats_type = st.radio(
+                stats_type_two_vars = st.radio(
                     sh.SELECT_STATS_PROMPT,
                     options=STATS_TYPES,
                     index=0,
                     horizontal=True,
                     key=f"radio_{key}_{column_one_to_plot}_{column_two_to_plot}",
                 )
-            dset_stats = proc.calculate_grouped_counts(
+            dset_stats_two_vars = proc.calculate_grouped_counts(
                 dset, [column_one_to_plot, column_two_to_plot]
             )
             show_counts_percent_grouped_chart(
-                dset_stats,
+                dset_stats_two_vars,
                 f"{clean_titles(column_one_to_plot)} by {clean_titles(column_two_to_plot)} "
                 f"(N = {dset.shape[0]}{data_prefix} records)",
                 [
                     column_one_to_plot,
                     column_two_to_plot,
                 ],
-                column_to_plot,
-                stats_type=stats_type,
+                columns_stats=None,
+                stats_type=stats_type_two_vars,
             )
 
 
